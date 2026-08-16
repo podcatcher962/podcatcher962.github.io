@@ -40,8 +40,8 @@ body{
 /* Header */
 .hdr{text-align:center;margin:14px 0 8px}
 .hdr h1{font-size:30px;color:var(--gold);letter-spacing:6px;text-shadow:0 0 24px rgba(255,215,0,0.2)}
-.hdr .en{font-size:13px;color:var(--dim);letter-spacing:3px;margin-top:6px}
-.hdr .slogan{font-size:12px;color:var(--accent);letter-spacing:2px;margin-top:10px}
+.hdr .sub{font-size:15px;color:var(--accent);letter-spacing:4px;margin-top:8px;font-weight:bold}
+.hdr .slogan{font-size:12px;color:var(--dim);letter-spacing:2px;margin-top:10px}
 /* Stats */
 .stats{display:flex;justify-content:center;gap:18px;margin:20px 0 6px;flex-wrap:wrap}
 .stat{text-align:center;background:var(--chip);border:1px solid var(--mutedBdr);padding:10px 22px;min-width:110px}
@@ -122,8 +122,8 @@ body{
 </div>
 
 <div class="hdr">
-  <h1>兰斋丛编 · 兰兰软件集</h1>
-  <div class="en">Lanzhai · Lanlan's Software Collection</div>
+  <h1>兰斋丛编</h1>
+  <div class="sub" id="sub">兰兰软件汇总集</div>
   <div class="slogan" id="slogan">藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新</div>
 </div>
 
@@ -224,10 +224,10 @@ const CATS = {
 // ============ 语言 ============
 let lang = 'zh';
 const I18N = {
-  zh:{total:"软件总数", web:"在线版", exe:"EXE 版", slogan:"一个入口，收录全部软件 · 收藏此页，实时获取更新",
+  zh:{total:"软件总数", web:"在线版", exe:"EXE 版", sub:"兰兰软件汇总集", slogan:"藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新",
       tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", ver:"版本",
       sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制"},
-  en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", slogan:"One link, all apps · Bookmark this page for live updates",
+  en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
       tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", ver:"Ver",
       sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied"},
 };
@@ -237,6 +237,7 @@ function setL(l){
   document.getElementById('btnZh').className = l==='zh'?'active':'';
   document.getElementById('btnEn').className = l==='en'?'active':'';
   document.getElementById('slogan').textContent = t('slogan');
+  document.getElementById('sub').textContent = t('sub');
   document.getElementById('tagline').textContent = t('tagline');
   document.getElementById('tSound').textContent = t('sound');
   document.getElementById('tAbout').textContent = t('about');
