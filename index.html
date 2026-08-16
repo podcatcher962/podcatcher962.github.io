@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="永远的兰兰 · 软件总入口 — 一个页面收录全部软件（传统文化工具 / 效率工具 / 下载工具），含版本号、在线版、EXE 下载。收藏此页即可实时获取更新。">
+<meta property="og:title" content="永远的兰兰 · 软件总入口">
+<meta property="og:description" content="一个入口，收录全部软件 · 收藏此页，实时获取更新">
+<meta name="theme-color" content="#f2e6cd">
+<title>永远的兰兰 · 软件总入口 | Lanlan Eternal · Software Hub</title>
+<style>
+:root{
+  --bg:#0d0d1a;--card:#13132b;--bdr:#1e3799;--accent:#4a69bd;
+  --gold:#ffd700;--text:#c8d6e5;--dim:#7f8fa6;--inp:#0c0c22;--inpText:#f1f2f6;
+  --mutedBdr:#2a2a4a;--foot:#576574;--grid:rgba(30,55,153,0.06);
+  --chip:#1a1a36;--shadow:0 0 30px rgba(74,105,189,0.18);
+}
+html[data-theme="light"]{
+  --bg:#f2e6cd;--card:#faf0dc;--bdr:#b8914f;--accent:#8a6a35;
+  --gold:#7a5c1e;--text:#3e2f1d;--dim:#7d6a4d;--inp:#f7ecd6;--inpText:#3e2f1d;
+  --mutedBdr:#d8c39a;--foot:#a08a63;--grid:rgba(138,106,53,0.08);
+  --chip:#f0e3c8;--shadow:0 0 24px rgba(138,106,53,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--text);font-family:'Courier New','Microsoft YaHei',monospace;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 14px 50px;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 31px,var(--grid) 31px,var(--grid) 32px),repeating-linear-gradient(90deg,transparent,transparent 31px,var(--grid) 31px,var(--grid) 32px);
+  transition:background 0.3s,color 0.3s;
+}
+.wrap{max-width:1060px;width:100%}
+/* Header */
+.topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.topbar a{color:var(--dim);font-size:13px;cursor:pointer;text-decoration:none;letter-spacing:1px;border-bottom:1px solid transparent;transition:all 0.2s;user-select:none}
+.topbar a:hover{color:var(--gold);border-color:var(--accent)}
+.topbar a.active{color:var(--gold);font-weight:bold}
+.hdr{text-align:center;margin:14px 0 8px}
+.hdr h1{font-size:30px;color:var(--gold);letter-spacing:6px;text-shadow:0 0 24px rgba(255,215,0,0.2)}
+.hdr .en{font-size:13px;color:var(--dim);letter-spacing:3px;margin-top:6px}
+.hdr .slogan{font-size:12px;color:var(--accent);letter-spacing:2px;margin-top:10px}
+/* Stats */
+.stats{display:flex;justify-content:center;gap:18px;margin:20px 0 6px;flex-wrap:wrap}
+.stat{text-align:center;background:var(--chip);border:1px solid var(--mutedBdr);padding:10px 22px;min-width:110px}
+.stat .num{font-size:26px;color:var(--gold);font-weight:bold}
+.stat .lbl{font-size:10px;color:var(--dim);letter-spacing:2px;margin-top:2px}
+/* Section */
+.sec{margin:30px 0 10px}
+.sec-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.sec-h .bar{flex:1;height:1px;background:var(--bdr)}
+.sec-h h2{font-size:17px;color:var(--gold);letter-spacing:4px;white-space:nowrap}
+.sec-h .cnt{font-size:11px;color:var(--dim)}
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{
+  background:var(--card);border:2px solid var(--bdr);padding:18px 18px 16px;position:relative;
+  display:flex;flex-direction:column;gap:10px;transition:transform 0.15s,box-shadow 0.2s;
+  box-shadow:var(--shadow);
+}
+.card:hover{transform:translateY(-3px)}
+.card .head{display:flex;align-items:center;gap:12px}
+.card .icon{font-size:30px;line-height:1;filter:drop-shadow(0 0 6px rgba(255,215,0,0.2))}
+.card .names{flex:1;min-width:0}
+.card .cn{font-size:18px;color:var(--text);font-weight:bold;letter-spacing:2px}
+.card .en{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .ver{font-size:10px;color:var(--gold);border:1px solid var(--gold);padding:2px 8px;letter-spacing:1px;white-space:nowrap;align-self:flex-start}
+.card .use{font-size:12px;color:var(--text);line-height:1.7;opacity:0.9;min-height:40px}
+.card .btns{display:flex;gap:8px;margin-top:auto}
+.card .btns a{
+  flex:1;text-align:center;padding:9px 6px;font-size:12px;text-decoration:none;letter-spacing:1px;
+  border:1px solid var(--bdr);color:var(--gold);background:var(--inp);transition:all 0.15s;white-space:nowrap;
+}
+.card .btns a:hover{background:var(--bdr);color:var(--gold);border-color:var(--accent)}
+.card .btns a.exe{color:var(--accent)}
+.card .btns a.exe:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.card .meta{font-size:10px;color:var(--dim);letter-spacing:1px;border-top:1px dashed var(--mutedBdr);padding-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+/* Footer */
+.foot{margin-top:44px;text-align:center;color:var(--foot);font-size:11px;line-height:2;letter-spacing:1px}
+.foot a{color:var(--accent);text-decoration:none}
+.foot a:hover{color:var(--gold)}
+.tagline{font-size:10px;color:var(--dim);margin-top:6px}
+@media(max-width:640px){
+  .hdr h1{font-size:24px;letter-spacing:3px}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <a id="btnZh" class="active" onclick="setL('zh')">中文</a>
+  <a id="btnEn" onclick="setL('en')">EN</a>
+  <a id="btnTheme" onclick="toggleTheme()" title="主题 / Theme">🌙</a>
+  <a href="https://github.com/podcatcher962" target="_blank" rel="noopener" title="GitHub">⌥ GitHub</a>
+</div>
+
+<div class="hdr">
+  <h1>永远的兰兰 · 软件总入口</h1>
+  <div class="en">Lanlan Eternal · Software Hub</div>
+  <div class="slogan" id="slogan">一个入口，收录全部软件 · 收藏此页，实时获取更新</div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl" data-l="total">软件总数</div></div>
+  <div class="stat"><div class="num" id="statWeb">0</div><div class="lbl" data-l="web">在线版</div></div>
+  <div class="stat"><div class="num" id="statExe">0</div><div class="lbl" data-l="exe">EXE 版</div></div>
+</div>
+
+<div id="root"></div>
+
+<div class="foot">
+  <div id="footAuthor">© 永远的兰兰 · Lanlan Eternal · 2026</div>
+  <div>🏠 <a href="https://github.com/podcatcher962" target="_blank" rel="noopener">github.com/podcatcher962</a></div>
+  <div class="tagline" id="tagline">单文件 HTML · 无追踪 · 无广告 · 免费开源</div>
+</div>
+
+</div>
+
+<script>
+// ============ 数据 ============
+const APPS = [
+  // 传统文化
+  {icon:"🧘", cn:"闲坐", en:"XianReverie", ver:"—", cat:"culture",
+   use_cn:"冥想静坐 · 每日一帧 · 听蝉看光影", use_en:"Quiet corner for the mind — one line a day",
+   web:"XianReverie", exe:null},
+  {icon:"🔮", cn:"观音灵签", en:"AvalokitaOracle", ver:"—", cat:"culture",
+   use_cn:"观音灵签抽签 · 解签 · 六字大明咒配乐", use_en:"GuanYin lot divination with mantra BGM",
+   web:"AvalokitaOracle", exe:null},
+  {icon:"✍️", cn:"测字问心", en:"ZiOracle", ver:"—", cat:"culture",
+   use_cn:"输入一字 · 拆字解字 · 五行命盘联动", use_en:"Chinese character divination (CeZi)",
+   web:"ZiOracle", exe:null},
+  {icon:"🍃", cn:"飞花令", en:"PetalVerse", ver:"—", cat:"culture",
+   use_cn:"诗词接龙 · 一字飞花 · 古今对照", use_en:"Classical poetry game — keyword & verses",
+   web:"PetalVerse", exe:null},
+  {icon:"📜", cn:"与古为徒", en:"YuguTether", ver:"—", cat:"culture",
+   use_cn:"现代困境 × 古人智慧 · 300+ 问答", use_en:"Modern dilemmas × ancient wisdom Q&A",
+   web:"YuguTether", exe:null},
+  {icon:"⚔️", cn:"像素命盘", en:"PixelBaZi", ver:"v3.0", cat:"culture",
+   use_cn:"八字排盘 · 像素 RPG 角色卡 · 大运流年", use_en:"BaZi calculator + pixel RPG card",
+   web:"PixelBaZi", exe:{name:"PixelBaZi.exe", size:"8.8 MB", url:"https://github.com/podcatcher962/PixelBaZi/releases/download/v3.0/PixelBaZi.exe"}},
+  {icon:"🪙", cn:"六爻起卦", en:"IChing", ver:"—", cat:"culture",
+   use_cn:"三钱起卦 · 易经六十四卦 · 卦辞解读", use_en:"I Ching divination — three-coin method",
+   web:"IChing", exe:null},
+  // 效率工具
+  {icon:"📋", cn:"剪贴板管理器", en:"ClipVault", ver:"v1.2", cat:"tool",
+   use_cn:"剪贴板自动捕获 · 搜索 · 置顶 · 片段库", use_en:"Clipboard manager — auto-capture & search",
+   web:null, exe:{name:"ClipVault.exe", size:"12.0 MB", url:"https://github.com/podcatcher962/ClipVault/releases/download/untagged-b5e88ae564a29c2f15e9/ClipVault.exe"}},
+  {icon:"📡", cn:"RSS 阅读器", en:"DrillFeed", ver:"v1.1", cat:"tool",
+   use_cn:"垂直 RSS 阅读 · 深挖小众信源", use_en:"Vertical RSS reader for researchers",
+   web:"DrillFeed", exe:{name:"DrillFeed.exe", size:"12.8 MB", url:"https://github.com/podcatcher962/DrillFeed/releases/download/v1.1/DrillFeed.exe"}},
+  {icon:"⏱️", cn:"番茄钟", en:"FlowTimer", ver:"v1.0", cat:"tool",
+   use_cn:"专注计时 · 心流工作法", use_en:"Pomodoro focus timer",
+   web:"FlowTimer", exe:{name:"FlowTimer.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/FlowTimer/releases/download/v1.0/FlowTimer.exe"}},
+  {icon:"🪞", cn:"人格镜像", en:"MindMirror", ver:"v1.1", cat:"tool",
+   use_cn:"42 题人格测试 · 灵魂镜像", use_en:"Soul Mirror personality quiz",
+   web:"MindMirror", exe:{name:"MindMirror.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/MindMirror/releases/download/v1.1/MindMirror.exe"}},
+  {icon:"📝", cn:"极简笔记本", en:"NoteFlow", ver:"v2.0", cat:"tool",
+   use_cn:"本地 Markdown 笔记 · 写/搜/存 · 无云端", use_en:"Minimalist local Markdown notebook",
+   web:"NoteFlow", exe:{name:"NoteFlow.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/NoteFlow/releases/download/untagged-cb69cf2024cdee609269/NoteFlow.exe"}},
+  {icon:"🔄", cn:"万能换算器", en:"QuickConvert", ver:"v2.0", cat:"tool",
+   use_cn:"离线单位换算 · 12 类 · 生活类比", use_en:"Universal offline unit converter",
+   web:"QuickConvert", exe:{name:"QuickConvert.exe", size:"11.5 MB", url:"https://github.com/podcatcher962/QuickConvert/releases/download/v2.0/QuickConvert.exe"}},
+  {icon:"🔐", cn:"密码生成器", en:"QuickPass", ver:"v1.0", cat:"tool",
+   use_cn:"强密码生成 · 本地离线", use_en:"Offline strong password generator",
+   web:"QuickPass", exe:{name:"QuickPass.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/QuickPass/releases/download/v1.0/QuickPass.exe"}},
+  {icon:"🔍", cn:"文本对比", en:"TextDiff", ver:"v2.0", cat:"tool",
+   use_cn:"文本差异对比 · 逐行高亮", use_en:"Text diff with line highlighting",
+   web:"TextDiff", exe:{name:"TextDiff.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/TextDiff/releases/download/v2.0/TextDiff.exe"}},
+  {icon:"🏷️", cn:"批量重命名", en:"BatchRename", ver:"v1.0", cat:"tool",
+   use_cn:"文件批量重命名 · 规则化处理", use_en:"Batch file renamer",
+   web:null, exe:{name:"BatchRename.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/BatchRename/releases/download/v1.0/BatchRename.exe"}},
+  // 下载工具
+  {icon:"🎙️", cn:"小宇宙下载器", en:"PodcastBatch-Downloader", ver:"v1.0", cat:"download",
+   use_cn:"播客批量下载 · 增量更新", use_en:"Podcast batch downloader",
+   web:null, exe:{name:"XiaoYuZhou-DL.exe", size:"12.1 MB", url:"https://github.com/podcatcher962/PodcastBatch-Downloader/releases/download/v1.0/XiaoYuZhou-DL.exe"}},
+  {icon:"🎧", cn:"喜马拉雅下载器", en:"PodcastRSS-Downloader", ver:"v1.0", cat:"download",
+   use_cn:"播客 RSS 增量下载 · 批量订阅", use_en:"Podcast RSS incremental downloader",
+   web:null, exe:{name:"XimalayaWatcher.exe", size:"48.4 MB", url:"https://github.com/podcatcher962/PodcastRSS-Downloader/releases/download/v1.0/XimalayaWatcher.exe"}},
+];
+
+const CATS = {
+  culture:{cn:"传统文化", en:"Traditional Culture", icon:"🏮"},
+  tool:{cn:"效率工具", en:"Productivity Tools", icon:"🧰"},
+  download:{cn:"下载工具", en:"Download Tools", icon:"📥"},
+};
+
+// ============ 语言 ============
+let lang = 'zh';
+const I18N = {
+  zh:{total:"软件总数", web:"在线版", exe:"EXE 版", slogan:"一个入口，收录全部软件 · 收藏此页，实时获取更新",
+      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", ver:"版本"},
+  en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", slogan:"One link, all apps · Bookmark this page for live updates",
+      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", ver:"Ver"},
+};
+function t(k){return I18N[lang][k];}
+function setL(l){
+  lang = l;
+  document.getElementById('btnZh').className = l==='zh'?'active':'';
+  document.getElementById('btnEn').className = l==='en'?'active':'';
+  document.getElementById('slogan').textContent = t('slogan');
+  document.getElementById('tagline').textContent = t('tagline');
+  document.querySelectorAll('[data-l]').forEach(el=>{ el.textContent = t(el.getAttribute('data-l')); });
+  render();
+}
+
+// ============ 主题 ============
+function applyTheme(th){
+  document.documentElement.setAttribute('data-theme', th);
+  document.getElementById('btnTheme').textContent = th==='light'?'🌙':'☀️';
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  applyTheme(cur);
+  try{localStorage.setItem('hubTheme', cur);}catch(e){}
+}
+
+// ============ 渲染 ============
+function render(){
+  const root = document.getElementById('root');
+  let html = '';
+  let webCount = 0, exeCount = 0;
+
+  for(const catKey of Object.keys(CATS)){
+    const items = APPS.filter(a=>a.cat===catKey);
+    if(!items.length) continue;
+    const cat = CATS[catKey];
+    html += `<div class="sec"><div class="sec-h"><span class="bar"></span><h2>${cat.icon} ${lang==='zh'?cat.cn:cat.en}</h2><span class="cnt">${items.length}</span><span class="bar"></span></div><div class="grid">`;
+    for(const a of items){
+      const use = lang==='zh'?a.use_cn:a.use_en;
+      let btns = '';
+      if(a.web){ btns += `<a href="https://podcatcher962.github.io/${a.web}/" target="_blank" rel="noopener">${t('webBtn')}</a>`; webCount++; }
+      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener">${t('exeBtn')} · ${a.exe.size}</a>`; exeCount++; }
+      const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.web ? `${a.web}.html` : '—'));
+      html += `
+      <div class="card">
+        <div class="head">
+          <span class="icon">${a.icon}</span>
+          <span class="names"><span class="cn">${a.cn}</span><span class="en">${a.en}</span></span>
+          <span class="ver">${a.ver}</span>
+        </div>
+        <div class="use">${use}</div>
+        <div class="btns">${btns}</div>
+        <div class="meta"><span>${t('ver')}: ${a.ver}</span><span>${meta}</span></div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  root.innerHTML = html;
+  document.getElementById('statTotal').textContent = APPS.length;
+  document.getElementById('statWeb').textContent = webCount;
+  document.getElementById('statExe').textContent = exeCount;
+}
+
+// ============ 初始化 ============
+(function(){
+  try{applyTheme(localStorage.getItem('hubTheme')||'light');}catch(e){applyTheme('light');}
+  try{const l=localStorage.getItem('hubLang'); if(l) lang=l;}catch(e){}
+  setL(lang);
+})();
+</script>
+</body>
+</html>
