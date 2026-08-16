@@ -226,10 +226,10 @@ let lang = 'zh';
 const I18N = {
   zh:{total:"软件总数", web:"在线版", exe:"EXE 版", sub:"兰兰软件汇总集", slogan:"藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新",
       tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", ver:"版本",
-      sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制"},
+      sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制", shareFallback:"当前环境不支持系统分享，已复制链接"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
       tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", ver:"Ver",
-      sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied"},
+      sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied"},
 };
 function t(k){return I18N[lang][k];}
 function setL(l){
@@ -273,19 +273,19 @@ function fallbackCopy(text){
   document.body.appendChild(ta); ta.select();
   try{ document.execCommand('copy'); }catch(e){}
   document.body.removeChild(ta);
-  toast(t('copied'));
 }
-function copyLink(){
+function copyLink(msg){
   const url = location.href;
+  const done = ()=>toast(msg || t('copied'));
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(()=>toast(t('copied'))).catch(()=>fallbackCopy(url));
-  } else { fallbackCopy(url); }
+    navigator.clipboard.writeText(url).then(done).catch(()=>{ fallbackCopy(url); done(); });
+  } else { fallbackCopy(url); done(); }
 }
 function sharePage(){
   if(navigator.share){
     navigator.share({ title: document.title, url: location.href }).catch(()=>{});
   } else {
-    copyLink();
+    copyLink(t('shareFallback'));
   }
 }
 
