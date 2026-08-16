@@ -9,15 +9,15 @@
 
 > 藏兰兰全部软件于兰斋 · 捡拾软件世界里的微光，写给愿意慢下来的人
 
-「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **19 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
+「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **20 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
 
 ### 📖 在线链接
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（19 个 · 4 类）
+### 🗂 收录软件（20 个 · 4 类）
 
-#### 🏮 传统文化（7）
+#### 🏮 传统文化（8）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
@@ -28,6 +28,7 @@
 | 与古为徒 | YuguTether | — | 现代困境 × 古人智慧问答 |
 | 像素命盘 | PixelBaZi | v3.0 | 八字排盘 + 像素 RPG 角色卡 |
 | 六爻起卦 | IChing | — | 三钱起卦 · 易经六十四卦 |
+| 见素 | JianMirror | — | 西游镜鉴 · 照见你本来的样子 |
 
 #### 🧰 效率工具（9）
 
@@ -93,15 +94,15 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **19 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **20 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (19 · 4 categories)
+### 🗂 Apps Indexed (20 · 4 categories)
 
-#### 🏮 Traditional Culture (7)
+#### 🏮 Traditional Culture (8)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
@@ -112,6 +113,7 @@
 | YuguTether | 与古为徒 | — | Modern dilemmas × ancient wisdom Q&A |
 | PixelBaZi | 像素命盘 | v3.0 | BaZi calculator + pixel RPG card |
 | IChing | 六爻起卦 | — | I Ching divination — three-coin method |
+| JianMirror | 见素 | — | Xiyou mirror records — see your true self |
 
 #### 🧰 Productivity Tools (9)
 
