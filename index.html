@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="永远的兰兰 · 软件总入口 — 一个页面收录全部软件（传统文化工具 / 效率工具 / 播客工具），含版本号、在线版、EXE 下载。收藏此页即可实时获取更新。">
-<meta property="og:title" content="永远的兰兰 · 软件总入口">
-<meta property="og:description" content="一个入口，收录全部软件 · 收藏此页，实时获取更新">
+<meta name="description" content="兰斋丛编 · 兰兰软件集 — 藏兰兰全部软件于兰斋（传统文化 / 效率工具 / 播客工具 / 个人站点），含版本号、在线版、EXE 下载。收藏此页即可实时获取更新。">
+<meta property="og:title" content="兰斋丛编 · 兰兰软件集">
+<meta property="og:description" content="藏兰兰全部软件于一台 · 收藏此页，实时获取更新">
 <meta name="theme-color" content="#f2e6cd">
-<title>永远的兰兰 · 软件总入口 | Lanlan Eternal · Software Hub</title>
+<title>兰斋丛编 · 兰兰软件集 | Lanzhai · Lanlan's Software Collection</title>
 <style>
 :root{
   --bg:#0d0d1a;--card:#13132b;--bdr:#1e3799;--accent:#4a69bd;
@@ -94,6 +94,9 @@ body{
 .modal-box a:hover{color:var(--gold)}
 .modal-close{position:absolute;top:14px;right:18px;color:var(--dim);font-size:22px;cursor:pointer;background:none;border:none;font-family:inherit}
 .modal-close:hover{color:var(--gold)}
+/* Toast */
+.toast{position:fixed;top:22px;left:50%;transform:translateX(-50%);background:var(--bdr);color:var(--gold);padding:10px 22px;border:2px solid var(--accent);font-size:13px;font-family:inherit;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;letter-spacing:1px}
+.toast.show{opacity:1}
 @media(max-width:640px){
   .hdr h1{font-size:24px;letter-spacing:3px}
   .grid{grid-template-columns:1fr}
@@ -113,13 +116,15 @@ body{
   <a id="btnSound" onclick="toggleSound()" title="背景音乐">♪ <span id="tSound">音乐</span></a>
   <a onclick="openModal('about')">ℹ️ <span id="tAbout">关于</span></a>
   <a onclick="openModal('disclaim')">⚠️ <span id="tDisclaim">免责声明</span></a>
+  <a onclick="copyLink()" title="复制链接">🔗 <span id="tCopy">复制链接</span></a>
+  <a onclick="sharePage()" title="分享">📤 <span id="tShare">分享</span></a>
   <a href="https://github.com/podcatcher962" target="_blank" rel="noopener" title="GitHub">⌥ GitHub</a>
 </div>
 
 <div class="hdr">
-  <h1>永远的兰兰 · 软件总入口</h1>
-  <div class="en">Lanlan Eternal · Software Hub</div>
-  <div class="slogan" id="slogan">一个入口，收录全部软件 · 收藏此页，实时获取更新</div>
+  <h1>兰斋丛编 · 兰兰软件集</h1>
+  <div class="en">Lanzhai · Lanlan's Software Collection</div>
+  <div class="slogan" id="slogan">藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新</div>
 </div>
 
 <div class="stats">
@@ -141,6 +146,7 @@ body{
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal-box" id="modalBox"></div>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
 // ============ 数据 ============
@@ -220,10 +226,10 @@ let lang = 'zh';
 const I18N = {
   zh:{total:"软件总数", web:"在线版", exe:"EXE 版", slogan:"一个入口，收录全部软件 · 收藏此页，实时获取更新",
       tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", ver:"版本",
-      sound:"音乐", about:"关于", disclaim:"免责声明"},
+      sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", slogan:"One link, all apps · Bookmark this page for live updates",
       tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", ver:"Ver",
-      sound:"Music", about:"About", disclaim:"Disclaimer"},
+      sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied"},
 };
 function t(k){return I18N[lang][k];}
 function setL(l){
@@ -235,6 +241,8 @@ function setL(l){
   document.getElementById('tSound').textContent = t('sound');
   document.getElementById('tAbout').textContent = t('about');
   document.getElementById('tDisclaim').textContent = t('disclaim');
+  document.getElementById('tCopy').textContent = t('copy');
+  document.getElementById('tShare').textContent = t('share');
   document.querySelectorAll('[data-l]').forEach(el=>{ el.textContent = t(el.getAttribute('data-l')); });
   render();
 }
@@ -248,6 +256,36 @@ function toggleTheme(){
   const cur = document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
   applyTheme(cur);
   try{localStorage.setItem('hubTheme', cur);}catch(e){}
+}
+
+// ============ 复制链接 / 分享 ============
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._tid);
+  el._tid = setTimeout(()=>el.classList.remove('show'), 2000);
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+  toast(t('copied'));
+}
+function copyLink(){
+  const url = location.href;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>toast(t('copied'))).catch(()=>fallbackCopy(url));
+  } else { fallbackCopy(url); }
+}
+function sharePage(){
+  if(navigator.share){
+    navigator.share({ title: document.title, url: location.href }).catch(()=>{});
+  } else {
+    copyLink();
+  }
 }
 
 // ============ 背景音乐 ============
@@ -315,7 +353,7 @@ function openModal(type){
   if(type==='about'){
     document.getElementById('modalBox').innerHTML = close + (l==='zh'?`
       <h2>ℹ️ 关于本页</h2>
-      <p><b>永远的兰兰 · 软件总入口</b>（Lanlan Eternal · Software Hub）——一个页面收录作者开发的全部软件作品，含版本号、在线版与 EXE 下载链接，收藏本页即可实时获取所有软件的最新更新。</p>
+      <p><b>兰斋丛编 · 兰兰软件集</b>（Lanzhai · Lanlan's Software Collection）——「兰斋」取义文人书斋，「丛编」即丛书之编，兰兰的全部软件作品汇于一斋，含版本号、在线版与 EXE 下载链接，收藏本页即可实时获取所有软件的最新更新。</p>
       <h3>作者</h3>
       <p>永远的兰兰（Lanlan Eternal）</p>
       <h3>代码仓库</h3>
@@ -325,7 +363,7 @@ function openModal(type){
       <p>纯前端单文件 HTML/CSS/JS，无后端、无账号、无数据上传；在线版为静态网页，EXE 版为本地运行。所有工具均免费开源，仅供个人学习与娱乐。</p>
       <p style="margin-top:12px;color:var(--dim);font-size:10px">© 永远的兰兰 · Lanlan Eternal · 2026</p>
     `:`<h2>ℹ️ About</h2>
-      <p><b>Lanlan Eternal · Software Hub</b> — one page indexing all software by the author, with versions, web links and EXE downloads. Bookmark this page for live updates.</p>
+      <p><b>Lanzhai · Lanlan's Software Collection</b> — "Lanzhai" (Lanlan's study) compiles all software by the author, with versions, web links and EXE downloads. Bookmark this page for live updates.</p>
       <h3>Author</h3>
       <p>Lanlan Eternal (永远的兰兰)</p>
       <h3>Repository</h3>
