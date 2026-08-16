@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="永远的兰兰 · 软件总入口 — 一个页面收录全部软件（传统文化工具 / 效率工具 / 下载工具），含版本号、在线版、EXE 下载。收藏此页即可实时获取更新。">
+<meta name="description" content="永远的兰兰 · 软件总入口 — 一个页面收录全部软件（传统文化工具 / 效率工具 / 播客工具），含版本号、在线版、EXE 下载。收藏此页即可实时获取更新。">
 <meta property="og:title" content="永远的兰兰 · 软件总入口">
 <meta property="og:description" content="一个入口，收录全部软件 · 收藏此页，实时获取更新">
 <meta name="theme-color" content="#f2e6cd">
@@ -29,11 +29,15 @@ body{
   transition:background 0.3s,color 0.3s;
 }
 .wrap{max-width:1060px;width:100%}
-/* Header */
-.topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+/* Splash 开屏 */
+#splash{position:fixed;inset:0;z-index:300;background:#f2e6cd url('generated-images/hub_poster.jpg') center/contain no-repeat;animation:splashFade 9s ease forwards;}
+@keyframes splashFade{0%{opacity:0}8%{opacity:1}70%{opacity:1}100%{opacity:0;visibility:hidden}}
+/* Topbar */
+.topbar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
 .topbar a{color:var(--dim);font-size:13px;cursor:pointer;text-decoration:none;letter-spacing:1px;border-bottom:1px solid transparent;transition:all 0.2s;user-select:none}
 .topbar a:hover{color:var(--gold);border-color:var(--accent)}
 .topbar a.active{color:var(--gold);font-weight:bold}
+/* Header */
 .hdr{text-align:center;margin:14px 0 8px}
 .hdr h1{font-size:30px;color:var(--gold);letter-spacing:6px;text-shadow:0 0 24px rgba(255,215,0,0.2)}
 .hdr .en{font-size:13px;color:var(--dim);letter-spacing:3px;margin-top:6px}
@@ -78,6 +82,18 @@ body{
 .foot a{color:var(--accent);text-decoration:none}
 .foot a:hover{color:var(--gold)}
 .tagline{font-size:10px;color:var(--dim);margin-top:6px}
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:200;justify-content:center;align-items:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--card);border:3px solid var(--bdr);max-width:640px;width:100%;max-height:82vh;overflow-y:auto;padding:28px 30px;position:relative}
+.modal-box h2{color:var(--gold);font-size:17px;letter-spacing:3px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--bdr)}
+.modal-box h3{color:var(--accent);font-size:13px;letter-spacing:1px;margin:16px 0 6px}
+.modal-box p,.modal-box li{font-size:12px;color:var(--text);line-height:1.9;margin:6px 0}
+.modal-box ul{padding-left:18px}
+.modal-box a{color:var(--accent);text-decoration:none}
+.modal-box a:hover{color:var(--gold)}
+.modal-close{position:absolute;top:14px;right:18px;color:var(--dim);font-size:22px;cursor:pointer;background:none;border:none;font-family:inherit}
+.modal-close:hover{color:var(--gold)}
 @media(max-width:640px){
   .hdr h1{font-size:24px;letter-spacing:3px}
   .grid{grid-template-columns:1fr}
@@ -85,12 +101,18 @@ body{
 </style>
 </head>
 <body>
+<div id="splash"></div>
+<audio id="bgm" loop src="audio/guqin.mp3"></audio>
+
 <div class="wrap">
 
 <div class="topbar">
   <a id="btnZh" class="active" onclick="setL('zh')">中文</a>
   <a id="btnEn" onclick="setL('en')">EN</a>
   <a id="btnTheme" onclick="toggleTheme()" title="主题 / Theme">🌙</a>
+  <a id="btnSound" onclick="toggleSound()" title="背景音乐">♪ <span id="tSound">音乐</span></a>
+  <a onclick="openModal('about')">ℹ️ <span id="tAbout">关于</span></a>
+  <a onclick="openModal('disclaim')">⚠️ <span id="tDisclaim">免责声明</span></a>
   <a href="https://github.com/podcatcher962" target="_blank" rel="noopener" title="GitHub">⌥ GitHub</a>
 </div>
 
@@ -114,6 +136,10 @@ body{
   <div class="tagline" id="tagline">单文件 HTML · 无追踪 · 无广告 · 免费开源</div>
 </div>
 
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modalBox"></div>
 </div>
 
 <script>
@@ -169,11 +195,11 @@ const APPS = [
   {icon:"🏷️", cn:"批量重命名", en:"BatchRename", ver:"v1.0", cat:"tool",
    use_cn:"文件批量重命名 · 规则化处理", use_en:"Batch file renamer",
    web:null, exe:{name:"BatchRename.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/BatchRename/releases/download/v1.0/BatchRename.exe"}},
-  // 下载工具
-  {icon:"🎙️", cn:"播客批量下载器", en:"PodcastBatch-Downloader", ver:"v1.0", cat:"download",
+  // 播客工具
+  {icon:"🎙️", cn:"播客批量下载器", en:"PodcastBatch-Downloader", ver:"v1.0", cat:"podcast",
    use_cn:"播客节目批量下载 · 增量更新", use_en:"Podcast batch downloader",
    web:null, exe:{name:"XiaoYuZhou-DL.exe", size:"12.1 MB", url:"https://github.com/podcatcher962/PodcastBatch-Downloader/releases/download/v1.0/XiaoYuZhou-DL.exe"}},
-  {icon:"🎧", cn:"播客RSS下载器", en:"PodcastRSS-Downloader", ver:"v1.0", cat:"download",
+  {icon:"🎧", cn:"播客RSS下载器", en:"PodcastRSS-Downloader", ver:"v1.0", cat:"podcast",
    use_cn:"播客 RSS 增量下载 · 批量订阅", use_en:"Podcast RSS incremental downloader",
    web:null, exe:{name:"XimalayaWatcher.exe", size:"48.4 MB", url:"https://github.com/podcatcher962/PodcastRSS-Downloader/releases/download/v1.0/XimalayaWatcher.exe"}},
 ];
@@ -181,16 +207,18 @@ const APPS = [
 const CATS = {
   culture:{cn:"传统文化", en:"Traditional Culture", icon:"🏮"},
   tool:{cn:"效率工具", en:"Productivity Tools", icon:"🧰"},
-  download:{cn:"下载工具", en:"Download Tools", icon:"📥"},
+  podcast:{cn:"播客工具", en:"Podcast Tools", icon:"📻"},
 };
 
 // ============ 语言 ============
 let lang = 'zh';
 const I18N = {
   zh:{total:"软件总数", web:"在线版", exe:"EXE 版", slogan:"一个入口，收录全部软件 · 收藏此页，实时获取更新",
-      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", ver:"版本"},
+      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", ver:"版本",
+      sound:"音乐", about:"关于", disclaim:"免责声明"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", slogan:"One link, all apps · Bookmark this page for live updates",
-      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", ver:"Ver"},
+      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", ver:"Ver",
+      sound:"Music", about:"About", disclaim:"Disclaimer"},
 };
 function t(k){return I18N[lang][k];}
 function setL(l){
@@ -199,6 +227,9 @@ function setL(l){
   document.getElementById('btnEn').className = l==='en'?'active':'';
   document.getElementById('slogan').textContent = t('slogan');
   document.getElementById('tagline').textContent = t('tagline');
+  document.getElementById('tSound').textContent = t('sound');
+  document.getElementById('tAbout').textContent = t('about');
+  document.getElementById('tDisclaim').textContent = t('disclaim');
   document.querySelectorAll('[data-l]').forEach(el=>{ el.textContent = t(el.getAttribute('data-l')); });
   render();
 }
@@ -213,6 +244,26 @@ function toggleTheme(){
   applyTheme(cur);
   try{localStorage.setItem('hubTheme', cur);}catch(e){}
 }
+
+// ============ 背景音乐 ============
+let soundOn = true;
+function toggleSound(){
+  soundOn = !soundOn;
+  const bgm = document.getElementById('bgm');
+  if(soundOn){ bgm.play().catch(()=>{}); }
+  else { bgm.pause(); }
+  document.getElementById('btnSound').className = soundOn ? 'active' : '';
+}
+(function(){
+  const bgm = document.getElementById('bgm');
+  if(!bgm) return;
+  bgm.volume = 0.25;
+  bgm.play().catch(()=>{});
+  document.getElementById('btnSound').className = 'active';
+  document.addEventListener('pointerdown', function(){
+    if(soundOn && bgm.paused) bgm.play().catch(()=>{});
+  });
+})();
 
 // ============ 渲染 ============
 function render(){
@@ -250,6 +301,57 @@ function render(){
   document.getElementById('statTotal').textContent = APPS.length;
   document.getElementById('statWeb').textContent = webCount;
   document.getElementById('statExe').textContent = exeCount;
+}
+
+// ============ 关于 / 免责声明 ============
+function openModal(type){
+  const l = lang;
+  const close = '<button class="modal-close" onclick="closeModal()">✕</button>';
+  if(type==='about'){
+    document.getElementById('modalBox').innerHTML = close + (l==='zh'?`
+      <h2>ℹ️ 关于本页</h2>
+      <p><b>永远的兰兰 · 软件总入口</b>（Lanlan Eternal · Software Hub）——一个页面收录作者开发的全部软件作品，含版本号、在线版与 EXE 下载链接，收藏本页即可实时获取所有软件的最新更新。</p>
+      <h3>作者</h3>
+      <p>永远的兰兰（Lanlan Eternal）</p>
+      <h3>代码仓库</h3>
+      <p>🏠 GitHub 主页：<a href="https://github.com/podcatcher962" target="_blank" rel="noopener">github.com/podcatcher962</a></p>
+      <p>📄 本页源码：<a href="https://github.com/podcatcher962/podcatcher962.github.io" target="_blank" rel="noopener">podcatcher962.github.io</a></p>
+      <h3>技术说明</h3>
+      <p>纯前端单文件 HTML/CSS/JS，无后端、无账号、无数据上传；在线版为静态网页，EXE 版为本地运行。所有工具均免费开源，仅供个人学习与娱乐。</p>
+      <p style="margin-top:12px;color:var(--dim);font-size:10px">© 永远的兰兰 · Lanlan Eternal · 2026</p>
+    `:`<h2>ℹ️ About</h2>
+      <p><b>Lanlan Eternal · Software Hub</b> — one page indexing all software by the author, with versions, web links and EXE downloads. Bookmark this page for live updates.</p>
+      <h3>Author</h3>
+      <p>Lanlan Eternal (永远的兰兰)</p>
+      <h3>Repository</h3>
+      <p>🏠 GitHub: <a href="https://github.com/podcatcher962" target="_blank" rel="noopener">github.com/podcatcher962</a></p>
+      <p>📄 Source: <a href="https://github.com/podcatcher962/podcatcher962.github.io" target="_blank" rel="noopener">podcatcher962.github.io</a></p>
+      <h3>Tech</h3>
+      <p>Pure front-end single-file HTML/CSS/JS. No backend, no account, no data upload. Web apps are static; EXE apps run locally. All free &amp; open-source, for personal study and entertainment only.</p>
+      <p style="margin-top:12px;color:var(--dim);font-size:10px">© Lanlan Eternal · 2026</p>`);
+  } else {
+    document.getElementById('modalBox').innerHTML = close + (l==='zh'?`
+      <h2>⚠️ 免责声明</h2>
+      <p><b>1. 性质说明</b><br>本页为个人软件作品的导航/合集，非商业平台，不提供任何商业服务。所有软件均为作者个人开发，仅供<b>个人学习、研究、娱乐</b>使用。</p>
+      <p><b>2. 播客工具特别声明</b><br>本页收录的「播客工具」类软件仅为<b>技术学习与个人备份</b>之用途。使用者应自行确保：仅下载<b>已获授权、公开免费或自行拥有版权</b>的内容，<b>不得</b>下载受版权保护、付费或需 DRM 解密的内容，<b>不得</b>用于任何商业或非法用途。使用相关软件必须遵守第三方平台的服务条款及所在地法律法规。</p>
+      <p><b>3. 商标与关联</b><br>本页及软件中如提及任何第三方平台名称，其商标、名称均归各自权利人所有；本页与任何第三方平台<b>无关联、未获授权、非官方</b>。</p>
+      <p><b>4. 不提供侵权内容</b><br>本页及所有软件<b>不提供、不存储、不传播</b>任何受版权保护的音频、视频、文字等侵权内容；亦不收录涉及版权规避或侵权风险的软件。</p>
+      <p><b>5. 责任声明</b><br>用户下载、使用任何软件的行为及其产生的一切后果（含法律后果），均由使用者本人自行承担，与作者无关。</p>
+      <p><b>6. 数据与隐私</b><br>在线工具为纯前端静态页面，无服务器、无跟踪、无数据上传；EXE 工具在本地运行，不主动联网上传数据。</p>
+      <p><b>7. 免责</b><br>软件按"现状"提供，作者不对其可用性、准确性、安全性作任何明示或暗示担保。使用本页及软件即视为您已阅读、理解并同意以上全部条款。</p>
+    `:`<h2>⚠️ Disclaimer</h2>
+      <p><b>1. Nature:</b> This page is a personal index of software, not a commercial service. All software is developed by the author, for <b>personal study, research and entertainment</b> only.</p>
+      <p><b>2. Podcast tools:</b> The "Podcast Tools" listed are for <b>technical learning and personal backup</b> only. You must only download content that is authorized, publicly free, or that you own. Do NOT download copyrighted, paid, or DRM-protected content, and do NOT use for commercial or illegal purposes. Comply with platform terms and local laws.</p>
+      <p><b>3. Trademarks:</b> Any third-party names mentioned belong to their respective owners. This page is <b>not affiliated with, authorized by, or official</b> of any third-party platform.</p>
+      <p><b>4. No infringing content:</b> This page and all software do <b>not provide, store, or distribute</b> any copyrighted audio/video/text. Software involving copyright circumvention risk is excluded.</p>
+      <p><b>5. Liability:</b> You are solely responsible for your use of any software and all consequences (including legal ones). The author is not liable.</p>
+      <p><b>6. Privacy:</b> Web tools are static front-end with no server, tracking, or upload. EXE tools run locally.</p>
+      <p><b>7. No warranty:</b> Software is provided "as is" without warranty. By using this page and its software, you accept all terms above.</p>`);
+  }
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
 }
 
 // ============ 初始化 ============
