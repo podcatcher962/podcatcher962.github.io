@@ -29,7 +29,7 @@
 | 像素命盘 | PixelBaZi | v3.0 | 八字排盘 + 像素 RPG 角色卡 |
 | 六爻起卦 | IChing | — | 三钱起卦 · 易经六十四卦 |
 | 见素 | JianMirror | — | 西游镜鉴 · 照见你本来的样子 |
-| 拾奇 | ZhiqiLamp | — | 灯下奇谭 · 古籍奇谭 × 现代照见 |
+| 拾奇 | QiGlow | — | 灯下奇谭 · 古籍奇谭 × 现代照见 |
 
 #### 🧰 效率工具（9）
 
@@ -115,7 +115,7 @@
 | PixelBaZi | 像素命盘 | v3.0 | BaZi calculator + pixel RPG card |
 | IChing | 六爻起卦 | — | I Ching divination — three-coin method |
 | JianMirror | 见素 | — | Xiyou mirror records — see your true self |
-| ZhiqiLamp | 拾奇 | — | Lamp-lit classical tales — mirror your heart |
+| QiGlow | 拾奇 | — | Lamp-lit classical tales — mirror your heart |
 
 #### 🧰 Productivity Tools (9)
 
