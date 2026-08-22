@@ -101,6 +101,16 @@ body{
   .hdr h1{font-size:24px;letter-spacing:3px}
   .grid{grid-template-columns:1fr}
 }
+/* 兰斋诗选 */
+.poem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.pcard{background:var(--card);border:2px solid var(--bdr);padding:10px 10px 12px;cursor:pointer;transition:transform 0.15s,box-shadow 0.2s;text-align:center;box-shadow:var(--shadow)}
+.pcard:hover{transform:translateY(-3px)}
+.pcard img{width:100%;display:block;border:1px solid var(--mutedBdr)}
+.pcard .pt{font-size:14px;color:var(--gold);letter-spacing:4px;margin-top:9px}
+.pcard .pl{font-size:10px;color:var(--dim);line-height:1.9;margin-top:5px;padding:0 2px}
+#poemView img{width:100%;display:block;border:1px solid var(--mutedBdr)}
+#poemView .pv{font-size:13px;color:var(--text);line-height:2.1;margin-top:12px;letter-spacing:2px}
+#poemView .pv .t{color:var(--gold);font-size:15px;letter-spacing:4px;margin-bottom:4px}
 </style>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
@@ -135,6 +145,11 @@ body{
 </div>
 
 <div id="root"></div>
+
+<div class="sec poem-sec">
+  <div class="sec-h"><span class="bar"></span><h2>📜 兰斋诗选 · Poems of Lanzhai</h2><span class="cnt">5</span><span class="bar"></span></div>
+  <div class="poem-grid" id="poemGrid"></div>
+</div>
 
 <div class="foot">
   <div id="footAuthor">© 永远的兰兰 · Lanlan Eternal · 2026</div>
@@ -406,11 +421,37 @@ function closeModal(){
   document.getElementById('modalOverlay').classList.remove('show');
 }
 
+// ============ 兰斋诗选 ============
+const POEMS = [
+  {t:"兰斋", img:"poems/lanzhai_poem.jpg", l:["兰斋静夜一灯明","万象皆藏小阁清","莫笑闲人无所有","满囊星月慰平生"]},
+  {t:"闲坐", img:"poems/lanzhai_poem_xianzuo.jpg", l:["竹影半窗风自凉","闲看日脚过回廊","人间万事皆如寄","一炷心香坐夕阳"]},
+  {t:"玄机", img:"poems/lanzhai_poem_xuanji.jpg", l:["半纸烟云笔底收","心头万事问何由","点画之间藏日月","一横一竖写春秋"]},
+  {t:"拾光", img:"poems/lanzhai_poem_shiguang.jpg", l:["岁月匆匆去不留","拾光人在小楼头","一灯夜话当年事","字字平常字字秋"]},
+  {t:"飞觞", img:"poems/lanzhai_poem_feishang.jpg", l:["杯传令起兴无穷","诗酒风流今古同","夜色深深人不寐","笑将明月入诗中"]},
+];
+function renderPoems(){
+  const g = document.getElementById('poemGrid');
+  g.innerHTML = POEMS.map((p,i)=>`
+    <div class="pcard" onclick="openPoem(${i})">
+      <img src="${p.img}" alt="${p.t}" loading="lazy">
+      <div class="pt">${p.t}</div>
+      <div class="pl">${p.l[0]}<br>${p.l[1]}<br>${p.l[2]}<br>${p.l[3]}</div>
+    </div>`).join('');
+}
+function openPoem(i){
+  const p = POEMS[i];
+  document.getElementById('modalBox').innerHTML =
+    '<button class="modal-close" onclick="closeModal()">✕</button>' +
+    `<div id="poemView"><img src="${p.img}" alt="${p.t}"><div class="pv"><div class="t">《${p.t}》</div>${p.l.join('<br>')}</div></div>`;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
 // ============ 初始化 ============
 (function(){
   try{applyTheme(localStorage.getItem('hubTheme')||'light');}catch(e){applyTheme('light');}
   try{const l=localStorage.getItem('hubLang'); if(l) lang=l;}catch(e){}
   setL(lang);
+  renderPoems();
 })();
 </script>
 </body>
