@@ -9,18 +9,19 @@
 
 > 藏兰兰全部软件于兰斋 · 捡拾软件世界里的微光，写给愿意慢下来的人
 
-「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **21 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
+「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **27 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
 
 ### 📖 在线链接
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（21 个 · 4 类）
+### 🗂 收录软件（27 个 · 4 类）
 
-#### 🏮 传统文化（9）
+#### 🏮 传统文化（13）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
+| 四扇门 | XianThreshold | v1.0 | 种因觉照 · 每日三节 · 业力图谱 |
 | 闲坐 | XianReverie | — | 冥想静坐 · 每日一帧 · 听蝉看光影 |
 | 观音灵签 | AvalokitaOracle | — | 观音灵签抽签 · 六字大明咒配乐 |
 | 测字问心 | ZiOracle | — | 输入一字 · 拆字解字 |
@@ -30,11 +31,15 @@
 | 六爻起卦 | IChing | — | 三钱起卦 · 易经六十四卦 |
 | 见素 | JianMirror | — | 西游镜鉴 · 照见你本来的样子 |
 | 拾奇 | QiGlow | — | 灯下奇谭 · 古籍奇谭 × 现代照见 |
+| 澄怀 | ChenMirror | — | 世说镜鉴 · 36 门 · 六种原型 |
+| 清欢 | GentleJoy | — | 古籍日签 · 每日一帖 · 与古人对话 |
+| 沉砾 | Sedgrit | α | 湖底石头 · 不逃的瞬间沉积为地基 |
 
-#### 🧰 效率工具（9）
+#### 🧰 效率工具（11）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
+| 闲听 | XianTuner | v1.0 | 本机音频播放 · 整文件夹入队 · 10 段均衡器 |
 | 剪贴板管理器 | ClipVault | v1.2 | 剪贴板自动捕获 · 搜索 · 置顶 |
 | RSS 阅读器 | DrillFeed | v1.1 | 垂直 RSS 阅读 · 深挖小众信源 |
 | 番茄钟 | FlowTimer | v1.0 | 专注计时 · 心流工作法 |
@@ -43,6 +48,7 @@
 | 万能换算器 | QuickConvert | v2.0 | 离线单位换算 · 12 类 |
 | 密码生成器 | QuickPass | v1.0 | 强密码生成 · 本地离线 |
 | 文本对比 | TextDiff | v2.0 | 文本差异对比 · 逐行高亮 |
+| 卷帙 | DeShelf | v1.3 | 本地 TXT 整理 · 清洗 / 智能分章 / EPUB |
 | 批量重命名 | BatchRename | v1.0 | 文件批量重命名 |
 
 #### 📻 播客工具（2）
@@ -75,12 +81,12 @@
 4. **不提供侵权内容**：本页及所有软件**不提供、不存储、不传播**任何受版权保护的内容；亦不收录涉及版权规避或侵权风险的软件。
 5. **责任声明**：用户下载、使用任何软件的行为及其产生的一切后果（含法律后果），均由使用者本人自行承担。
 6. **数据与隐私**：在线工具为纯前端静态页面，无服务器、无跟踪、无数据上传；EXE 工具在本地运行，不主动联网上传数据。
-7. **无担保**：软件按"现状"提供，作者不对其可用性、准确性、安全性作任何明示或暗示担保。使用本页及软件即视为您已阅读、理解并同意以上全部条款。
+7. **无担保**：软件按「现状」提供，作者不对其可用性、准确性、安全性作任何明示或暗示担保。使用本页及软件即视为您已阅读、理解并同意以上全部条款。
 
 ### 🔧 技术说明
 
 - 纯前端单文件 HTML/CSS/JS，无后端、无账号、无数据上传
-- 托管于 GitHub Pages，静态部署，免费开源
+- 托管于 GitHub Pages，静态部署
 - 在线版为网页应用，EXE 版为桌面应用（本地运行）
 
 ### 👤 作者
@@ -95,18 +101,19 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **21 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **27 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (21 · 4 categories)
+### 🗂 Apps Indexed (27 · 4 categories)
 
-#### 🏮 Traditional Culture (9)
+#### 🏮 Traditional Culture (13)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
+| XianThreshold | 四扇门 | v1.0 | Self-reflection — daily impulses & an ink map of your roads |
 | XianReverie | 闲坐 | — | Meditation corner — one line a day |
 | AvalokitaOracle | 观音灵签 | — | GuanYin lot divination with mantra BGM |
 | ZiOracle | 测字问心 | — | Chinese character divination (CeZi) |
@@ -116,11 +123,15 @@
 | IChing | 六爻起卦 | — | I Ching divination — three-coin method |
 | JianMirror | 见素 | — | Xiyou mirror records — see your true self |
 | QiGlow | 拾奇 | — | Lamp-lit classical tales — mirror your heart |
+| ChenMirror | 澄怀 | — | Shishuo mirror records — 36 gates, six archetypes |
+| GentleJoy | 清欢 | — | Daily ancient posts — gentle joy |
+| Sedgrit | 沉砾 | α | Let it settle — stones of unhidden moments |
 
-#### 🧰 Productivity Tools (9)
+#### 🧰 Productivity Tools (11)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
+| XianTuner | 闲听 | v1.0 | Local audio player — folder queue, 10-band EQ |
 | ClipVault | 剪贴板管理器 | v1.2 | Clipboard manager — auto-capture & search |
 | DrillFeed | RSS 阅读器 | v1.1 | Vertical RSS reader for researchers |
 | FlowTimer | 番茄钟 | v1.0 | Pomodoro focus timer |
@@ -129,6 +140,7 @@
 | QuickConvert | 万能换算器 | v2.0 | Universal offline unit converter |
 | QuickPass | 密码生成器 | v1.0 | Offline strong password generator |
 | TextDiff | 文本对比 | v2.0 | Text diff with line highlighting |
+| DeShelf | 卷帙 | v1.3 | Local TXT organizer — clean, split, EPUB |
 | BatchRename | 批量重命名 | v1.0 | Batch file renamer |
 
 #### 📻 Podcast Tools (2)
@@ -166,7 +178,7 @@
 ### 🔧 Tech
 
 - Pure front-end single-file HTML/CSS/JS. No backend, no account, no upload
-- Hosted on GitHub Pages. Free & open-source
+- Hosted on GitHub Pages. Static deployment
 - Web apps for browser; EXE apps for desktop (local)
 
 ### 👤 Author
@@ -174,3 +186,4 @@
 Lanlan Eternal (永远的兰兰) · © 2026
 
 - GitHub: https://github.com/podcatcher962
+
