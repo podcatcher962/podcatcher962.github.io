@@ -214,7 +214,7 @@ const APPS = [
    web:"XianTuner", exe:null},
   {icon:"📻", cn:"拾声", en:"XianDial", ver:"v1.0", cat:"tool",
    use_cn:"中文网络收音机 · 1120 个电台逐台试播 · 可装到桌面 · 边听边录 · 央广国广 / 31 省台与地级市台 / 交通 / 教育 / 戏曲 / 评书 / 央视卫视伴音 · 能听自己存的戏 · 收藏常听的台 · 拼音搜索 · 无注册", use_en:"Chinese internet radio — 1120 tested stations, installable as an app: CNR, CRI, 31 provinces incl. prefecture cities, traffic, education, opera, storytelling, CCTV & satellite TV audio; favourites & recent list; pinyin search; auto-reconnect; offline library",
-   web:"xiandial", exe:{name:"XianDial.exe", size:"20.0 MB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.exe"}},
+   web:"xiandial", exe:{name:"XianDial.exe", size:"20.0 MB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.exe"}, apk:{name:"XianDial.apk", size:"217 KB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.apk"}},
   {icon:"📋", cn:"剪贴板管理器", en:"ClipVault", ver:"v1.2", cat:"tool",
    use_cn:"剪贴板自动捕获 · 搜索 · 置顶 · 片段库", use_en:"Clipboard manager — auto-capture & search",
    web:null, exe:{name:"ClipVault.exe", size:"12.0 MB", url:"https://github.com/podcatcher962/ClipVault/releases/latest/download/ClipVault.exe"}},
@@ -269,10 +269,10 @@ const CATS = {
 let lang = 'zh';
 const I18N = {
   zh:{total:"软件总数", web:"在线版", exe:"EXE 版", sub:"兰兰软件汇总集", slogan:"藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新",
-      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", ver:"版本",
+      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", apkBtn:"📱 APK", ver:"版本",
       sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制", shareFallback:"当前环境不支持系统分享，已复制链接"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
-      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", ver:"Ver",
+      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", apkBtn:"📱 APK", ver:"Ver",
       sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied"},
 };
 function t(k){return I18N[lang][k];}
@@ -368,7 +368,7 @@ function render(){
       const use = lang==='zh'?a.use_cn:a.use_en;
       let btns = '';
       if(a.web){ const wu = a.web.startsWith('http') ? a.web : `https://podcatcher962.github.io/${a.web}/`; btns += `<a href="${wu}" target="_blank" rel="noopener">${t('webBtn')}</a>`; webCount++; }
-      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener">${t('exeBtn')} · ${a.exe.size}</a>`; exeCount++; }
+      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener">${t('exeBtn')} · ${a.exe.size}</a>`; exeCount++; } if(a.apk){ btns += `<a class="exe" href="${a.apk.url}" target="_blank" rel="noopener">${t('apkBtn')} · ${a.apk.size}</a>`; }
       const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.web ? (a.web.includes('http') ? '🌐 在线站' : `${a.web}.html`) : '—'));
       html += `
       <div class="card">
