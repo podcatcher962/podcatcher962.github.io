@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="兰斋丛编 · 兰兰软件集 — 藏兰兰全部软件于兰斋（传统文化 / 效率工具 / 播客工具 / 个人站点），含版本号、在线版、EXE 下载。收藏此页即可实时获取更新。">
+<meta name="description" content="兰斋丛编 · 兰兰软件集 — 藏兰兰全部软件于兰斋（传统文化 / 效率工具 / 播客工具 / 个人站点），含版本号、在线版、EXE 与安卓下载。收藏此页即可实时获取更新。">
 <meta property="og:title" content="兰斋丛编 · 兰兰软件集">
 <meta property="og:description" content="藏兰兰全部软件于一台 · 收藏此页，实时获取更新">
 <meta name="theme-color" content="#f2e6cd">
@@ -76,6 +76,8 @@ body{
 .card .btns a:hover{background:var(--bdr);color:var(--gold);border-color:var(--accent)}
 .card .btns a.exe{color:var(--accent)}
 .card .btns a.exe:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.card .btns a.apk{color:var(--accent)}
+.card .btns a.apk:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
 .card .meta{font-size:10px;color:var(--dim);letter-spacing:1px;border-top:1px dashed var(--mutedBdr);padding-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
 /* Footer */
 .foot{margin-top:44px;text-align:center;color:var(--foot);font-size:11px;line-height:2;letter-spacing:1px}
@@ -142,6 +144,7 @@ body{
   <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl" data-l="total">软件总数</div></div>
   <div class="stat"><div class="num" id="statWeb">0</div><div class="lbl" data-l="web">在线版</div></div>
   <div class="stat"><div class="num" id="statExe">0</div><div class="lbl" data-l="exe">EXE 版</div></div>
+  <div class="stat"><div class="num" id="statApk">0</div><div class="lbl" data-l="android">安卓版</div></div>
 </div>
 
 <div id="root"></div>
@@ -213,8 +216,9 @@ const APPS = [
    use_cn:"本机音频播放 · 整文件夹入队 · 整夜循环 · 10 段均衡器", use_en:"Local audio player — folder queue, overnight loop, 10-band EQ",
    web:"XianTuner", exe:null},
   {icon:"📻", cn:"拾声", en:"XianDial", ver:"v1.0", cat:"tool",
-   use_cn:"中文网络收音机 · 1120 个电台逐台试播 · 可装到桌面 · 边听边录 · 央广国广 / 31 省台与地级市台 / 交通 / 教育 / 戏曲 / 评书 / 央视卫视伴音 · 能听自己存的戏 · 收藏常听的台 · 拼音搜索 · 无注册", use_en:"Chinese internet radio — 1120 tested stations, installable as an app: CNR, CRI, 31 provinces incl. prefecture cities, traffic, education, opera, storytelling, CCTV & satellite TV audio; favourites & recent list; pinyin search; auto-reconnect; offline library",
-   web:"xiandial", exe:{name:"XianDial.exe", size:"20.0 MB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.exe"}, apk:{name:"XianDial.apk", size:"217 KB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.apk"}},
+   use_cn:"戏曲 / 评书 / 相声网络收音机 · 1120 个电台逐台试播 · 央视卫视伴音 · 能听自己存的戏 · 边听边录 · 无注册", use_en:"Chinese internet radio — 1,120 stations tested one by one, CCTV & satellite TV audio, record while listening, offline library",
+   web:"xiandial", exe:{name:"XianDial.exe", size:"20.0 MB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.exe"},
+   apk:{name:"XianDial.apk", size:"217 KB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.apk"}},
   {icon:"📋", cn:"剪贴板管理器", en:"ClipVault", ver:"v1.2", cat:"tool",
    use_cn:"剪贴板自动捕获 · 搜索 · 置顶 · 片段库", use_en:"Clipboard manager — auto-capture & search",
    web:null, exe:{name:"ClipVault.exe", size:"12.0 MB", url:"https://github.com/podcatcher962/ClipVault/releases/latest/download/ClipVault.exe"}},
@@ -268,11 +272,11 @@ const CATS = {
 // ============ 语言 ============
 let lang = 'zh';
 const I18N = {
-  zh:{total:"软件总数", web:"在线版", exe:"EXE 版", sub:"兰兰软件汇总集", slogan:"藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新",
-      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", apkBtn:"📱 APK", ver:"版本",
+  zh:{total:"软件总数", web:"在线版", exe:"EXE 版", android:"安卓版", sub:"兰兰软件汇总集", slogan:"藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新",
+      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", apkBtn:"🤖 安卓版", ver:"版本",
       sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制", shareFallback:"当前环境不支持系统分享，已复制链接"},
-  en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
-      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", apkBtn:"📱 APK", ver:"Ver",
+  en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", android:"Android", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
+      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", apkBtn:"🤖 Android", ver:"Ver",
       sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied"},
 };
 function t(k){return I18N[lang][k];}
@@ -357,7 +361,7 @@ function toggleSound(){
 function render(){
   const root = document.getElementById('root');
   let html = '';
-  let webCount = 0, exeCount = 0;
+  let webCount = 0, exeCount = 0, apkCount = 0;
 
   for(const catKey of Object.keys(CATS)){
     const items = APPS.filter(a=>a.cat===catKey);
@@ -368,7 +372,8 @@ function render(){
       const use = lang==='zh'?a.use_cn:a.use_en;
       let btns = '';
       if(a.web){ const wu = a.web.startsWith('http') ? a.web : `https://podcatcher962.github.io/${a.web}/`; btns += `<a href="${wu}" target="_blank" rel="noopener">${t('webBtn')}</a>`; webCount++; }
-      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener">${t('exeBtn')} · ${a.exe.size}</a>`; exeCount++; } if(a.apk){ btns += `<a class="exe" href="${a.apk.url}" target="_blank" rel="noopener">${t('apkBtn')} · ${a.apk.size}</a>`; }
+      if(a.apk){ btns += `<a class="apk" href="${a.apk.url}" target="_blank" rel="noopener">${t('apkBtn')} · ${a.apk.size}</a>`; apkCount++; }
+      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener">${t('exeBtn')} · ${a.exe.size}</a>`; exeCount++; }
       const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.web ? (a.web.includes('http') ? '🌐 在线站' : `${a.web}.html`) : '—'));
       html += `
       <div class="card">
@@ -389,6 +394,7 @@ function render(){
   document.getElementById('statTotal').textContent = APPS.length;
   document.getElementById('statWeb').textContent = webCount;
   document.getElementById('statExe').textContent = exeCount;
+  document.getElementById('statApk').textContent = apkCount;
 }
 
 // ============ 关于 / 免责声明 ============
