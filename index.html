@@ -52,6 +52,12 @@ body{
 .sec-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .sec-h .bar{flex:1;height:1px;background:var(--bdr)}
 .sec-h h2{font-size:17px;color:var(--gold);letter-spacing:4px;white-space:nowrap}
+/* 窄屏：分类标题要能折行 —— 中英并列的那种（「📜 兰斋诗选 · Poems of Lanzhai」）
+   原来 nowrap，会把整页撑出横向滚动条 */
+@media (max-width:640px){
+  .sec-h{gap:8px}
+  .sec-h h2{font-size:15px;letter-spacing:2px;white-space:normal;line-height:1.35}
+}
 .sec-h .cnt{font-size:11px;color:var(--dim)}
 /* Grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
@@ -68,7 +74,7 @@ body{
 .card .en{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card .ver{font-size:10px;color:var(--gold);border:1px solid var(--gold);padding:2px 8px;letter-spacing:1px;white-space:nowrap;align-self:flex-start}
 .card .use{font-size:12px;color:var(--text);line-height:1.7;opacity:0.9;min-height:40px}
-.card .btns{display:flex;gap:8px;margin-top:auto}
+.card .btns{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}
 .card .btns a{
   flex:1;text-align:center;padding:9px 6px;font-size:12px;text-decoration:none;letter-spacing:1px;
   border:1px solid var(--bdr);color:var(--gold);background:var(--inp);transition:all 0.15s;white-space:nowrap;
@@ -376,8 +382,9 @@ function render(){
       const use = lang==='zh'?a.use_cn:a.use_en;
       let btns = '';
       if(a.web){ const wu = a.web.startsWith('http') ? a.web : `https://podcatcher962.github.io/${a.web}/`; btns += `<a href="${wu}" target="_blank" rel="noopener">${t('webBtn')}</a>`; webCount++; }
-      if(a.apk){ btns += `<a class="apk" href="${a.apk.url}" target="_blank" rel="noopener">${t('apkBtn')} · ${a.apk.size}</a>`; apkCount++; }
-      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener">${t('exeBtn')} · ${a.exe.size}</a>`; exeCount++; }
+      // 按钮上不再写体积（会把按键撑出卡片），改放到 title 里悬停可见
+      if(a.apk){ btns += `<a class="apk" href="${a.apk.url}" target="_blank" rel="noopener" title="${a.apk.name} · ${a.apk.size}">${t('apkBtn')}</a>`; apkCount++; }
+      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener" title="${a.exe.name} · ${a.exe.size}">${t('exeBtn')}</a>`; exeCount++; }
       const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.web ? (a.web.includes('http') ? '🌐 在线站' : `${a.web}.html`) : '—'));
       html += `
       <div class="card">
