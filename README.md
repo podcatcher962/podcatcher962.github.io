@@ -9,13 +9,13 @@
 
 > 藏兰兰全部软件于兰斋 · 捡拾软件世界里的微光，写给愿意慢下来的人
 
-「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **27 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
+「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **29 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
 
 ### 📖 在线链接
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（27 个 · 4 类）
+### 🗂 收录软件（29 个 · 4 类）
 
 #### 🏮 传统文化（13）
 
@@ -35,11 +35,13 @@
 | 清欢 | GentleJoy | — | 古籍日签 · 每日一帖 · 与古人对话 |
 | 沉砾 | Sedgrit | α | 湖底石头 · 不逃的瞬间沉积为地基 |
 
-#### 🧰 效率工具（11）
+#### 🧰 效率工具（13）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
 | 闲听 | XianTuner | v1.0 | 本机音频播放 · 整文件夹入队 · 10 段均衡器 |
+| 拾声 | XianDial | v1.0 | 网络收音机 · 1120 个电台逐台试播 · 边听边录 |
+| 联屏 | PaneWall | v1.8 | IPTV 直播播放器 · 多画面墙 · 实时字幕 · 三端（桌面 / 网页 / 安卓）· 不自带任何源 |
 | 剪贴板管理器 | ClipVault | v1.2 | 剪贴板自动捕获 · 搜索 · 置顶 |
 | RSS 阅读器 | DrillFeed | v1.1 | 垂直 RSS 阅读 · 深挖小众信源 |
 | 番茄钟 | FlowTimer | v1.0 | 专注计时 · 心流工作法 |
@@ -67,7 +69,7 @@
 ### ✨ 功能特性
 
 - 📦 单页面汇总全部软件：版本号、在线版、EXE 下载、文件大小一目了然
-- 🖥 在线版即点即用（纯静态网页），💾 EXE 版本地运行
+- 🖥 在线版即点即用（纯静态网页），💾 EXE 版本地运行，🤖 安卓版随身看
 - 🌐 中英双语切换 · 🌙 亮暗双主题（默认白天版）
 - 🎋 开屏海报淡入淡出 + 古琴配乐
 - 🔗 一键复制链接 / 📤 系统分享
@@ -101,13 +103,13 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **27 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **29 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (27 · 4 categories)
+### 🗂 Apps Indexed (29 · 4 categories)
 
 #### 🏮 Traditional Culture (13)
 
@@ -127,11 +129,13 @@
 | GentleJoy | 清欢 | — | Daily ancient posts — gentle joy |
 | Sedgrit | 沉砾 | α | Let it settle — stones of unhidden moments |
 
-#### 🧰 Productivity Tools (11)
+#### 🧰 Productivity Tools (13)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
 | XianTuner | 闲听 | v1.0 | Local audio player — folder queue, 10-band EQ |
+| XianDial | 拾声 | v1.0 | Internet radio — 1,120 stations, record while listening |
+| PaneWall | 联屏 | v1.8 | IPTV / HLS player — video wall, live subtitles, three platforms, bundles no source |
 | ClipVault | 剪贴板管理器 | v1.2 | Clipboard manager — auto-capture & search |
 | DrillFeed | RSS 阅读器 | v1.1 | Vertical RSS reader for researchers |
 | FlowTimer | 番茄钟 | v1.0 | Pomodoro focus timer |
@@ -159,7 +163,7 @@
 ### ✨ Features
 
 - 📦 All apps in one page: version, web, EXE download & size at a glance
-- 🖥 Web apps run instantly in browser; 💾 EXE apps run locally
+- 🖥 Web apps run instantly in browser; 💾 EXE apps run locally; 🤖 Android apps on the go
 - 🌐 Bilingual Chinese/English · 🌙 Light/Dark themes
 - 🎋 Splash poster fade + guqin background music
 - 🔗 Copy link / 📤 system share
