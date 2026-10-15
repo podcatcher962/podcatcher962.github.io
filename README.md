@@ -9,13 +9,13 @@
 
 > 藏兰兰全部软件于兰斋 · 捡拾软件世界里的微光，写给愿意慢下来的人
 
-「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **29 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
+「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **31 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
 
 ### 📖 在线链接
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（29 个 · 4 类）
+### 🗂 收录软件（31 个 · 5 类）
 
 #### 🏮 传统文化（13）
 
@@ -35,7 +35,13 @@
 | 清欢 | GentleJoy | — | 古籍日签 · 每日一帖 · 与古人对话 |
 | 沉砾 | Sedgrit | α | 湖底石头 · 不逃的瞬间沉积为地基 |
 
-#### 🧰 效率工具（13）
+#### 🫧 解压小游戏（1）
+
+| 软件 | 英文名 | 版本 | 用途 |
+|---|---|---|---|
+| 拾闲 | XianIdle | v0.7 | 下班后的解压盒 · 25 个没有计时器也没有失败的小玩法 · 371 题细说 · 真电台直播猜台 · 故事秘境十种结局 · 中英双语（在线版另有 `/xianidle/?lang=en` 英文入口） |
+
+#### 🧰 效率工具（14）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
@@ -52,6 +58,7 @@
 | 文本对比 | TextDiff | v2.0 | 文本差异对比 · 逐行高亮 |
 | 卷帙 | DeShelf | v1.3 | 本地 TXT 整理 · 清洗 / 智能分章 / EPUB |
 | 批量重命名 | BatchRename | v1.0 | 文件批量重命名 |
+| 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
 
 #### 📻 播客工具（2）
 
@@ -103,13 +110,13 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **29 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **31 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (29 · 4 categories)
+### 🗂 Apps Indexed (31 · 5 categories)
 
 #### 🏮 Traditional Culture (13)
 
@@ -129,7 +136,13 @@
 | GentleJoy | 清欢 | — | Daily ancient posts — gentle joy |
 | Sedgrit | 沉砾 | α | Let it settle — stones of unhidden moments |
 
-#### 🧰 Productivity Tools (13)
+#### 🫧 Relaxation & Play (1)
+
+| App | Name | Ver | Description |
+|---|---|---|---|
+| XianIdle | 拾闲 | v0.7 | A decompression box — 25 little games with no timer and no way to lose, 371 three-paragraph Deep Reads, live radio guessing, a 34-node story with 10 endings, bilingual (English entry: `/xianidle/?lang=en`) |
+
+#### 🧰 Productivity Tools (14)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
@@ -146,6 +159,7 @@
 | TextDiff | 文本对比 | v2.0 | Text diff with line highlighting |
 | DeShelf | 卷帙 | v1.3 | Local TXT organizer — clean, split, EPUB |
 | BatchRename | 批量重命名 | v1.0 | Batch file renamer |
+| SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
 
 #### 📻 Podcast Tools (2)
 
