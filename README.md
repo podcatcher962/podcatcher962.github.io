@@ -72,7 +72,7 @@
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
 | 拾光集 | Shiguangji | — | 个人日志 · 捡拾日常里的微光 |
-| 大唐诗路 | The Tang Verse | v1.0 | 唐风新中式系列套装 · 22 张设计图 · 七组场景 · 82 秒发布片 |
+| 大唐诗路 | The Tang Verse | v1.0 | 唐风新中式系列套装 · 22 张设计图 · 九组场景 · 82 秒发布片（[独立项目页](https://github.com/podcatcher962/tang-verse)） |
 
 ### ✨ 功能特性
 
@@ -174,7 +174,7 @@
 | App | Name | Ver | Description |
 |---|---|---|---|
 | Shiguangji | 拾光集 | — | Personal journal — collecting daily glimmers |
-| The Tang Verse | 大唐诗路 | v1.0 | Neo-Tang couture collection — 22 looks, seven chapters, 82s film |
+| The Tang Verse | 大唐诗路 | v1.0 | Neo-Tang couture collection — 22 looks, nine chapters, 82s film ([project page](https://github.com/podcatcher962/tang-verse)) |
 
 ### ✨ Features
 
