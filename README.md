@@ -9,13 +9,13 @@
 
 > 藏兰兰全部软件于兰斋 · 捡拾软件世界里的微光，写给愿意慢下来的人
 
-「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **31 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
+「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **32 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
 
 ### 📖 在线链接
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（31 个 · 5 类）
+### 🗂 收录软件（32 个 · 5 类）
 
 #### 🏮 传统文化（13）
 
@@ -67,11 +67,12 @@
 | 播客批量下载器 | PodcastBatch-Downloader | v1.0 | 播客节目批量下载 · 增量更新 |
 | 播客RSS下载器 | PodcastRSS-Downloader | v1.0 | 播客 RSS 增量下载 · 批量订阅 |
 
-#### 🏡 个人站点（1）
+#### 🏡 个人站点（2）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
 | 拾光集 | Shiguangji | — | 个人日志 · 捡拾日常里的微光 |
+| 大唐诗路 | The Tang Verse | v1.0 | 唐风新中式系列套装 · 22 张设计图 · 七组场景 · 82 秒发布片 |
 
 ### ✨ 功能特性
 
@@ -110,13 +111,13 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **31 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **32 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (31 · 5 categories)
+### 🗂 Apps Indexed (32 · 5 categories)
 
 #### 🏮 Traditional Culture (13)
 
@@ -168,11 +169,12 @@
 | PodcastBatch-Downloader | 播客批量下载器 | v1.0 | Podcast batch downloader |
 | PodcastRSS-Downloader | 播客RSS下载器 | v1.0 | Podcast RSS incremental downloader |
 
-#### 🏡 Personal (1)
+#### 🏡 Personal (2)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
 | Shiguangji | 拾光集 | — | Personal journal — collecting daily glimmers |
+| The Tang Verse | 大唐诗路 | v1.0 | Neo-Tang couture collection — 22 looks, seven chapters, 82s film |
 
 ### ✨ Features
 
