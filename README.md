@@ -57,7 +57,7 @@
 | 密码生成器 | QuickPass | v1.0 | 强密码生成 · 本地离线 |
 | 文本对比 | TextDiff | v2.0 | 文本差异对比 · 逐行高亮 |
 | 卷帙 | DeShelf | v1.3 | 本地 TXT 整理 · 清洗 / 智能分章 / EPUB |
-| 全文检索 | TxtSeeker | v1.3.2 | TXT 全文搜索定位 · 关键词高亮 · 定位文件夹 · 批量另存 · 中英双语 · 纯本地 |
+| 全文检索 | TxtSeeker | v1.4.0 | TXT 全文搜索定位 · 关键词高亮 · 定位文件夹 · 批量另存 · 搜索历史 / 检索方案 / CSV / 深浅主题 · 中英双语 · 纯本地 |
 | 批量重命名 | BatchRename | v1.0 | 文件批量重命名 |
 | 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
 
@@ -77,6 +77,10 @@
 
 ### ✨ 功能特性
 
+- 🔍 **即时搜索**：一个搜索框同时搜中英文名、功能描述、版本与分类（多个词用空格，取交集）
+- 🗂 **分类筛选**：点分类标签只看该类，chip 上直接标出数量；可与搜索叠加取交集
+- ↕️ **排序**：按分类顺序 / 名称 A-Z / 版本（新→旧）
+- 📱 **可装成 App**（PWA）：手机 Safari/Chrome「添加到主屏幕」、电脑 Chrome/Edge「安装」，离线也能打开（Service Worker 缓存）
 - 📦 单页面汇总全部软件：版本号、在线版、EXE 下载、文件大小一目了然
 - 🖥 在线版即点即用（纯静态网页），💾 EXE 版本地运行，🤖 安卓版随身看
 - 🌐 中英双语切换 · 🌙 亮暗双主题（默认白天版）
@@ -97,6 +101,7 @@
 ### 🔧 技术说明
 
 - 纯前端单文件 HTML/CSS/JS，无后端、无账号、无数据上传
+- 支持 PWA：manifest + Service Worker 离线缓存（页面走网络优先，静态资源走缓存优先）
 - 托管于 GitHub Pages，静态部署
 - 在线版为网页应用，EXE 版为桌面应用（本地运行）
 
@@ -160,7 +165,7 @@
 | QuickPass | 密码生成器 | v1.0 | Offline strong password generator |
 | TextDiff | 文本对比 | v2.0 | Text diff with line highlighting |
 | DeShelf | 卷帙 | v1.3 | Local TXT organizer — clean, split, EPUB |
-| TxtSeeker | 全文检索 | v1.3.2 | TXT full-text search & locate — keyword highlight, reveal folder, batch save, bilingual, fully local |
+| TxtSeeker | 全文检索 | v1.4.0 | TXT full-text search & locate — keyword highlight, reveal folder, batch save, search history, schemes, CSV, themes, bilingual, fully local |
 | BatchRename | 批量重命名 | v1.0 | Batch file renamer |
 | SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
 
@@ -180,6 +185,10 @@
 
 ### ✨ Features
 
+- 🔍 **Instant search** — one box covers Chinese/English names, feature descriptions, versions and categories (space-separated terms are ANDed)
+- 🗂 **Category filters** — click a chip to see one category; counts shown on each chip; combines with search
+- ↕️ **Sorting** — category order / name A-Z / version (newest first)
+- 📱 **Installable (PWA)** — "Add to Home Screen" on iOS/Android, "Install" in Chrome/Edge; works offline via Service Worker
 - 📦 All apps in one page: version, web, EXE download & size at a glance
 - 🖥 Web apps run instantly in browser; 💾 EXE apps run locally; 🤖 Android apps on the go
 - 🌐 Bilingual Chinese/English · 🌙 Light/Dark themes
