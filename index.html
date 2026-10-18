@@ -138,10 +138,12 @@ body{
 }
 .filmclose{position:fixed;top:12px;right:16px;background:none;border:none;color:#e8dcc2;font-size:26px;cursor:pointer;font-family:inherit;line-height:1;z-index:401;padding:6px}
 .filmclose:hover{color:var(--gold)}
-.filmside{position:fixed;left:0;right:0;bottom:14px;text-align:center;color:#c9bda6;font-size:11px;letter-spacing:1px;pointer-events:none}
+.filmside{position:fixed;left:0;right:0;bottom:14px;display:flex;gap:16px;align-items:center;justify-content:center;color:#c9bda6;font-size:11px;letter-spacing:1px;pointer-events:none}
+.fget{pointer-events:auto;color:#e8dcc2;text-decoration:none;border-bottom:1px solid #7a6a52;padding-bottom:1px;transition:color 0.15s,border-color 0.15s}
+.fget:hover{color:var(--gold);border-color:var(--gold)}
 @media(max-width:640px){
   .filmov video{max-height:80vh;border-width:2px}
-  .filmside{font-size:10px;bottom:8px}
+  .filmside{font-size:10px;bottom:8px;gap:12px}
 }
 html[data-theme="light"] .filmov{background:rgba(18,12,6,0.955)}
 @media(max-width:640px){
@@ -281,8 +283,11 @@ html[data-theme="light"] .filmov{background:rgba(18,12,6,0.955)}
   <button class="filmclose" onclick="closeFilm()" title="关闭 / Close" aria-label="关闭">✕</button>
   <video id="filmV" controls playsinline preload="none"
          poster="promo/lanzhai-promo-poster.jpg"
-         src="promo/lanzhai-promo-1080x1920.mp4"></video>
-  <div class="filmside" id="filmSide">兰斋丛编 · 33 秒 · ESC 关闭</div>
+         src="promo/lanzhai-promo-web.mp4"></video>
+  <div class="filmside">
+    <span id="filmSide">兰斋丛编 · 33 秒 · ESC 关闭</span>
+    <a class="fget" id="filmGet" href="promo/lanzhai-promo-1080x1920.mp4" download>⬇ 下载原片</a>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -414,14 +419,14 @@ const I18N = {
       searchPh:"搜索软件名 / 功能 / 英文名…", sortCat:"分类顺序", sortName:"名称 A-Z", sortVer:"版本（新→旧）",
       allCat:"全部", noRes:"没有匹配的软件", noResTip:"换个关键词试试，或点「全部」清空筛选",
       foundN:"找到 <b>{n}</b> 个", ofAll:"共 <b>{n}</b> 个软件 · 收藏本页，实时获取更新", results:"筛选结果",
-      film:"宣传片", ctaFilm:"看宣传片", ctaFilmSub:"33 秒，看完兰斋丛编", filmSide:"兰斋丛编 · 33 秒 · ESC 关闭"},
+      film:"宣传片", ctaFilm:"看宣传片", ctaFilmSub:"33 秒，看完兰斋丛编", filmSide:"兰斋丛编 · 33 秒 · ESC 关闭", filmGet:"⬇ 下载原片"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", android:"Android", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
       tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", apkBtn:"🤖 Android", ver:"Ver",
       sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied",
       searchPh:"Search by name / feature / English…", sortCat:"Category", sortName:"Name A-Z", sortVer:"Version (new first)",
       allCat:"All", noRes:"No matching apps", noResTip:"Try another keyword, or click \"All\" to clear the filter",
       foundN:"<b>{n}</b> found", ofAll:"<b>{n}</b> apps indexed · bookmark this page for live updates", results:"Results",
-      film:"Film", ctaFilm:"Watch the film", ctaFilmSub:"33 seconds — the whole collection", filmSide:"Lanzhai · 33s · ESC to close"},
+      film:"Film", ctaFilm:"Watch the film", ctaFilmSub:"33 seconds — the whole collection", filmSide:"Lanzhai · 33s · ESC to close", filmGet:"⬇ Full-res"},
 };
 function t(k){return I18N[lang][k];}
 function setL(l){
@@ -440,6 +445,7 @@ function setL(l){
   document.getElementById('ctaFilm').textContent = t('ctaFilm');
   document.getElementById('ctaFilmSub').textContent = t('ctaFilmSub');
   document.getElementById('filmSide').textContent = t('filmSide');
+  document.getElementById('filmGet').textContent = t('filmGet');
   document.querySelectorAll('[data-l]').forEach(el=>{ el.textContent = t(el.getAttribute('data-l')); });
   const qEl = document.getElementById('q');
   if(qEl) qEl.placeholder = t('searchPh');
