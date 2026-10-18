@@ -78,7 +78,7 @@
 ### ✨ 功能特性
 
 - 🔍 **即时搜索**：一个搜索框同时搜中英文名、功能描述、版本与分类（多个词用空格，取交集）
-- 🎬 **宣传片**：首页「看宣传片」一键播放 33 秒竖屏短片（1080×1920，宣纸水墨风，全屏观看，ESC 关闭）
+- 🎬 **宣传片**：首页「看宣传片」一键播放 33 秒竖屏短片（宣纸水墨风，全屏观看，ESC 关闭；网页版 2.6MB 边下边播，另有 1080×1920 原片可下载）
 - 🗂 **分类筛选**：点分类标签只看该类，chip 上直接标出数量；可与搜索叠加取交集
 - ↕️ **排序**：按分类顺序 / 名称 A-Z / 版本（新→旧）
 - 📱 **可装成 App**（PWA）：手机 Safari/Chrome「添加到主屏幕」、电脑 Chrome/Edge「安装」，离线也能打开（Service Worker 缓存）
@@ -103,6 +103,7 @@
 
 - 纯前端单文件 HTML/CSS/JS，无后端、无账号、无数据上传
 - 支持 PWA：manifest + Service Worker 离线缓存（页面走网络优先，静态资源走缓存优先）
+- 宣传片有网页版（720×1280、2.6MB、faststart 边下边播）与 1080×1920 原片（14MB，播放层里可下载）
 - 宣传片 mp4 由浏览器直连取流、不经过 Service Worker，保证 Range 请求正常（可拖动进度）
 - 托管于 GitHub Pages，静态部署
 - 在线版为网页应用，EXE 版为桌面应用（本地运行）
@@ -188,7 +189,7 @@
 ### ✨ Features
 
 - 🔍 **Instant search** — one box covers Chinese/English names, feature descriptions, versions and categories (space-separated terms are ANDed)
-- 🎬 **Promo film** — a 33-second vertical short (1080×1920, ink-on-paper style) plays full-screen from the hero button; ESC to close
+- 🎬 **Promo film** — a 33-second vertical short (ink-on-paper style) plays full-screen from the hero button; ESC to close. Web cut is 2.6MB and streams as it loads; a 1080×1920 master is downloadable
 - 🗂 **Category filters** — click a chip to see one category; counts shown on each chip; combines with search
 - ↕️ **Sorting** — category order / name A-Z / version (newest first)
 - 📱 **Installable (PWA)** — "Add to Home Screen" on iOS/Android, "Install" in Chrome/Edge; works offline via Service Worker
