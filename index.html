@@ -8,6 +8,13 @@
 <meta property="og:description" content="藏兰兰全部软件于一台 · 收藏此页，实时获取更新">
 <meta name="theme-color" content="#f2e6cd">
 <title>兰斋丛编 · 兰兰软件集 | Lanzhai · Lanlan's Software Collection</title>
+<!-- PWA：可装到桌面 / 主屏（v2 新增） -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="兰斋丛编">
+<meta name="application-name" content="兰斋丛编">
 <style>
 :root{
   --bg:#0d0d1a;--card:#13132b;--bdr:#1e3799;--accent:#4a69bd;
@@ -119,6 +126,46 @@ body{
 #poemView img{width:100%;display:block;border:1px solid var(--mutedBdr)}
 #poemView .pv{font-size:13px;color:var(--text);line-height:2.1;margin-top:12px;letter-spacing:2px}
 #poemView .pv .t{color:var(--gold);font-size:15px;letter-spacing:4px;margin-bottom:4px}
+/* ========== 搜索 / 分类筛选 / 排序（v2 新增） ========== */
+.finder{margin:22px 0 2px}
+.findrow{display:flex;gap:10px;align-items:center}
+.findrow .qwrap{position:relative;flex:1;min-width:0;display:flex;align-items:center}
+.findrow input{
+  width:100%;background:var(--inp);border:2px solid var(--bdr);color:var(--inpText);
+  padding:11px 42px 11px 14px;font-size:14px;font-family:inherit;letter-spacing:1px;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.findrow input:focus{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.findrow input::placeholder{color:var(--dim);letter-spacing:1px}
+.findrow .xbtn{
+  position:absolute;right:8px;background:none;border:none;color:var(--dim);
+  font-size:16px;cursor:pointer;padding:4px 6px;font-family:inherit;display:none;
+}
+.findrow .xbtn.show{display:block}
+.findrow .xbtn:hover{color:var(--gold)}
+.findrow select{
+  background:var(--inp);border:2px solid var(--bdr);color:var(--inpText);
+  padding:11px 8px;font-size:12px;font-family:inherit;outline:none;cursor:pointer;
+}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{
+  background:var(--chip);border:1px solid var(--mutedBdr);color:var(--dim);
+  padding:5px 13px;font-size:12px;letter-spacing:1px;cursor:pointer;user-select:none;
+  transition:all .18s;font-family:inherit;
+}
+.chip:hover{color:var(--gold);border-color:var(--accent)}
+.chip.on{background:var(--bdr);border-color:var(--accent);color:var(--gold);font-weight:bold}
+.chip .n{opacity:.65;font-size:10px;margin-left:4px}
+.findinfo{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:11px;min-height:16px}
+.findinfo b{color:var(--gold)}
+.empty{text-align:center;padding:60px 16px;color:var(--dim);font-size:13px;
+  letter-spacing:1px;border:1px dashed var(--mutedBdr);line-height:2}
+.empty .big{font-size:34px;display:block;margin-bottom:10px;opacity:.55}
+@media(max-width:640px){
+  .findrow{flex-wrap:wrap}
+  .findrow .qwrap{width:100%;flex:none}
+  .findrow select{flex:1}
+}
 </style>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
@@ -151,6 +198,23 @@ body{
   <div class="stat"><div class="num" id="statWeb">0</div><div class="lbl" data-l="web">在线版</div></div>
   <div class="stat"><div class="num" id="statExe">0</div><div class="lbl" data-l="exe">EXE 版</div></div>
   <div class="stat"><div class="num" id="statApk">0</div><div class="lbl" data-l="android">安卓版</div></div>
+</div>
+
+<div class="finder">
+  <div class="findrow">
+    <div class="qwrap">
+      <input id="q" type="search" autocomplete="off" oninput="onQuery()"
+             placeholder="搜索软件名 / 功能 / 英文名…" aria-label="搜索软件">
+      <button class="xbtn" id="qClear" onclick="clearQuery()" title="清空">✕</button>
+    </div>
+    <select id="sortSel" onchange="onSort()" aria-label="排序">
+      <option value="cat" id="optCat">分类顺序</option>
+      <option value="name" id="optName">名称 A-Z</option>
+      <option value="ver" id="optVer">版本（新→旧）</option>
+    </select>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="findinfo" id="findInfo"></div>
 </div>
 
 <div id="root"></div>
@@ -260,9 +324,9 @@ const APPS = [
   {icon:"📚", cn:"卷帙", en:"DeShelf", ver:"v1.3", cat:"tool",
    use_cn:"本地 TXT 整理 · 清洗/智能分章/EPUB", use_en:"Local TXT organizer — clean, split, EPUB",
    web:"DeShelf", exe:{name:"DeShelf.exe", size:"11.1 MB", url:"https://github.com/podcatcher962/DeShelf/releases/latest/download/DeShelf.exe"}},
-  {icon:"🔎", cn:"全文检索", en:"TxtSeeker", ver:"v1.3.2", cat:"tool",
-   use_cn:"TXT 全文搜索定位 · 上万文件秒级命中 · 关键词高亮 · 定位文件夹 · 批量另存 · 中英双语 · 纯本地不上传", use_en:"Full-text search across thousands of TXT files — locate that one line, keyword highlight, reveal in folder, batch save, bilingual, fully local",
-   web:"TxtSeeker", exe:{name:"TxtSeeker.exe", size:"16.1 MB", url:"https://github.com/podcatcher962/TxtSeeker/releases/latest/download/TxtSeeker_v1.3.2.exe"}},
+  {icon:"🔎", cn:"全文检索", en:"TxtSeeker", ver:"v1.4.0", cat:"tool",
+   use_cn:"TXT 全文搜索定位 · 上万文件秒级命中 · 关键词高亮 · 定位文件夹 · 批量另存 · 搜索历史 / 检索方案 / CSV 导出 / 深浅主题 · 中英双语 · 纯本地不上传", use_en:"Full-text search across thousands of TXT files — keyword highlight, reveal in folder, batch save, search history, saved schemes, CSV export, dark/light themes, bilingual, fully local",
+   web:"TxtSeeker", exe:{name:"TxtSeeker.exe", size:"16.1 MB", url:"https://github.com/podcatcher962/TxtSeeker/releases/latest/download/TxtSeeker.exe"}},
   {icon:"🏷️", cn:"批量重命名", en:"BatchRename", ver:"v1.0", cat:"tool",
    use_cn:"文件批量重命名 · 规则化处理", use_en:"Batch file renamer",
    web:null, exe:{name:"BatchRename.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/BatchRename/releases/latest/download/BatchRename.exe"}},
@@ -298,10 +362,16 @@ let lang = 'zh';
 const I18N = {
   zh:{total:"软件总数", web:"在线版", exe:"EXE 版", android:"安卓版", sub:"兰兰软件汇总集", slogan:"藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新",
       tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", apkBtn:"🤖 安卓版", ver:"版本",
-      sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制", shareFallback:"当前环境不支持系统分享，已复制链接"},
+      sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制", shareFallback:"当前环境不支持系统分享，已复制链接",
+      searchPh:"搜索软件名 / 功能 / 英文名…", sortCat:"分类顺序", sortName:"名称 A-Z", sortVer:"版本（新→旧）",
+      allCat:"全部", noRes:"没有匹配的软件", noResTip:"换个关键词试试，或点「全部」清空筛选",
+      foundN:"找到 <b>{n}</b> 个", ofAll:"共 <b>{n}</b> 个软件 · 收藏本页，实时获取更新", results:"筛选结果"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", android:"Android", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
       tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", apkBtn:"🤖 Android", ver:"Ver",
-      sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied"},
+      sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied",
+      searchPh:"Search by name / feature / English…", sortCat:"Category", sortName:"Name A-Z", sortVer:"Version (new first)",
+      allCat:"All", noRes:"No matching apps", noResTip:"Try another keyword, or click \"All\" to clear the filter",
+      foundN:"<b>{n}</b> found", ofAll:"<b>{n}</b> apps indexed · bookmark this page for live updates", results:"Results"},
 };
 function t(k){return I18N[lang][k];}
 function setL(l){
@@ -317,6 +387,11 @@ function setL(l){
   document.getElementById('tCopy').textContent = t('copy');
   document.getElementById('tShare').textContent = t('share');
   document.querySelectorAll('[data-l]').forEach(el=>{ el.textContent = t(el.getAttribute('data-l')); });
+  const qEl = document.getElementById('q');
+  if(qEl) qEl.placeholder = t('searchPh');
+  document.getElementById('optCat').textContent = t('sortCat');
+  document.getElementById('optName').textContent = t('sortName');
+  document.getElementById('optVer').textContent = t('sortVer');
   render();
 }
 
@@ -382,25 +457,40 @@ function toggleSound(){
 })();
 
 // ============ 渲染 ============
-function render(){
-  const root = document.getElementById('root');
-  let html = '';
-  let webCount = 0, exeCount = 0, apkCount = 0;
+// ============ 搜索 / 筛选 / 排序（v2 新增） ============
+let Q = '', FCAT = 'all', SORT = 'cat';
 
-  for(const catKey of Object.keys(CATS)){
-    const items = APPS.filter(a=>a.cat===catKey);
-    if(!items.length) continue;
-    const cat = CATS[catKey];
-    html += `<div class="sec"><div class="sec-h"><span class="bar"></span><h2>${cat.icon} ${lang==='zh'?cat.cn:cat.en}</h2><span class="cnt">${items.length}</span><span class="bar"></span></div><div class="grid">`;
-    for(const a of items){
-      const use = lang==='zh'?a.use_cn:a.use_en;
-      let btns = '';
-      if(a.web){ const wu = a.web.startsWith('http') ? a.web : `https://podcatcher962.github.io/${a.web}/`; btns += `<a href="${wu}" target="_blank" rel="noopener">${t('webBtn')}</a>`; webCount++; }
-      // 按钮上不再写体积（会把按键撑出卡片），改放到 title 里悬停可见
-      if(a.apk){ btns += `<a class="apk" href="${a.apk.url}" target="_blank" rel="noopener" title="${a.apk.name} · ${a.apk.size}">${t('apkBtn')}</a>`; apkCount++; }
-      if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener" title="${a.exe.name} · ${a.exe.size}">${t('exeBtn')}</a>`; exeCount++; }
-      const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.web ? (a.web.includes('http') ? '🌐 在线站' : `${a.web}.html`) : '—'));
-      html += `
+function verNum(v){
+  const m = String(v||'').match(/(\d+)\.(\d+)(?:\.(\d+))?/);
+  return m ? (+m[1])*1000000 + (+m[2])*1000 + (+(m[3]||0)) : -1;
+}
+function haystack(a){
+  const c = CATS[a.cat] || {};
+  return [a.cn, a.en, a.use_cn, a.use_en, a.ver, c.cn, c.en, a.cat,
+          a.exe ? a.exe.name : '', a.web || ''].join(' ').toLowerCase();
+}
+function passFilter(a){
+  if(FCAT !== 'all' && a.cat !== FCAT) return false;
+  const q = Q.trim().toLowerCase();
+  if(!q) return true;
+  const hay = haystack(a);
+  return q.split(/\s+/).filter(Boolean).every(w => hay.indexOf(w) >= 0);
+}
+function visibleApps(){
+  let list = APPS.filter(passFilter);
+  if(SORT === 'name') list = list.slice().sort((x,y)=>x.cn.localeCompare(y.cn,'zh'));
+  else if(SORT === 'ver') list = list.slice().sort((x,y)=>verNum(y.ver)-verNum(x.ver));
+  return list;
+}
+function cardHtml(a){
+  const use = lang==='zh'?a.use_cn:a.use_en;
+  let btns = '';
+  if(a.web){ const wu = a.web.startsWith('http') ? a.web : `https://podcatcher962.github.io/${a.web}/`; btns += `<a href="${wu}" target="_blank" rel="noopener">${t('webBtn')}</a>`; }
+  // 按钮上不写体积（会把按键撑出卡片），放 title 里悬停可见
+  if(a.apk){ btns += `<a class="apk" href="${a.apk.url}" target="_blank" rel="noopener" title="${a.apk.name} · ${a.apk.size}">${t('apkBtn')}</a>`; }
+  if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener" title="${a.exe.name} · ${a.exe.size}">${t('exeBtn')}</a>`; }
+  const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.web ? (a.web.includes('http') ? '🌐 在线站' : `${a.web}.html`) : '—'));
+  return `
       <div class="card">
         <div class="head">
           <span class="icon">${a.icon}</span>
@@ -411,15 +501,68 @@ function render(){
         <div class="btns">${btns}</div>
         <div class="meta"><span>${t('ver')}: ${a.ver}</span><span>${meta}</span></div>
       </div>`;
-    }
-    html += `</div></div>`;
+}
+function secHtml(cat, items){
+  return `<div class="sec"><div class="sec-h"><span class="bar"></span><h2>${cat.icon} ${lang==='zh'?cat.cn:cat.en}</h2><span class="cnt">${items.length}</span><span class="bar"></span></div><div class="grid">${items.map(cardHtml).join('')}</div></div>`;
+}
+function renderChips(){
+  const box = document.getElementById('chips');
+  if(!box) return;
+  let h = `<button class="chip${FCAT==='all'?' on':''}" onclick="setCat('all')">${t('allCat')}<span class="n">${APPS.length}</span></button>`;
+  for(const k of Object.keys(CATS)){
+    const n = APPS.filter(a=>a.cat===k).length;
+    if(!n) continue;
+    const c = CATS[k];
+    h += `<button class="chip${FCAT===k?' on':''}" onclick="setCat('${k}')">${c.icon} ${lang==='zh'?c.cn:c.en}<span class="n">${n}</span></button>`;
   }
+  box.innerHTML = h;
+}
+function render(){
+  renderChips();
+  const list = visibleApps();
+  let html = '';
+  if(SORT === 'cat'){
+    for(const catKey of Object.keys(CATS)){
+      const items = list.filter(a=>a.cat===catKey);
+      if(items.length) html += secHtml(CATS[catKey], items);
+    }
+  }else if(list.length){
+    html = secHtml({icon:'🔎', cn:t('results'), en:t('results')}, list);
+  }
+  if(!list.length){
+    html = `<div class="empty"><span class="big">🔍</span>${t('noRes')}<br>${t('noResTip')}</div>`;
+  }
+  document.getElementById('root').innerHTML = html;
 
-  root.innerHTML = html;
+  const info = document.getElementById('findInfo');
+  if(info){
+    const q = Q.trim();
+    const safe = q.replace(/[<>&"]/g, '');
+    info.innerHTML = (q || FCAT !== 'all')
+      ? t('foundN').replace('{n}', list.length) + (q ? ` · 「${safe}」` : '')
+      : t('ofAll').replace('{n}', APPS.length);
+  }
+  const xb = document.getElementById('qClear');
+  if(xb) xb.className = 'xbtn' + (Q.trim() ? ' show' : '');
+
   document.getElementById('statTotal').textContent = APPS.length;
-  document.getElementById('statWeb').textContent = webCount;
-  document.getElementById('statExe').textContent = exeCount;
-  document.getElementById('statApk').textContent = apkCount;
+  document.getElementById('statWeb').textContent = APPS.filter(a=>a.web).length;
+  document.getElementById('statExe').textContent = APPS.filter(a=>a.exe).length;
+  document.getElementById('statApk').textContent = APPS.filter(a=>a.apk).length;
+}
+let qTimer = null;
+function onQuery(){
+  const v = document.getElementById('q').value;
+  clearTimeout(qTimer);
+  qTimer = setTimeout(()=>{ Q = v; render(); }, 120);
+}
+function onSort(){ SORT = document.getElementById('sortSel').value; render(); }
+function setCat(c){ FCAT = c; render(); }
+function clearQuery(){
+  Q = ''; FCAT = 'all';
+  document.getElementById('q').value = '';
+  render();
+  document.getElementById('q').focus();
 }
 
 // ============ 关于 / 免责声明 ============
@@ -505,6 +648,14 @@ function openPoem(i){
   setL(lang);
   renderPoems();
 })();
+</script>
+<script>
+/* PWA：只在 https 下注册（file:// 与 http 会被浏览器拒绝） */
+if('serviceWorker' in navigator && location.protocol === 'https:'){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>
