@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>兰舟 · 月洞窗外 —— 三境之一</title>
+<meta name="description" content="一艘东方的星舰。木作月洞门外是两万两千颗星。拖动回望星河，空格熄灯。纯 Canvas 手写，单文件，零依赖。">
+<meta name="theme-color" content="#04060c">
+<meta property="og:type" content="website">
+<meta property="og:title" content="兰舟 · 月洞窗外">
+<meta property="og:description" content="一艘东方的星舰。木作月洞门外是两万两千颗星。拖动回望星河，空格熄灯。">
+<meta property="og:image" content="https://podcatcher962.github.io/lanzhou/og.jpg">
+<meta property="og:url" content="https://podcatcher962.github.io/lanzhou/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23070b14'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23a8843f' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23101826'/%3E%3C/svg%3E">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#04060c; }
+  body { font-family: "KaiTi","STKaiti","Kaiti SC","楷体",serif; -webkit-font-smoothing:antialiased; }
+  #sky { position:fixed; inset:0; width:100%; height:100%; display:block;
+         touch-action:none; cursor:grab; }
+  #sky.drag { cursor:grabbing; }
+
+  /* 上下黑边渐隐，像老电影的遮幅 */
+  .vignette { position:fixed; inset:0; pointer-events:none;
+    background:
+      radial-gradient(125% 95% at 43% 47%, rgba(0,0,0,0) 46%, rgba(0,0,0,0.42) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0) 16%, rgba(0,0,0,0) 84%, rgba(0,0,0,0.36)); }
+
+  #hud { position:fixed; top:0; right:0; padding:34px 42px; text-align:right;
+         color:#cdb894; letter-spacing:2px; font-size:13px; line-height:2.05;
+         opacity:0; transition:opacity 1.4s ease; pointer-events:none;
+         text-shadow:0 0 18px rgba(0,0,0,0.95); }
+  #hud.on { opacity:0.72; }
+  #hud .title { font-size:21px; letter-spacing:9px; color:#e3d0a8; line-height:1.5; }
+  #hud .dim { font-size:12px; color:#9a8b6d; letter-spacing:1px; }
+  #hud .rule { height:1px; background:linear-gradient(to left, rgba(168,132,64,0.55), rgba(168,132,64,0)); margin:11px 0 11px auto; width:96px; }
+
+  #sign { position:fixed; right:38px; bottom:30px; writing-mode:vertical-rl;
+          color:#6d6047; font-size:12px; letter-spacing:4px; opacity:0;
+          transition:opacity 1.6s ease .6s; pointer-events:none; }
+  #sign.on { opacity:0.55; }
+
+  #tip { position:fixed; left:0; right:0; bottom:26px; text-align:center;
+         color:#a6977a; font-size:12.5px; letter-spacing:1.5px; font-family:"KaiTi","STKaiti",serif;
+         opacity:0; transition:opacity 1.4s ease; pointer-events:none;
+         text-shadow:0 1px 10px rgba(0,0,0,0.95); }
+  #tip.on { opacity:0.9; }
+  #tip span { margin:0 20px; }
+  #tip b { color:#c0ab84; font-weight:normal; margin-right:6px; }
+  #tip i { color:#5c5038; font-style:normal; margin:0 4px; }
+
+  #veil { position:fixed; inset:0; background:#04060c; pointer-events:none;
+          transition:opacity 2.4s ease; }
+  #veil.gone { opacity:0; }
+
+  @media (max-width:640px){
+    #hud { font-size:12px; padding:22px 20px; letter-spacing:3px; }
+    #tip { font-size:11px; letter-spacing:2px; }
+    #sign { display:none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="vignette"></div>
+<div id="hud">
+  <div class="title">兰　舟</div>
+  <div class="rule"></div>
+  <div class="dim">舷外 · 天市垣</div>
+  <div class="dim">里程 · 三千二百光年</div>
+</div>
+<div id="sign">永远的兰兰 · 二〇二六</div>
+<div id="tip">
+  <span><b>拖动</b>回望星河</span><i>·</i>
+  <span><b>空格</b>熄灯</span><i>·</i>
+  <span><b>滚轮</b>远近</span>
+</div>
+<div id="veil"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var TAU = Math.PI * 2;
+  // 固定种子：每次打开是同一片星海，构图才可控
+  var _seed = 20261018;
+  function srnd() {
+    _seed ^= _seed << 13; _seed ^= _seed >>> 17; _seed ^= _seed << 5;
+    return (_seed >>> 0) / 4294967296;
+  }
+  function SR(a, b) { return a + srnd() * (b - a); }
+  var R = function (a, b) { return a + Math.random() * (b - a); };
+  var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
+  var lerp = function (a, b, t) { return a + (b - a) * t; };
+  var ease = function (t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
+
+  var cv = document.getElementById('sky');
+  var ctx = cv.getContext('2d', { alpha: false });
+
+  var W = 0, H = 0, DPR = 1;
+  var CX = 0, CY = 0, RAD = 0;      // 月洞门圆心与半径
+  var portrait = false;
+
+  // ---------- 状态 ----------
+  var ST = {
+    yaw: 0, pitch: 0, fov: 1,
+    tYaw: 0, tPitch: 0, tFov: 1,
+    lamp: 1, tLamp: 1,
+    t0: 0, now: 0
+  };
+
+  var stars = [], nebulae = [], dust = [], meteors = [], ships = [];
+  var sprites = [];
+  var FRAME = null;      // 预渲染的舱内层
+  var PLANET = null;     // 预渲染的星球
+  var PLANET_DIR = null;
+  var DBG_OFF = { frame: false, cabin: false };
+
+  // 预渲染的柔光点：烟、环光、尘埃都用它，避免每帧 createRadialGradient（很贵）
+  var SOFT_WARM = null, SOFT_GOLD = null;
+
+  function makeSoft(rgb) {
+    var s = 64;
+    var c = document.createElement('canvas');
+    c.width = c.height = s;
+    var g = c.getContext('2d');
+    var grd = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+    grd.addColorStop(0, 'rgba(' + rgb + ',1)');
+    grd.addColorStop(0.30, 'rgba(' + rgb + ',0.42)');
+    grd.addColorStop(0.62, 'rgba(' + rgb + ',0.11)');
+    grd.addColorStop(1, 'rgba(' + rgb + ',0)');
+    g.fillStyle = grd;
+    g.fillRect(0, 0, s, s);
+    return c;
+  }
+
+  // ---------- 工具 ----------
+  function norm(v) {
+    var l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]) || 1;
+    return [v[0] / l, v[1] / l, v[2] / l];
+  }
+  function cross(a, b) {
+    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  }
+  function gauss() {
+    return (Math.random() + Math.random() + Math.random() + Math.random() - 2) * 0.7;
+  }
+
+  // ---------- 星点精灵 ----------
+  // 按恒星光谱分色：蓝白 / 纯白 / 淡黄 / 金黄 / 橙红
+  var COLORS = [
+    [176, 206, 255],
+    [232, 240, 255],
+    [255, 250, 235],
+    [255, 233, 190],
+    [255, 198, 158]
+  ];
+
+  // 按尺寸分档预渲染：缩小贴图会把亮核平均成灰雾，必须 1:1 绘制
+  var SIZES = [2.5, 3.5, 5, 7, 9.5, 13, 18, 24];
+
+  function makeSprite(rgb, s) {
+    var px = Math.max(2, Math.round(s * DPR));
+    var c = document.createElement('canvas');
+    c.width = c.height = px;
+    var g = c.getContext('2d');
+    var h = px / 2;
+    var grd = g.createRadialGradient(h, h, 0, h, h, h);
+    var col = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',';
+    grd.addColorStop(0, col + '1)');
+    grd.addColorStop(0.09, col + '0.72)');
+    grd.addColorStop(0.19, col + '0.26)');
+    grd.addColorStop(0.34, col + '0.085)');
+    grd.addColorStop(0.56, col + '0.022)');
+    grd.addColorStop(1, col + '0)');
+    g.fillStyle = grd;
+    g.fillRect(0, 0, px, px);
+    // 亮核（1 物理像素的实心点），让星有针尖般的锐度
+    if (px >= 7) {
+      g.fillStyle = 'rgba(255,255,255,0.92)';
+      g.beginPath();
+      g.arc(h, h, Math.max(0.5, px * 0.028), 0, TAU);
+      g.fill();
+    }
+    return c;
+  }
+
+  function buildSprites() {
+    sprites = COLORS.map(function (rgb) {
+      return SIZES.map(function (s) { return makeSprite(rgb, s); });
+    });
+  }
+
+  function sizeIndex(sz) {
+    var best = 0, bd = 1e9;
+    for (var i = 0; i < SIZES.length; i++) {
+      var d = Math.abs(SIZES[i] - sz);
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+
+  // ---------- 星场 ----------
+  function addStar(dir, mag, ci, sizeK) {
+    stars.push({
+      x: dir[0], y: dir[1], z: dir[2],
+      m: mag, ci: ci,
+      sz: sizeK,
+      si: sizeIndex(sizeK),
+      ph: R(0, TAU), sp: R(0.6, 2.4)
+    });
+  }
+
+  function buildStars() {
+    stars = [];
+    // 1) 均匀星场
+    for (var i = 0; i < 5200; i++) {
+      var z = SR(-1, 1), th = SR(0, TAU), r = Math.sqrt(1 - z * z);
+      var mag = Math.pow(srnd(), 4.0);          // 绝大多数是暗星，亮星极少
+      addStar([r * Math.cos(th), z, r * Math.sin(th)],
+              mag, Math.floor(SR(0, 5)), SR(2.5, 4.5) + mag * mag * 22);
+    }
+    // 2) 银河：沿一个倾斜大圆带聚集
+    var n = norm([0.15, 0.989, 0]);                  // 银道面法向
+    var u = norm(cross(n, [1, 0, 0]));
+    var v = cross(n, u);
+    for (var k = 0; k < 17000; k++) {
+      var a = SR(0, TAU);
+      var d = gauss() * 0.13;
+      var p = norm([
+        u[0] * Math.cos(a) + v[0] * Math.sin(a) + n[0] * d,
+        u[1] * Math.cos(a) + v[1] * Math.sin(a) + n[1] * d,
+        u[2] * Math.cos(a) + v[2] * Math.sin(a) + n[2] * d
+      ]);
+      var mg = Math.pow(srnd(), 2.1) * 0.66;
+      addStar(p, mg, Math.floor(SR(0, 5)), SR(2.2, 3.6) + mg * mg * 11);
+    }
+    // 3) 几颗显眼的亮星，带十字光芒
+    var bright = [
+      [0.42, -0.18, 0.89, 0],
+      [-0.55, 0.22, 0.80, 2],
+      [0.05, 0.55, 0.83, 1],
+      [-0.20, -0.62, 0.76, 3],
+      [0.72, 0.34, 0.60, 0],
+      [-0.72, -0.30, 0.62, 1]
+    ];
+    bright.forEach(function (b) {
+      var d = norm([b[0], b[1], b[2]]);
+      addStar(d, 1, b[3], 22);
+      stars[stars.length - 1].big = true;
+    });
+  }
+
+  // ---------- 星云 ----------
+  function makeNebula(rgb, size, k) {
+    var s = size;
+    var kk = k || 1;
+    var c = document.createElement('canvas');
+    c.width = c.height = s;
+    var g = c.getContext('2d');
+    // 用若干不规则光团叠出絮状
+    for (var i = 0; i < 9; i++) {
+      var cx = s / 2 + SR(-s * 0.16, s * 0.16);
+      var cy = s / 2 + SR(-s * 0.16, s * 0.16);
+      var rr = s * SR(0.14, 0.34);
+      var grd = g.createRadialGradient(cx, cy, 0, cx, cy, rr);
+      var a = SR(0.05, 0.13) * kk;
+      grd.addColorStop(0, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + a + ')');
+      grd.addColorStop(0.5, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (a * 0.4) + ')');
+      grd.addColorStop(1, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0)');
+      g.fillStyle = grd;
+      g.fillRect(0, 0, s, s);
+    }
+    return c;
+  }
+
+  function buildNebulae() {
+    var pal = [
+      [92, 126, 205],
+      [168, 138, 82],
+      [128, 78, 96],
+      [72, 148, 150]
+    ];
+    var dirs = [
+      [-0.34, 0.10, 0.94, 0, 0.62],
+      [0.58, -0.30, 0.76, 1, 0.44],
+      [-0.62, -0.42, 0.66, 2, 0.46],
+      [0.14, 0.70, 0.70, 3, 0.40]
+    ];
+    nebulae = dirs.map(function (d) {
+      return {
+        d: norm([d[0], d[1], d[2]]),
+        img: makeNebula(pal[d[3]], 512),
+        size: d[4],
+        a: 0.30
+      };
+    });
+
+    // 银河辉光带：沿银道面撒一串柔和的冷白光团
+    var n = norm([0.15, 0.989, 0]);
+    var u = norm(cross(n, [1, 0, 0]));
+    var v = cross(n, u);
+    var dustImg = makeNebula([176, 196, 238], 512);
+    for (var i = 0; i < 34; i++) {
+      var a = i / 34 * TAU + SR(-0.04, 0.04);
+      var off = gauss() * 0.085;
+      var p = norm([
+        u[0] * Math.cos(a) + v[0] * Math.sin(a) + n[0] * off,
+        u[1] * Math.cos(a) + v[1] * Math.sin(a) + n[1] * off,
+        u[2] * Math.cos(a) + v[2] * Math.sin(a) + n[2] * off
+      ]);
+      nebulae.push({
+        d: p,
+        img: dustImg,
+        size: SR(0.30, 0.55),
+        a: SR(0.09, 0.17)
+      });
+    }
+
+    // 暗尘带：银河里必须有"暗"才像银河
+    var darkImg = makeNebula([3, 4, 8], 512, 4.2);
+    for (var j = 0; j < 11; j++) {
+      var aj = j / 11 * TAU + SR(-0.15, 0.15);
+      var offj = gauss() * 0.045;
+      var pj = norm([
+        u[0] * Math.cos(aj) + v[0] * Math.sin(aj) + n[0] * offj,
+        u[1] * Math.cos(aj) + v[1] * Math.sin(aj) + n[1] * offj,
+        u[2] * Math.cos(aj) + v[2] * Math.sin(aj) + n[2] * offj
+      ]);
+      nebulae.push({
+        d: pj,
+        img: darkImg,
+        size: SR(0.30, 0.62),
+        a: SR(0.24, 0.46)
+      });
+    }
+  }
+
+  // ---------- 星球 ----------
+  function buildPlanet() {
+    _seed = 20261019;   // 同一颗星球
+    var r = 106;
+    var pad = 100;
+    var s = (r + pad) * 2;
+    var c = document.createElement('canvas');
+    c.width = c.height = s;
+    var g = c.getContext('2d');
+    var cxp = s / 2, cyp = s / 2;
+
+    // 外大气光晕（克制）
+    var halo = g.createRadialGradient(cxp, cyp, r * 0.98, cxp, cyp, r * 1.28);
+    halo.addColorStop(0, 'rgba(126,190,240,0.20)');
+    halo.addColorStop(0.45, 'rgba(88,146,206,0.055)');
+    halo.addColorStop(1, 'rgba(70,120,180,0)');
+    g.fillStyle = halo;
+    g.beginPath(); g.arc(cxp, cyp, r * 1.28, 0, TAU); g.fill();
+
+    g.save();
+    g.beginPath(); g.arc(cxp, cyp, r, 0, TAU); g.clip();
+
+    // 海洋底色：受光左上 → 背光右下
+    var lx = cxp - r * 0.40, ly = cyp - r * 0.38;
+    var sea = g.createRadialGradient(lx, ly, r * 0.04, lx, ly, r * 1.30);
+    sea.addColorStop(0.00, 'rgba(158,220,236,1)');
+    sea.addColorStop(0.18, 'rgba(98,180,208,1)');
+    sea.addColorStop(0.40, 'rgba(40,116,158,1)');
+    sea.addColorStop(0.62, 'rgba(16,62,100,1)');
+    sea.addColorStop(0.82, 'rgba(6,24,48,1)');
+    sea.addColorStop(1.00, 'rgba(2,6,14,1)');
+    g.fillStyle = sea;
+    g.fillRect(cxp - r, cyp - r, r * 2, r * 2);
+
+    // 陆地：一簇柔光圆叠出不规则轮廓（不依赖 filter，到处都能跑）
+    function blob(bx, by, rad, rgb, n) {
+      for (var i = 0; i < n; i++) {
+        var a = R(0, TAU), dd = Math.pow(Math.random(), 0.7) * rad;
+        var x = bx + Math.cos(a) * dd, y = by + Math.sin(a) * dd * 0.78;
+        var rr = R(rad * 0.26, rad * 0.58);
+        var gg2 = g.createRadialGradient(x, y, 0, x, y, rr);
+        gg2.addColorStop(0, 'rgba(' + rgb + ',0.62)');
+        gg2.addColorStop(0.55, 'rgba(' + rgb + ',0.34)');
+        gg2.addColorStop(1, 'rgba(' + rgb + ',0)');
+        g.fillStyle = gg2;
+        g.beginPath(); g.arc(x, y, rr, 0, TAU); g.fill();
+      }
+    }
+    blob(cxp - r * 0.30, cyp - r * 0.08, r * 0.36, '62,110,84', 16);
+    blob(cxp + r * 0.36, cyp + r * 0.28, r * 0.28, '56,102,78', 12);
+    blob(cxp + r * 0.08, cyp - r * 0.54, r * 0.22, '66,116,90', 10);
+    blob(cxp - r * 0.54, cyp + r * 0.48, r * 0.24, '52,96,76', 11);
+    blob(cxp - r * 0.10, cyp + r * 0.60, r * 0.20, '58,104,80', 9);
+
+    // 云：絮状团块，不是水平条纹
+    for (var i2 = 0; i2 < 30; i2++) {
+      var a2 = R(0, TAU), dd2 = R(0, r * 0.94);
+      var x2 = cxp + Math.cos(a2) * dd2, y2 = cyp + Math.sin(a2) * dd2;
+      // 赤道带（水平方向）云更多
+      var bandW = 1 - Math.abs(Math.sin(a2)) * 0.55;
+      if (Math.random() > bandW) continue;
+      var n2 = 3 + Math.floor(R(0, 4));
+      for (var k3 = 0; k3 < n2; k3++) {
+        var cx3 = x2 + R(-r * 0.16, r * 0.16), cy3 = y2 + R(-r * 0.06, r * 0.06);
+        var rr3 = R(r * 0.045, r * 0.125);
+        var gg3 = g.createRadialGradient(cx3, cy3, 0, cx3, cy3, rr3);
+        gg3.addColorStop(0, 'rgba(238,251,255,' + R(0.16, 0.34).toFixed(2) + ')');
+        gg3.addColorStop(0.6, 'rgba(238,251,255,' + R(0.04, 0.11).toFixed(2) + ')');
+        gg3.addColorStop(1, 'rgba(238,251,255,0)');
+        g.fillStyle = gg3;
+        g.beginPath(); g.arc(cx3, cy3, rr3, 0, TAU); g.fill();
+      }
+    }
+
+    // 极冠（两极各一）
+    var cap = g.createRadialGradient(cxp - r * 0.20, cyp - r * 0.86, 0,
+                                     cxp - r * 0.20, cyp - r * 0.86, r * 0.42);
+    cap.addColorStop(0, 'rgba(246,253,255,0.55)');
+    cap.addColorStop(1, 'rgba(246,253,255,0)');
+    g.fillStyle = cap;
+    g.beginPath(); g.arc(cxp - r * 0.20, cyp - r * 0.86, r * 0.42, 0, TAU); g.fill();
+
+    // 背光侧收暗：明暗交界更硬，球才立得住
+    var dk = g.createRadialGradient(cxp + r * 0.50, cyp + r * 0.42, r * 0.06,
+                                    cxp + r * 0.50, cyp + r * 0.42, r * 1.55);
+    dk.addColorStop(0, 'rgba(2,4,10,0.62)');
+    dk.addColorStop(0.48, 'rgba(2,4,10,0.30)');
+    dk.addColorStop(1, 'rgba(2,4,10,0)');
+    g.fillStyle = dk;
+    g.fillRect(cxp - r, cyp - r, r * 2, r * 2);
+
+    // 边缘大气散射
+    var rim = g.createRadialGradient(cxp, cyp, r * 0.87, cxp, cyp, r);
+    rim.addColorStop(0, 'rgba(150,215,255,0)');
+    rim.addColorStop(0.70, 'rgba(150,215,255,0.06)');
+    rim.addColorStop(0.94, 'rgba(176,228,255,0.16)');
+    rim.addColorStop(1, 'rgba(120,180,250,0)');
+    g.fillStyle = rim;
+    g.fillRect(cxp - r, cyp - r, r * 2, r * 2);
+
+    g.restore();
+
+    // 受光侧边缘的亮弧（大气散射最真实的一条线）
+    g.save();
+    g.beginPath(); g.arc(cxp, cyp, r - 1.3, -2.72, -1.02);
+    g.strokeStyle = 'rgba(226,248,255,0.46)';
+    g.lineWidth = 1.6; g.stroke();
+    g.restore();
+
+    PLANET = { img: c, r: r, half: s / 2 };
+  }
+
+  // ---------- 舱内：月洞门 ----------
+  function buildFrame() {
+    _seed = 20261018;   // 每次重建都同一套木纹
+    var c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(W * DPR));
+    c.height = Math.max(1, Math.round(H * DPR));
+    var g = c.getContext('2d');
+    g.scale(DPR, DPR);
+
+    var cx = CX, cy = CY, Rr = RAD;
+    var ringOut = Rr + Math.max(26, Rr * 0.105);
+
+    // 1) 舱壁底色
+    var wall = g.createLinearGradient(0, 0, W, H);
+    wall.addColorStop(0, '#2b1d14');
+    wall.addColorStop(0.38, '#362619');
+    wall.addColorStop(0.72, '#291b12');
+    wall.addColorStop(1, '#1b120d');
+    g.fillStyle = wall;
+    g.fillRect(0, 0, W, H);
+
+    // 2) 舱壁：竖向木板 + 板缝（横向条纹太像条绒，改竖向才有舱室的构造感）
+    g.save();
+    var bw = Math.max(96, W * 0.082);
+    var bx = -bw * 0.35;
+    while (bx < W + bw) {
+      var shade = R(-0.055, 0.055);
+      g.fillStyle = shade > 0
+        ? 'rgba(255,214,160,' + shade.toFixed(3) + ')'
+        : 'rgba(0,0,0,' + (-shade).toFixed(3) + ')';
+      g.fillRect(bx, 0, bw, H);
+      g.fillStyle = 'rgba(0,0,0,0.40)';
+      g.fillRect(bx, 0, 1.7, H);
+      g.fillStyle = 'rgba(255,226,180,0.05)';
+      g.fillRect(bx + 1.7, 0, 1, H);
+      g.globalAlpha = 0.42;
+      for (var i = 0; i < 7; i++) {
+        var vx = bx + R(4, bw - 4);
+        g.beginPath();
+        g.moveTo(vx, -20);
+        var yy = -20, xx = vx;
+        while (yy < H + 20) {
+          yy += R(60, 150);
+          xx += R(-2.5, 2.5);
+          g.lineTo(xx, yy);
+        }
+        g.strokeStyle = Math.random() > 0.5 ? 'rgba(58,36,22,0.28)' : 'rgba(10,7,4,0.30)';
+        g.lineWidth = R(0.5, 1.8);
+        g.stroke();
+      }
+      g.globalAlpha = 1;
+      bx += bw;
+    }
+    g.restore();
+
+    // 2b) 左侧立柱：给舱室一点建筑感
+    var colX = CX - RAD * 1.30;
+    if (colX > 26) {
+      var cw = Math.max(24, RAD * 0.105);
+      var cg = g.createLinearGradient(colX - cw / 2, 0, colX + cw / 2, 0);
+      cg.addColorStop(0, 'rgba(12,8,5,0.96)');
+      cg.addColorStop(0.26, 'rgba(54,37,23,0.96)');
+      cg.addColorStop(0.48, 'rgba(74,52,33,0.96)');
+      cg.addColorStop(0.74, 'rgba(36,25,15,0.96)');
+      cg.addColorStop(1, 'rgba(9,6,4,0.96)');
+      g.fillStyle = cg;
+      g.fillRect(colX - cw / 2, 0, cw, H);
+      [0.13, 0.50, 0.86].forEach(function (ky) {
+        var yy2 = H * ky;
+        g.fillStyle = 'rgba(146,110,50,0.50)';
+        g.fillRect(colX - cw / 2 - 3, yy2, cw + 6, 7);
+        g.fillStyle = 'rgba(255,226,170,0.18)';
+        g.fillRect(colX - cw / 2 - 3, yy2, cw + 6, 1.4);
+        g.fillStyle = 'rgba(0,0,0,0.34)';
+        g.fillRect(colX - cw / 2 - 3, yy2 + 7, cw + 6, 2.4);
+      });
+    }
+
+    // 3) 颗粒噪点
+    g.save();
+    for (var n2 = 0; n2 < 5200; n2++) {
+      var px = R(0, W), py = R(0, H);
+      g.fillStyle = Math.random() > 0.5 ? 'rgba(255,226,180,0.030)' : 'rgba(0,0,0,0.055)';
+      g.fillRect(px, py, R(1, 2.2), R(1, 2.2));
+    }
+    g.restore();
+
+    // 4) 上部横梁 + 铜条（东方舱室的框架感）
+    g.fillStyle = 'rgba(9,6,4,0.55)';
+    g.fillRect(0, 0, W, Math.max(12, H * 0.035));
+    g.fillStyle = 'rgba(150,116,58,0.22)';
+    g.fillRect(0, Math.max(12, H * 0.035) - 3, W, 2);
+
+    // 5) 挖洞（注意：destination-out 按 fillStyle 的 alpha 擦除，
+    //    必须显式设成不透明黑，否则只会擦掉一部分，窗内永远是半透的褐色）
+    g.globalCompositeOperation = 'destination-out';
+    g.fillStyle = '#000';
+    g.beginPath();
+    g.ellipse(cx, cy, Rr, Rr * 1.015, 0, 0, TAU);
+    g.fill();
+    g.globalCompositeOperation = 'source-over';
+
+    // 6) 洞口的窗内暗角（画在透明区上，压暗窗外边缘）
+    g.save();
+    g.beginPath();
+    g.ellipse(cx, cy, Rr, Rr * 1.015, 0, 0, TAU);
+    g.clip();
+    var inner = g.createRadialGradient(cx, cy, Rr * 0.50, cx, cy, Rr * 1.02);
+    inner.addColorStop(0, 'rgba(4,6,10,0)');
+    inner.addColorStop(0.74, 'rgba(4,6,10,0)');
+    inner.addColorStop(0.90, 'rgba(4,6,10,0.20)');
+    inner.addColorStop(1, 'rgba(4,6,10,0.52)');
+    g.fillStyle = inner;
+    g.fillRect(cx - Rr, cy - Rr * 1.1, Rr * 2, Rr * 2.2);
+    g.restore();
+
+    // 7) 洞外投在舱壁上的阴影（必须 clip 掉洞口，否则会把星空压黑）
+    g.save();
+    g.beginPath();
+    g.rect(0, 0, W, H);
+    g.ellipse(cx, cy, Rr, Rr * 1.015, 0, 0, TAU, true);
+    g.clip('evenodd');
+    var outShadow = g.createRadialGradient(cx, cy, Rr, cx, cy, ringOut + Rr * 0.40);
+    outShadow.addColorStop(0, 'rgba(0,0,0,0.78)');
+    outShadow.addColorStop(0.36, 'rgba(0,0,0,0.30)');
+    outShadow.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = outShadow;
+    g.fillRect(0, 0, W, H);
+    g.restore();
+
+    // 8) 门框：深棕木作 + 铜边（月洞门本来是木匠的活，铜只是配件）
+    g.save();
+    g.beginPath();
+    g.ellipse(cx, cy, ringOut, ringOut * 1.015, 0, 0, TAU);
+    g.ellipse(cx, cy, Rr, Rr * 1.015, 0, 0, TAU, true);
+    g.clip();
+
+    // 木底：内暗外亮，才有厚度
+    var wood = g.createRadialGradient(cx, cy, Rr, cx, cy, ringOut);
+    wood.addColorStop(0.00, '#1c1108');
+    wood.addColorStop(0.20, '#4e3019');
+    wood.addColorStop(0.52, '#704724');
+    wood.addColorStop(0.80, '#452a14');
+    wood.addColorStop(1.00, '#180f07');
+    g.fillStyle = wood;
+    g.fillRect(cx - ringOut, cy - ringOut * 1.05, ringOut * 2, ringOut * 2.1);
+
+    // 顺纹：沿环一圈圈的同心木纹
+    for (var wI = 0; wI < 30; wI++) {
+      var rr6 = Rr + (ringOut - Rr) * (wI / 30) + R(-1.4, 1.4);
+      g.beginPath();
+      for (var a6 = 0; a6 <= TAU + 0.12; a6 += 0.10) {
+        var jr = rr6 + Math.sin(a6 * 7 + wI * 1.7) * 1.3;
+        var px6 = cx + Math.cos(a6) * jr;
+        var py6 = cy + Math.sin(a6) * jr * 1.015;
+        if (a6 === 0) g.moveTo(px6, py6); else g.lineTo(px6, py6);
+      }
+      g.strokeStyle = Math.random() > 0.5
+        ? 'rgba(112,72,38,' + R(0.08, 0.24).toFixed(2) + ')'
+        : 'rgba(8,5,3,' + R(0.10, 0.30).toFixed(2) + ')';
+      g.lineWidth = R(0.5, 2.0);
+      g.stroke();
+    }
+
+    // 灯光：右上方来，环的受光侧提亮
+    var lampLit = g.createLinearGradient(cx + ringOut * 0.9, cy - ringOut * 0.85,
+                                         cx - ringOut * 0.75, cy + ringOut * 0.95);
+    lampLit.addColorStop(0, 'rgba(255,206,140,0.20)');
+    lampLit.addColorStop(0.45, 'rgba(255,206,140,0.03)');
+    lampLit.addColorStop(1, 'rgba(0,0,0,0.42)');
+    g.fillStyle = lampLit;
+    g.fillRect(cx - ringOut, cy - ringOut * 1.05, ringOut * 2, ringOut * 2.1);
+
+    // 大漆的一点反光
+    var lac = g.createLinearGradient(cx - ringOut * 0.5, cy - ringOut, cx + ringOut * 0.6, cy + ringOut * 0.4);
+    lac.addColorStop(0, 'rgba(255,236,196,0.10)');
+    lac.addColorStop(0.45, 'rgba(255,236,196,0.00)');
+    lac.addColorStop(1, 'rgba(255,236,196,0.035)');
+    g.fillStyle = lac;
+    g.fillRect(cx - ringOut, cy - ringOut * 1.05, ringOut * 2, ringOut * 2.1);
+
+    // 磨旧：零星磕碰
+    for (var m2 = 0; m2 < 44; m2++) {
+      var ang3 = R(0, TAU);
+      var rr3 = R(Rr + 2, ringOut - 2);
+      var px3 = cx + Math.cos(ang3) * rr3;
+      var py3 = cy + Math.sin(ang3) * rr3 * 1.015;
+      g.beginPath();
+      g.ellipse(px3, py3, R(2, 14), R(1, 4), ang3, 0, TAU);
+      g.fillStyle = Math.random() > 0.45
+        ? 'rgba(20,12,6,' + R(0.10, 0.24).toFixed(2) + ')'
+        : 'rgba(196,152,86,' + R(0.03, 0.08).toFixed(2) + ')';
+      g.fill();
+    }
+    g.restore();
+
+
+    // 9) 内外铜边：木框的包边，也是唯一"亮"的地方
+    g.save();
+    var edgeIn = Rr + Math.max(3, (ringOut - Rr) * 0.13);
+    var edgeOut = ringOut - Math.max(3, (ringOut - Rr) * 0.11);
+
+    g.beginPath();
+    g.ellipse(cx, cy, edgeIn, edgeIn * 1.015, 0, 0, TAU);
+    g.strokeStyle = 'rgba(154,116,54,0.80)'; g.lineWidth = 4.2; g.stroke();
+    g.beginPath();
+    g.ellipse(cx, cy, edgeIn - 1.6, (edgeIn - 1.6) * 1.015, 0, 0, TAU);
+    g.strokeStyle = 'rgba(255,218,158,0.34)'; g.lineWidth = 1.1; g.stroke();
+
+    g.beginPath();
+    g.ellipse(cx, cy, edgeOut, edgeOut * 1.015, 0, 0, TAU);
+    g.strokeStyle = 'rgba(140,104,48,0.72)'; g.lineWidth = 3.6; g.stroke();
+    g.beginPath();
+    g.ellipse(cx, cy, edgeOut + 1.4, (edgeOut + 1.4) * 1.015, 0, 0, TAU);
+    g.strokeStyle = 'rgba(10,6,3,0.85)'; g.lineWidth = 2.2; g.stroke();
+    g.restore();
+
+    // 10) 二十八宿刻度
+    var N = 28;
+    for (var k2 = 0; k2 < N; k2++) {
+      var ang = -Math.PI / 2 + k2 * TAU / N;
+      var major = (k2 % 7 === 0);
+      var r1 = Rr + ringOut * 0.05;
+      var r2 = r1 + (major ? (ringOut - Rr) * 0.52 : (ringOut - Rr) * 0.30);
+      var sx1 = cx + Math.cos(ang) * r1, sy1 = cy + Math.sin(ang) * r1 * 1.015;
+      var sx2 = cx + Math.cos(ang) * r2, sy2 = cy + Math.sin(ang) * r2 * 1.015;
+      g.beginPath();
+      g.moveTo(sx1, sy1); g.lineTo(sx2, sy2);
+      g.strokeStyle = major ? 'rgba(226,188,124,0.72)' : 'rgba(22,13,6,0.70)';
+      g.lineWidth = major ? 1.8 : 1.1;
+      g.stroke();
+      if (major) {
+        // 四象：小菱形
+        var mx = cx + Math.cos(ang) * (r2 + ringOut * 0.10);
+        var my = cy + Math.sin(ang) * (r2 + ringOut * 0.10) * 1.015;
+        g.save();
+        g.translate(mx, my); g.rotate(ang);
+        g.beginPath();
+        g.moveTo(0, -4.2); g.lineTo(4.2, 0); g.lineTo(0, 4.2); g.lineTo(-4.2, 0);
+        g.closePath();
+        g.fillStyle = 'rgba(232,196,132,0.78)'; g.fill();
+        g.restore();
+      }
+    }
+
+    // 11) 铭牌
+    var plY = cy + ringOut * 1.02 + Math.max(26, Rr * 0.10);
+    if (plY < H - 40) {
+      g.save();
+      var pw = Math.max(96, Rr * 0.52), ph = Math.max(26, Rr * 0.115);
+      var px0 = cx - pw / 2;
+      if (!portrait) {
+        g.fillStyle = 'rgba(12,8,5,0.72)';
+        g.fillRect(px0, plY, pw, ph);
+        g.strokeStyle = 'rgba(168,132,60,0.55)'; g.lineWidth = 1;
+        g.strokeRect(px0 + 0.5, plY + 0.5, pw - 1, ph - 1);
+      }
+      g.fillStyle = portrait ? 'rgba(176,146,94,0.50)' : 'rgba(206,176,116,0.72)';
+      g.font = Math.round(ph * 0.56) + 'px "KaiTi","STKaiti",serif';
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText('兰　舟', cx, plY + ph / 2 + 1);
+      g.restore();
+    }
+
+    // 12) 舱内陈设
+    buildCabinProps(g);
+
+    return c;
+  }
+
+  // 舱内陈设：横贯的矮榻、一盏宫灯、一只香炉
+  function buildCabinProps(g) {
+    var lx = Math.min(W - RAD * 0.62, CX + RAD * 1.30);
+    var ly = CY - RAD * 0.60;
+    ST.lampPos = portrait ? null : [lx, ly];
+
+    // —— 矮榻（横贯画面底部，前景层）——
+    var tblY = H * (portrait ? 0.755 : 0.876);
+    g.save();
+    // 榻面
+    var tg = g.createLinearGradient(0, tblY, 0, H);
+    tg.addColorStop(0, 'rgba(62,42,26,0.99)');
+    tg.addColorStop(0.09, 'rgba(40,27,17,0.99)');
+    tg.addColorStop(0.45, 'rgba(22,15,10,1)');
+    tg.addColorStop(1, 'rgba(9,6,4,1)');
+    g.fillStyle = tg;
+    g.fillRect(0, tblY, W, H - tblY);
+
+    // 榻沿铜条
+    g.fillStyle = 'rgba(150,116,56,0.52)';
+    g.fillRect(0, tblY, W, 2.4);
+    g.fillStyle = 'rgba(255,228,172,0.22)';
+    g.fillRect(0, tblY + 2.4, W, 1);
+    // 沿下的一道细影
+    g.fillStyle = 'rgba(0,0,0,0.45)';
+    g.fillRect(0, tblY + 4, W, 5);
+    // 榻面木纹（横向拉丝）
+    g.globalAlpha = 0.30;
+    for (var i2 = 0; i2 < 42; i2++) {
+      var yy2 = tblY + R(8, Math.max(9, H - tblY - 4));
+      g.beginPath();
+      var xx = -20, cxx = -20;
+      g.moveTo(xx, yy2);
+      while (cxx < W + 20) {
+        cxx += R(50, 160);
+        g.lineTo(cxx, yy2 + R(-1.6, 1.6));
+      }
+      g.strokeStyle = Math.random() > 0.5 ? 'rgba(92,62,34,0.55)' : 'rgba(0,0,0,0.55)';
+      g.lineWidth = R(0.5, 1.8);
+      g.stroke();
+    }
+    g.restore();
+
+    // —— 吊绳与宫灯（竖屏没有横向空间，只留香炉）——
+    if (!portrait) {
+    g.save();
+    g.beginPath();
+    g.moveTo(lx, 0);
+    g.lineTo(lx, ly - RAD * 0.20);
+    g.strokeStyle = 'rgba(134,102,50,0.55)';
+    g.lineWidth = 1.5;
+    g.stroke();
+    // 绳结
+    g.fillStyle = 'rgba(150,116,58,0.75)';
+    g.beginPath();
+    g.arc(lx, ly - RAD * 0.205, 3.4, 0, TAU);
+    g.fill();
+    g.restore();
+
+    // 灯罩：六角宫灯
+    var lw = RAD * 0.17, lh = RAD * 0.24;
+    g.save();
+    g.translate(lx, ly);
+    // 上下铜盖
+    g.fillStyle = '#3a2a14';
+    g.beginPath();
+    g.moveTo(-lw * 0.62, -lh * 0.52); g.lineTo(lw * 0.62, -lh * 0.52);
+    g.lineTo(lw * 0.44, -lh * 0.66); g.lineTo(-lw * 0.44, -lh * 0.66);
+    g.closePath(); g.fill();
+    g.beginPath();
+    g.moveTo(-lw * 0.62, lh * 0.52); g.lineTo(lw * 0.62, lh * 0.52);
+    g.lineTo(lw * 0.44, lh * 0.66); g.lineTo(-lw * 0.44, lh * 0.66);
+    g.closePath(); g.fill();
+    // 灯身
+    var lg = g.createLinearGradient(-lw, 0, lw, 0);
+    lg.addColorStop(0, 'rgba(120,68,26,0.92)');
+    lg.addColorStop(0.32, 'rgba(255,206,134,0.98)');
+    lg.addColorStop(0.62, 'rgba(255,224,168,0.99)');
+    lg.addColorStop(1, 'rgba(122,70,28,0.92)');
+    g.fillStyle = lg;
+    g.beginPath();
+    g.moveTo(-lw * 0.72, -lh * 0.52);
+    g.lineTo(lw * 0.72, -lh * 0.52);
+    g.lineTo(lw * 0.58, lh * 0.52);
+    g.lineTo(-lw * 0.58, lh * 0.52);
+    g.closePath(); g.fill();
+    // 灯骨
+    g.strokeStyle = 'rgba(64,38,12,0.62)'; g.lineWidth = 1.1;
+    for (var q = -1; q <= 1; q++) {
+      g.beginPath();
+      g.moveTo(q * lw * 0.36, -lh * 0.52);
+      g.lineTo(q * lw * 0.29, lh * 0.52);
+      g.stroke();
+    }
+    // 灯穗
+    g.strokeStyle = 'rgba(178,58,42,0.62)'; g.lineWidth = 1.4;
+    for (var t2 = -1; t2 <= 1; t2++) {
+      g.beginPath();
+      g.moveTo(t2 * 4, lh * 0.66);
+      g.quadraticCurveTo(t2 * 6, lh * 0.86, t2 * 3, lh * 1.02);
+      g.stroke();
+    }
+    g.restore();
+    }
+
+    // 香炉（摆在榻上，偏右）
+    var fx = Math.min(W - 92, CX + RAD * 1.19), fy = tblY - 2;
+    ST.incense = [fx, fy];
+    g.save();
+    // 炉体
+    var rg = g.createLinearGradient(fx - 36, 0, fx + 36, 0);
+    rg.addColorStop(0, '#241a13');
+    rg.addColorStop(0.36, '#6b563c');
+    rg.addColorStop(0.62, '#463526');
+    rg.addColorStop(1, '#170f0b');
+    g.fillStyle = rg;
+    g.beginPath();
+    g.ellipse(fx, fy - 19, 35, 23, 0, Math.PI, TAU);
+    g.lineTo(fx + 30, fy - 2);
+    g.quadraticCurveTo(fx, fy + 9, fx - 30, fy - 2);
+    g.closePath();
+    g.fill();
+    // 炉口高光
+    g.beginPath();
+    g.ellipse(fx, fy - 19, 35, 6, 0, Math.PI, TAU);
+    g.strokeStyle = 'rgba(196,164,110,0.34)';
+    g.lineWidth = 1.2;
+    g.stroke();
+    // 盖
+    g.fillStyle = 'rgba(104,84,58,0.96)';
+    g.beginPath();
+    g.ellipse(fx, fy - 40, 26, 9, 0, 0, TAU);
+    g.fill();
+    g.beginPath();
+    g.ellipse(fx, fy - 47, 8, 6, 0, 0, TAU);
+    g.fill();
+    // 三足
+    g.strokeStyle = 'rgba(64,48,32,0.95)'; g.lineWidth = 3.4;
+    [-19, 0, 19].forEach(function (dx) {
+      g.beginPath();
+      g.moveTo(fx + dx, fy - 2);
+      g.lineTo(fx + dx * 1.15, fy + 10);
+      g.stroke();
+    });
+    g.restore();
+  }
+
+  // ---------- 适应尺寸 ----------
+  function layout() {
+    var oldDPR = DPR;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    if (oldDPR && oldDPR !== DPR) buildSprites();
+    W = cv.clientWidth || window.innerWidth;
+    H = cv.clientHeight || window.innerHeight;
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    portrait = W < H * 0.86;
+    CX = W * (portrait ? 0.5 : 0.435);
+    CY = H * (portrait ? 0.44 : 0.47);
+    RAD = Math.min(W, H) * (portrait ? 0.40 : 0.375);
+
+    FRAME = buildFrame();
+    layoutDust();
+  }
+
+  function layoutDust() {
+    dust = [];
+    for (var i = 0; i < 16; i++) {
+      dust.push({
+        x: R(-1, 1), y: R(-1, 1),
+        sz: R(0.8, 2.4),
+        a: R(0.05, 0.22),
+        vx: R(-0.006, 0.006), vy: R(-0.004, 0.004),
+        ph: R(0, TAU)
+      });
+    }
+  }
+
+  // ---------- 绘制：星空 ----------
+  // ---------- 绘制：星空（整层缓存，只在视角变化时重绘）----------
+  var SKY = null, SKYKEY = { yaw: 1e9, pitch: 1e9, fov: 0 };
+
+  function ensureSky() {
+    var cw = Math.max(1, Math.round(W * DPR)), ch = Math.max(1, Math.round(H * DPR));
+    if (!SKY || SKY.width !== cw || SKY.height !== ch) {
+      SKY = document.createElement('canvas');
+      SKY.width = cw; SKY.height = ch;
+      SKYKEY.yaw = 1e9;
+    }
+  }
+
+  function drawSky(t) {
+    ensureSky();
+    if (Math.abs(ST.yaw - SKYKEY.yaw) > 0.0012 ||
+        Math.abs(ST.pitch - SKYKEY.pitch) > 0.0012 ||
+        Math.abs(ST.fov - SKYKEY.fov) > 0.003) {
+      renderSky(SKY.getContext('2d'));
+      SKYKEY.yaw = ST.yaw; SKYKEY.pitch = ST.pitch; SKYKEY.fov = ST.fov;
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.drawImage(SKY, 0, 0, W, H);
+  }
+
+  function renderSky(g) {
+    g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    g.globalAlpha = 1;
+    g.globalCompositeOperation = 'source-over';
+    // 深空底色：不是纯黑，是极深的蓝紫
+    var bg = g.createLinearGradient(0, 0, W * 0.4, H);
+    bg.addColorStop(0, '#05070f');
+    bg.addColorStop(0.42, '#080c18');
+    bg.addColorStop(0.72, '#060911');
+    bg.addColorStop(1, '#04060b');
+    g.fillStyle = bg;
+    g.fillRect(0, 0, W, H);
+
+    var focal = Math.min(W, H) * 0.92 * ST.fov;
+    var scx = CX, scy = CY;
+    var cyaw = Math.cos(ST.yaw), syaw = Math.sin(ST.yaw);
+    var cpit = Math.cos(ST.pitch), spit = Math.sin(ST.pitch);
+
+    var PPR = [0, 0, 0];
+    function proj3(px, py, pz) {
+      var x1 = px * cyaw - pz * syaw;
+      var z1 = px * syaw + pz * cyaw;
+      var y1 = py * cpit - z1 * spit;
+      var z2 = py * spit + z1 * cpit;
+      if (z2 < 0.12) return null;
+      var f = focal / z2;
+      PPR[0] = scx + x1 * f;
+      PPR[1] = scy - y1 * f;
+      PPR[2] = z2;
+      return PPR;
+    }
+
+    // 星云 / 银河辉光
+    g.save();
+    for (var ni = 0; ni < nebulae.length; ni++) {
+      var nb = nebulae[ni];
+      var pp = proj3(nb.d[0], nb.d[1], nb.d[2]);
+      if (!pp) continue;
+      var szn = Math.min(W, H) * nb.size * 1.5;
+      if (pp[0] + szn < 0 || pp[0] - szn > W || pp[1] + szn < 0 || pp[1] - szn > H) continue;
+      g.globalAlpha = nb.a;
+      g.drawImage(nb.img, pp[0] - szn / 2, pp[1] - szn / 2, szn, szn);
+    }
+    g.restore();
+
+    // 星球
+    if (PLANET) {
+      var pd = proj3(PLANET_DIR[0], PLANET_DIR[1], PLANET_DIR[2]);
+      if (pd) {
+        var pr = RAD * 0.35 * clamp(ST.fov, 0.72, 1.5);
+        var hs = PLANET.half * (pr / PLANET.r);
+        if (pd[0] + hs > -100 && pd[0] - hs < W + 100 &&
+            pd[1] + hs > -100 && pd[1] - hs < H + 100) {
+          g.globalAlpha = 1;
+          g.drawImage(PLANET.img, pd[0] - hs, pd[1] - hs, hs * 2, hs * 2);
+        }
+      }
+    }
+
+    // 恒星
+    g.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var pr2 = proj3(s.x, s.y, s.z);
+      if (!pr2) continue;
+      if (pr2[0] < -40 || pr2[0] > W + 40 || pr2[1] < -40 || pr2[1] > H + 40) continue;
+      var tw = 1;
+      var al = clamp((0.30 + s.m * 1.05) * tw, 0, 1);
+      g.globalAlpha = al;
+      var d = SIZES[s.si];
+      g.drawImage(sprites[s.ci][s.si], pr2[0] - d / 2, pr2[1] - d / 2, d, d);
+      if (s.big) {
+        g.globalAlpha = al * 0.45;
+        g.strokeStyle = 'rgba(220,235,255,0.85)';
+        g.lineWidth = 0.8;
+        var L = d * 1.15;
+        g.beginPath();
+        g.moveTo(pr2[0] - L, pr2[1]); g.lineTo(pr2[0] + L, pr2[1]);
+        g.moveTo(pr2[0], pr2[1] - L); g.lineTo(pr2[0], pr2[1] + L);
+        g.stroke();
+        // 斜向短芒
+        g.globalAlpha = al * 0.22;
+        g.beginPath();
+        var L2 = d * 0.62;
+        g.moveTo(pr2[0] - L2 * 0.7, pr2[1] - L2 * 0.7);
+        g.lineTo(pr2[0] + L2 * 0.7, pr2[1] + L2 * 0.7);
+        g.moveTo(pr2[0] + L2 * 0.7, pr2[1] - L2 * 0.7);
+        g.lineTo(pr2[0] - L2 * 0.7, pr2[1] + L2 * 0.7);
+        g.stroke();
+      }
+    }
+    g.globalCompositeOperation = 'source-over';
+    g.globalAlpha = 1;
+  }
+
+  // ---------- 绘制：窗内微尘 ----------
+
+  function drawDust(t) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(CX, CY, RAD, RAD * 1.015, 0, 0, TAU);
+    ctx.clip();
+    for (var i = 0; i < dust.length; i++) {
+      var p = dust[i];
+      p.x += p.vx * 0.016;
+      p.y += p.vy * 0.016;
+      if (p.x > 1) p.x = -1; if (p.x < -1) p.x = 1;
+      if (p.y > 1) p.y = -1; if (p.y < -1) p.y = 1;
+      var px = CX + p.x * RAD;
+      var py = CY + p.y * RAD * 1.015;
+      var a = p.a * (0.55 + 0.45 * Math.sin(t * 1.4 + p.ph));
+      ctx.beginPath();
+      ctx.arc(px, py, p.sz, 0, TAU);
+      ctx.fillStyle = 'rgba(226,236,255,' + a + ')';
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // ---------- 绘制：窗口在舱壁上投出的冷辉光 ----------
+  function drawShaft() {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, W, H);
+    ctx.ellipse(CX, CY, RAD * 0.985, RAD * 1.0, 0, 0, TAU, true);
+    ctx.clip('evenodd');
+    ctx.globalCompositeOperation = 'lighter';
+    var grd = ctx.createRadialGradient(CX, CY, RAD * 0.94, CX, CY, RAD * 1.52);
+    grd.addColorStop(0, 'rgba(136,180,232,0.072)');
+    grd.addColorStop(0.32, 'rgba(112,154,212,0.020)');
+    grd.addColorStop(1, 'rgba(90,130,190,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+  }
+
+  // ---------- 绘制：窗玻璃的极淡反射 ----------
+  function drawGlass() {
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(CX, CY, RAD - 1, RAD * 1.015 - 1, 0, 0, TAU);
+    ctx.clip();
+    var g = ctx.createLinearGradient(CX - RAD * 0.9, CY - RAD, CX + RAD * 0.5, CY + RAD);
+    g.addColorStop(0, 'rgba(178,206,255,0.048)');
+    g.addColorStop(0.28, 'rgba(178,206,255,0.014)');
+    g.addColorStop(0.50, 'rgba(178,206,255,0)');
+    g.addColorStop(0.78, 'rgba(178,206,255,0)');
+    g.addColorStop(1, 'rgba(178,206,255,0.020)');
+    ctx.fillStyle = g;
+    ctx.fillRect(CX - RAD, CY - RAD * 1.05, RAD * 2, RAD * 2.1);
+    ctx.restore();
+  }
+
+  // ---------- 绘制：流星 / 远方船 ----------
+  function spawnMeteor() {
+    var ang = R(-0.9, 0.9);
+    var rr = RAD * R(0.25, 0.95);
+    meteors.push({
+      x: CX + Math.cos(ang) * rr,
+      y: CY + Math.sin(ang) * rr - RAD * 0.15,
+      vx: R(320, 640) * (Math.random() > 0.5 ? 1 : -1),
+      vy: R(120, 320),
+      life: 0, max: R(0.55, 1.15),
+      len: R(60, 150)
+    });
+  }
+
+  function drawMeteors(dt) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(CX, CY, RAD - 2, (RAD) * 1.015 - 2, 0, 0, TAU);
+    ctx.clip();
+    for (var i = meteors.length - 1; i >= 0; i--) {
+      var m = meteors[i];
+      m.life += dt;
+      if (m.life > m.max) { meteors.splice(i, 1); continue; }
+      m.x += m.vx * dt; m.y += m.vy * dt;
+      var k = 1 - m.life / m.max;
+      var a = Math.sin(k * Math.PI) * 0.85;
+      var nx = m.x - m.vx * 0.055, ny = m.y - m.vy * 0.055;
+      var grd = ctx.createLinearGradient(m.x, m.y, nx, ny);
+      grd.addColorStop(0, 'rgba(255,255,255,' + a + ')');
+      grd.addColorStop(0.4, 'rgba(190,220,255,' + (a * 0.45) + ')');
+      grd.addColorStop(1, 'rgba(140,180,255,0)');
+      ctx.strokeStyle = grd;
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(m.x, m.y); ctx.lineTo(nx, ny);
+      ctx.stroke();
+    }
+    // 远方船：两点缓慢移动的光
+    for (var j = 0; j < ships.length; j++) {
+      var sh = ships[j];
+      sh.t += dt * sh.sp;
+      var xx = CX + Math.cos(sh.a + sh.t) * RAD * sh.r;
+      var yy = CY + Math.sin(sh.a + sh.t) * RAD * sh.r * 0.8;
+      var aa = 0.32 + 0.24 * Math.sin(sh.t * 2.4 + j);
+      ctx.globalAlpha = aa;
+      ctx.drawImage(sprites[1][4], xx - 6.5, yy - 6.5, 13, 13);
+      ctx.globalAlpha = aa * 0.35;
+      ctx.drawImage(sprites[1][3], xx - sh.dx - 4.75, yy - sh.dy - 4.75, 9.5, 9.5);
+      ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+  }
+
+  // ---------- 绘制：窗外一叶兰舟 ----------
+  function drawBoat(t) {
+    var period = 54;
+    var ph = (t % period) / period;
+    var bx = CX + RAD * (0.75 - ph * 1.5);
+    if (Math.abs(bx - CX) > RAD * 1.05) return;
+    var by = CY + RAD * 0.34 + Math.sin(t * 0.33) * RAD * 0.018;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(CX, CY, RAD - 2, RAD * 1.015 - 2, 0, 0, TAU);
+    ctx.clip();
+    ctx.translate(bx, by);
+
+    var w = RAD * 0.52, h = RAD * 0.10;
+
+    // 船身：两端起翘的中式船，平底、薄壳，近黑 + 冷色受光边
+    ctx.beginPath();
+    ctx.moveTo(-w / 2, -h * 0.30);
+    ctx.quadraticCurveTo(-w * 0.34, h * 0.72, 0, h * 0.80);
+    ctx.quadraticCurveTo(w * 0.34, h * 0.72, w / 2, -h * 0.30);
+    ctx.quadraticCurveTo(w * 0.26, h * 0.12, 0, h * 0.12);
+    ctx.quadraticCurveTo(-w * 0.26, h * 0.12, -w / 2, -h * 0.30);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(4,7,14,0.97)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(162,206,246,0.55)';
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+
+    // 舱室：低矮的一间，别做成天线
+    ctx.beginPath();
+    ctx.moveTo(-w * 0.15, -h * 0.28);
+    ctx.lineTo(w * 0.13, -h * 0.28);
+    ctx.quadraticCurveTo(w * 0.10, -h * 0.92, 0, -h * 0.96);
+    ctx.quadraticCurveTo(-w * 0.11, -h * 0.92, -w * 0.15, -h * 0.28);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(5,9,16,0.97)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(140,186,232,0.30)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    // 三盏舷灯
+    var lampPts = [[-w * 0.34, h * 0.16], [0, h * 0.30], [w * 0.32, h * 0.14]];
+    for (var i = 0; i < lampPts.length; i++) {
+      var lx2 = lampPts[i][0], ly2 = lampPts[i][1];
+      var pl = 0.55 + 0.35 * Math.sin(t * 2.1 + i * 2.2);
+      ctx.globalAlpha = 0.30 * pl;
+      ctx.drawImage(SOFT_GOLD, lx2 - h * 0.55, ly2 - h * 0.55, h * 1.1, h * 1.1);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = 'rgba(255,222,158,' + (0.85 * pl).toFixed(2) + ')';
+      ctx.beginPath();
+      ctx.arc(lx2, ly2, Math.max(0.9, h * 0.055), 0, TAU);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  // ---------- 绘制：舱内动态 ----------
+  function drawCabinLight(t) {
+    // 宫灯呼吸
+    if (ST.lampPos && ST.lamp > 0.02) {
+      var lp = ST.lampPos;
+      var breathe = 0.88 + 0.12 * Math.sin(t * 1.9) + 0.05 * Math.sin(t * 5.3);
+      var rr = RAD * 1.5;
+      ctx.save();
+      // 灯光只落在舱壁上，绝不漫进窗口（窗内必须保持冷调）
+      ctx.beginPath();
+      ctx.rect(0, 0, W, H);
+      ctx.ellipse(CX, CY, RAD * 0.94, RAD * 0.955, 0, 0, TAU, true);
+      ctx.clip('evenodd');
+      ctx.globalCompositeOperation = 'lighter';
+      var g1 = ctx.createRadialGradient(lp[0], lp[1], 0, lp[0], lp[1], rr);
+      var a1 = 0.30 * ST.lamp * breathe;
+      g1.addColorStop(0, 'rgba(255,204,132,' + a1 + ')');
+      g1.addColorStop(0.18, 'rgba(255,178,96,' + (a1 * 0.55) + ')');
+      g1.addColorStop(0.5, 'rgba(226,138,62,' + (a1 * 0.18) + ')');
+      g1.addColorStop(1, 'rgba(180,100,40,0)');
+      ctx.fillStyle = g1;
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+
+      // 灯芯
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      var g2 = ctx.createRadialGradient(lp[0], lp[1], 0, lp[0], lp[1], RAD * 0.22);
+      g2.addColorStop(0, 'rgba(255,246,214,' + (0.85 * ST.lamp) + ')');
+      g2.addColorStop(0.30, 'rgba(255,208,138,' + (0.35 * ST.lamp) + ')');
+      g2.addColorStop(1, 'rgba(255,180,90,0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.ellipse(lp[0], lp[1], RAD * 0.24, RAD * 0.30, 0, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 香炉烟气
+    if (ST.incense && SOFT_WARM) {
+      var ip = ST.incense;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      for (var i = 0; i < 34; i++) {
+        var pr = ((t * 0.13 + i / 26) % 1);
+        var yy = ip[1] - 40 - pr * RAD * 0.82;
+        var amp = 8 + pr * 34;
+        var xx = ip[0] + Math.sin(pr * 5.2 + i * 1.7 + t * 0.55) * amp;
+        var a = Math.pow(1 - pr, 1.9) * 0.20 * ST.lamp;
+        var rad = (3 + pr * 17) * 2;
+        ctx.globalAlpha = a;
+        ctx.drawImage(SOFT_WARM, xx - rad / 2, yy - rad / 2, rad, rad);
+      }
+      ctx.restore();
+    }
+
+    // 铜环上的流光：二十八宿依次呼吸
+    if (SOFT_GOLD) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      var ringOut = RAD + Math.max(19, RAD * 0.086);
+      var rr2 = RAD + (ringOut - RAD) * 0.62;
+      var gsz = RAD * 0.085;
+      for (var k = 0; k < 28; k++) {
+        var glow = 0.10 + 0.18 * Math.max(0, Math.sin(t * 1.1 + k * 0.9));
+        var ang2 = -Math.PI / 2 + k * TAU / 28;
+        var px2 = CX + Math.cos(ang2) * rr2;
+        var py2 = CY + Math.sin(ang2) * rr2 * 1.015;
+        ctx.globalAlpha = glow * ST.lamp;
+        ctx.drawImage(SOFT_GOLD, px2 - gsz / 2, py2 - gsz / 2, gsz, gsz);
+      }
+      ctx.restore();
+    }
+  }
+
+  // ---------- 主循环 ----------
+  var last = 0, meteorTimer = 3.5;
+
+  function frame(ts) {
+    var dt = last ? Math.min((ts - last) / 1000, 0.05) : 0.016;
+    last = ts;
+    var t = (ts - ST.t0) / 1000;
+
+    // 缓动
+    ST.yaw += (ST.tYaw - ST.yaw) * 0.075;
+    ST.pitch += (ST.tPitch - ST.pitch) * 0.075;
+    ST.fov += (ST.tFov - ST.fov) * 0.08;
+    ST.lamp += (ST.tLamp - ST.lamp) * 0.05;
+
+    // 飞船缓慢前行：视角极缓漂移
+    if (!dragging) ST.tYaw += dt * 0.006;
+
+    drawSky(t);
+
+    // 窗玻璃的微光 + 微尘
+    drawDust(t);
+    drawGlass();
+    drawMeteors(dt);
+    drawBoat(t);
+
+    // 舱内层
+    if (FRAME && !DBG_OFF.frame) ctx.drawImage(FRAME, 0, 0, W, H);
+    drawShaft();
+
+    if (!DBG_OFF.cabin) drawCabinLight(t);
+
+    // 流星
+    meteorTimer -= dt;
+    if (meteorTimer <= 0) {
+      spawnMeteor();
+      meteorTimer = R(4.5, 11);
+    }
+
+    // 轻微呼吸（船身在动）
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- 交互 ----------
+  var dragging = false, px0 = 0, py0 = 0, yaw0 = 0, pitch0 = 0;
+
+  function onDown(e) {
+    dragging = true;
+    cv.classList.add('drag');
+    var p = e.touches ? e.touches[0] : e;
+    px0 = p.clientX; py0 = p.clientY;
+    yaw0 = ST.tYaw; pitch0 = ST.tPitch;
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    var p = e.touches ? e.touches[0] : e;
+    var dx = (p.clientX - px0) / (W * 0.9);
+    var dy = (p.clientY - py0) / (H * 0.9);
+    ST.tYaw = yaw0 - dx * 1.6;
+    ST.tPitch = clamp(pitch0 - dy * 0.9, -0.62, 0.62);
+    if (e.cancelable) e.preventDefault();
+  }
+  function onUp() {
+    dragging = false;
+    cv.classList.remove('drag');
+  }
+
+  cv.addEventListener('pointerdown', onDown);
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onUp);
+
+  cv.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    ST.tFov = clamp(ST.tFov * (1 - e.deltaY * 0.0012), 0.62, 1.9);
+  }, { passive: false });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      ST.tLamp = ST.tLamp > 0.5 ? 0.06 : 1;
+      var hud = document.getElementById('hud');
+      hud.classList.toggle('on');
+    }
+    if (e.code === 'KeyR') {
+      ST.tYaw = 0; ST.tPitch = 0; ST.tFov = 1;
+    }
+  });
+
+  // 双击回正
+  cv.addEventListener('dblclick', function () {
+    ST.tYaw = 0; ST.tPitch = 0; ST.tFov = 1;
+  });
+
+  // ---------- 启动 ----------
+  function boot() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);   // 先定 DPR，贴图才能 1:1
+    buildSprites();
+    SOFT_WARM = makeSoft('232,224,208');
+    SOFT_GOLD = makeSoft('255,222,150');
+    buildStars();
+    buildNebulae();
+    buildPlanet();
+    PLANET_DIR = norm([0.18, 0.10, 0.98]);
+
+    ships = [
+      { a: R(0, TAU), r: R(0.30, 0.72), sp: 0.09, t: 0, dx: 8, dy: 4 },
+      { a: R(0, TAU), r: R(0.35, 0.80), sp: 0.055, t: R(0, 6), dx: -6, dy: 5 }
+    ];
+
+    layout();
+    ST.t0 = performance.now();
+
+    document.getElementById('hud').classList.add('on');
+    var tip = document.getElementById('tip');
+    setTimeout(function () { tip.classList.add('on'); }, 2600);
+    setTimeout(function () { tip.classList.remove('on'); }, 11000);
+    setTimeout(function () { document.getElementById('sign').classList.add('on'); }, 4000);
+    setTimeout(function () { document.getElementById('veil').classList.add('gone'); }, 120);
+
+    requestAnimationFrame(frame);
+  }
+
+  var rt = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { layout(); }, 180);
+  });
+
+  // 供自动化测试读取
+  window.__LZ = {
+    state: ST,
+    get stars() { return stars.length; },
+    get frameReady() { return !!FRAME; },
+    setLamp: function (v) { ST.tLamp = v; },
+    resetView: function () { ST.tYaw = 0; ST.tPitch = 0; ST.tFov = 1; },
+    geom: function () { return { W: W, H: H, CX: CX, CY: CY, RAD: RAD, portrait: portrait }; },
+    px: function (x, y) {
+      var d = ctx.getImageData(Math.round(x * DPR), Math.round(y * DPR), 1, 1).data;
+      return [d[0], d[1], d[2], d[3]];
+    },
+    get frameAlphaAt() {
+      // 读 FRAME 在圆心处的 alpha
+      if (!FRAME) return -1;
+      var g = FRAME.getContext('2d');
+      var d = g.getImageData(Math.round(CX * DPR), Math.round(CY * DPR), 1, 1).data;
+      return d[3];
+    },
+    off: DBG_OFF
+  };
+
+  boot();
+})();
+</script>
+</body>
+</html>
