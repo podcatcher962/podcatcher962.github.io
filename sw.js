@@ -1,9 +1,10 @@
 /* 兰斋丛编 Service Worker
  * 策略：页面「网络优先」（保证软件列表实时更新），静态资源「缓存优先」（离线可看）。
  * 改版本号即可让旧缓存整体失效。 */
-const CACHE = 'lanzhai-v2';
+const CACHE = 'lanzhai-v3';
 const CORE = ['./', './index.html', './manifest.json',
-              './icon-192.png', './icon-512.png'];
+              './icon-192.png', './icon-512.png',
+              './promo/lanzhai-promo-poster.jpg'];
 
 self.addEventListener('install', function(e){
   e.waitUntil(
@@ -30,6 +31,11 @@ self.addEventListener('fetch', function(e){
   let url;
   try { url = new URL(req.url); } catch(_) { return; }
   if(url.origin !== self.location.origin) return;    // 统计 / GitHub 等第三方不插手
+
+  /* 媒体（宣传片 mp4 等）：不拦截、不缓存
+   * 一是 14MB 不该塞进 CacheStorage；二是 SW 插手会让 Range 请求异常、拖不动进度条 */
+  if(req.destination === 'video' || req.destination === 'audio'
+     || /\.(mp4|webm|m4a|ogg)$/i.test(url.pathname)) return;
 
   const isPage = req.mode === 'navigate'
     || url.pathname.endsWith('/')
