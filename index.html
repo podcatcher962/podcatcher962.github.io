@@ -112,6 +112,38 @@ body{
 /* Toast */
 .toast{position:fixed;top:22px;left:50%;transform:translateX(-50%);background:var(--bdr);color:var(--gold);padding:10px 22px;border:2px solid var(--accent);font-size:13px;font-family:inherit;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;letter-spacing:1px}
 .toast.show{opacity:1}
+/* 宣传片入口（v2.1 新增） */
+.filmcta{display:flex;justify-content:center;margin:18px 0 4px}
+.filmcta button{
+  display:flex;align-items:center;gap:14px;background:var(--card);border:2px solid var(--bdr);
+  color:var(--gold);font-family:inherit;padding:9px 20px 9px 9px;cursor:pointer;text-align:left;
+  box-shadow:var(--shadow);transition:transform 0.15s,box-shadow 0.2s,background 0.15s;
+}
+.filmcta button:hover{transform:translateY(-2px);background:var(--chip)}
+.fthumb{width:36px;height:64px;object-fit:cover;display:block;flex:none;border:1px solid var(--bdr);background:var(--inp)}
+.ftxt{display:flex;flex-direction:column;gap:5px;min-width:0}
+.ftxt b{font-size:14px;letter-spacing:2px;font-weight:normal;color:var(--gold);white-space:nowrap}
+.ftxt i{font-size:10px;letter-spacing:1px;color:var(--dim);font-style:normal;white-space:nowrap}
+.fplay{
+  width:26px;height:26px;border-radius:50%;border:1px solid var(--bdr);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:10px;flex:none;margin-left:2px;
+}
+.filmcta button:hover .fplay{background:var(--bdr);color:var(--bg)}
+/* 全屏播放层 */
+.filmov{position:fixed;inset:0;background:rgba(8,6,4,0.93);z-index:400;display:none;align-items:center;justify-content:center;padding:18px}
+.filmov.show{display:flex}
+.filmov video{
+  max-height:86vh;max-width:min(94vw,470px);width:auto;height:auto;background:#000;
+  border:3px solid var(--bdr);box-shadow:0 24px 64px rgba(0,0,0,0.7);outline:none;
+}
+.filmclose{position:fixed;top:12px;right:16px;background:none;border:none;color:#e8dcc2;font-size:26px;cursor:pointer;font-family:inherit;line-height:1;z-index:401;padding:6px}
+.filmclose:hover{color:var(--gold)}
+.filmside{position:fixed;left:0;right:0;bottom:14px;text-align:center;color:#c9bda6;font-size:11px;letter-spacing:1px;pointer-events:none}
+@media(max-width:640px){
+  .filmov video{max-height:80vh;border-width:2px}
+  .filmside{font-size:10px;bottom:8px}
+}
+html[data-theme="light"] .filmov{background:rgba(18,12,6,0.955)}
 @media(max-width:640px){
   .hdr h1{font-size:24px;letter-spacing:3px}
   .grid{grid-template-columns:1fr}
@@ -180,6 +212,7 @@ body{
   <a id="btnEn" onclick="setL('en')">EN</a>
   <a id="btnTheme" onclick="toggleTheme()" title="主题 / Theme">🌙</a>
   <a id="btnSound" onclick="toggleSound()" title="背景音乐">♪ <span id="tSound">音乐</span></a>
+  <a onclick="openFilm()" title="看宣传片 / Watch the film" style="color:var(--gold)">🎬 <span id="tFilm">宣传片</span></a>
   <a onclick="openModal('about')">ℹ️ <span id="tAbout">关于</span></a>
   <a onclick="openModal('disclaim')">⚠️ <span id="tDisclaim">免责声明</span></a>
   <a onclick="copyLink()" title="复制链接">🔗 <span id="tCopy">复制链接</span></a>
@@ -191,6 +224,14 @@ body{
   <h1>兰斋丛编</h1>
   <div class="sub" id="sub">兰兰软件汇总集</div>
   <div class="slogan" id="slogan">藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新</div>
+</div>
+
+<div class="filmcta">
+  <button onclick="openFilm()" aria-label="看宣传片">
+    <img class="fthumb" src="promo/lanzhai-promo-poster.jpg" alt="" width="36" height="64">
+    <span class="ftxt"><b id="ctaFilm">看宣传片</b><i id="ctaFilmSub">33 秒，看完兰斋丛编</i></span>
+    <span class="fplay">▶</span>
+  </button>
 </div>
 
 <div class="stats">
@@ -235,6 +276,13 @@ body{
 
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal-box" id="modalBox"></div>
+</div>
+<div class="filmov" id="filmOv" onclick="if(event.target===this)closeFilm()">
+  <button class="filmclose" onclick="closeFilm()" title="关闭 / Close" aria-label="关闭">✕</button>
+  <video id="filmV" controls playsinline preload="none"
+         poster="promo/lanzhai-promo-poster.jpg"
+         src="promo/lanzhai-promo-1080x1920.mp4"></video>
+  <div class="filmside" id="filmSide">兰斋丛编 · 33 秒 · ESC 关闭</div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -365,13 +413,15 @@ const I18N = {
       sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制", shareFallback:"当前环境不支持系统分享，已复制链接",
       searchPh:"搜索软件名 / 功能 / 英文名…", sortCat:"分类顺序", sortName:"名称 A-Z", sortVer:"版本（新→旧）",
       allCat:"全部", noRes:"没有匹配的软件", noResTip:"换个关键词试试，或点「全部」清空筛选",
-      foundN:"找到 <b>{n}</b> 个", ofAll:"共 <b>{n}</b> 个软件 · 收藏本页，实时获取更新", results:"筛选结果"},
+      foundN:"找到 <b>{n}</b> 个", ofAll:"共 <b>{n}</b> 个软件 · 收藏本页，实时获取更新", results:"筛选结果",
+      film:"宣传片", ctaFilm:"看宣传片", ctaFilmSub:"33 秒，看完兰斋丛编", filmSide:"兰斋丛编 · 33 秒 · ESC 关闭"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", android:"Android", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
       tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", apkBtn:"🤖 Android", ver:"Ver",
       sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied",
       searchPh:"Search by name / feature / English…", sortCat:"Category", sortName:"Name A-Z", sortVer:"Version (new first)",
       allCat:"All", noRes:"No matching apps", noResTip:"Try another keyword, or click \"All\" to clear the filter",
-      foundN:"<b>{n}</b> found", ofAll:"<b>{n}</b> apps indexed · bookmark this page for live updates", results:"Results"},
+      foundN:"<b>{n}</b> found", ofAll:"<b>{n}</b> apps indexed · bookmark this page for live updates", results:"Results",
+      film:"Film", ctaFilm:"Watch the film", ctaFilmSub:"33 seconds — the whole collection", filmSide:"Lanzhai · 33s · ESC to close"},
 };
 function t(k){return I18N[lang][k];}
 function setL(l){
@@ -386,6 +436,10 @@ function setL(l){
   document.getElementById('tDisclaim').textContent = t('disclaim');
   document.getElementById('tCopy').textContent = t('copy');
   document.getElementById('tShare').textContent = t('share');
+  document.getElementById('tFilm').textContent = t('film');
+  document.getElementById('ctaFilm').textContent = t('ctaFilm');
+  document.getElementById('ctaFilmSub').textContent = t('ctaFilmSub');
+  document.getElementById('filmSide').textContent = t('filmSide');
   document.querySelectorAll('[data-l]').forEach(el=>{ el.textContent = t(el.getAttribute('data-l')); });
   const qEl = document.getElementById('q');
   if(qEl) qEl.placeholder = t('searchPh');
@@ -452,9 +506,42 @@ function toggleSound(){
   bgm.play().catch(()=>{});
   document.getElementById('btnSound').className = 'active';
   document.addEventListener('pointerdown', function(){
+    // 宣传片播放中不要再把背景音乐拉起来，否则两路声音叠在一起
+    var fo = document.getElementById('filmOv');
+    if(fo && fo.classList.contains('show')) return;
     if(soundOn && bgm.paused) bgm.play().catch(()=>{});
   });
 })();
+
+// ============ 宣传片（v2.1 新增） ============
+var filmOpen = false, bgmWasOn = false;
+function openFilm(){
+  var ov = document.getElementById('filmOv'), v = document.getElementById('filmV');
+  if(!ov || !v || filmOpen) return;
+  var bgm = document.getElementById('bgm');
+  bgmWasOn = !!(bgm && soundOn && !bgm.paused);
+  if(bgm) bgm.pause();               // 播放宣传片时压掉背景音乐
+  filmOpen = true;
+  ov.classList.add('show');
+  document.body.style.overflow = 'hidden';
+  try{ v.currentTime = 0; }catch(e){}
+  var pr = v.play();
+  if(pr && pr.catch) pr.catch(function(){});
+}
+function closeFilm(){
+  var ov = document.getElementById('filmOv'), v = document.getElementById('filmV');
+  if(!ov || !v) return;
+  try{ v.pause(); v.currentTime = 0; }catch(e){}
+  ov.classList.remove('show');
+  filmOpen = false;
+  document.body.style.overflow = '';
+  var bgm = document.getElementById('bgm');
+  if(bgmWasOn && soundOn && bgm){ bgm.play().catch(function(){}); }
+  bgmWasOn = false;
+}
+document.addEventListener('keydown', function(e){
+  if((e.key === 'Escape' || e.key === 'Esc') && filmOpen) closeFilm();
+});
 
 // ============ 渲染 ============
 // ============ 搜索 / 筛选 / 排序（v2 新增） ============
