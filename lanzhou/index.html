@@ -402,9 +402,12 @@
       for (var k3 = 0; k3 < n2; k3++) {
         var cx3 = x2 + R(-r * 0.16, r * 0.16), cy3 = y2 + R(-r * 0.06, r * 0.06);
         var rr3 = R(r * 0.045, r * 0.125);
+        // 云要跟着受光走：背光侧的云必须压暗，否则像球漏光
+        var dv = Math.sqrt(Math.pow(cx3 - (cxp - r * 0.40), 2) + Math.pow(cy3 - (cyp - r * 0.30), 2)) / r;
+        var litF = clamp(1.20 - dv * 1.02, 0.10, 1.0);
         var gg3 = g.createRadialGradient(cx3, cy3, 0, cx3, cy3, rr3);
-        gg3.addColorStop(0, 'rgba(238,251,255,' + R(0.16, 0.34).toFixed(2) + ')');
-        gg3.addColorStop(0.6, 'rgba(238,251,255,' + R(0.04, 0.11).toFixed(2) + ')');
+        gg3.addColorStop(0, 'rgba(238,251,255,' + (R(0.20, 0.40) * litF).toFixed(3) + ')');
+        gg3.addColorStop(0.6, 'rgba(238,251,255,' + (R(0.05, 0.13) * litF).toFixed(3) + ')');
         gg3.addColorStop(1, 'rgba(238,251,255,0)');
         g.fillStyle = gg3;
         g.beginPath(); g.arc(cx3, cy3, rr3, 0, TAU); g.fill();
@@ -1269,7 +1272,10 @@
   // ---------- 主循环 ----------
   var last = 0, meteorTimer = 3.5;
 
+  var PAUSED = false;
+
   function frame(ts) {
+    if (PAUSED) { last = ts; requestAnimationFrame(frame); return; }
     var dt = last ? Math.min((ts - last) / 1000, 0.05) : 0.016;
     last = ts;
     var t = (ts - ST.t0) / 1000;
@@ -1413,7 +1419,34 @@
       var d = g.getImageData(Math.round(CX * DPR), Math.round(CY * DPR), 1, 1).data;
       return d[3];
     },
-    off: DBG_OFF
+    off: DBG_OFF,
+
+    /* ---- 离线逐帧渲染：供宣传片导出用，不影响正常运行 ---- */
+    pause: function () { PAUSED = true; },
+    resume: function () { PAUSED = false; last = 0; },
+    renderAt: function (t, dt) {
+      dt = dt || 1 / 30;
+      ST.yaw += (ST.tYaw - ST.yaw) * 0.075;
+      ST.pitch += (ST.tPitch - ST.pitch) * 0.075;
+      ST.fov += (ST.tFov - ST.fov) * 0.08;
+      ST.lamp += (ST.tLamp - ST.lamp) * 0.05;
+      drawSky(t);
+      drawDust(t);
+      drawGlass();
+      drawMeteors(dt);
+      drawBoat(t);
+      if (FRAME && !DBG_OFF.frame) ctx.drawImage(FRAME, 0, 0, W, H);
+      drawShaft();
+      if (!DBG_OFF.cabin) drawCabinLight(t);
+    },
+    grab: function (q) { return cv.toDataURL('image/jpeg', q || 0.94); },
+    hideHud: function () {
+      document.getElementById('hud').style.display = 'none';
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('tip').style.display = 'none';
+      var v = document.querySelector('.vignette');
+      if (v) v.style.display = 'none';
+    }
   };
 
   boot();
