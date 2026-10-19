@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>兰舟 · 月洞窗外 —— 三境之一</title>
-<meta name="description" content="一艘东方的星舰：一节环形的舱，尽头一整面拱形巨窗，窗前一道铜栏。按住往里走，走到窗边，再往前一步就出了舱。窗外两万两千颗星。纯 Canvas 手写，单文件，零依赖。">
+<meta name="description" content="一艘东方的星舰。你从舱内走到舷窗，再走出舱外，看见整艘兰舟悬在无边的星海里。时间可以加速，星可以取名。纯 Canvas 手写，单文件，零依赖。">
 <meta name="theme-color" content="#04060c">
 <meta property="og:type" content="website">
 <meta property="og:title" content="兰舟 · 月洞窗外">
-<meta property="og:description" content="环形的舱，一道一道肋从身边过去；尽头一整面拱窗，窗里什么也没有，只有宇宙。">
+<meta property="og:description" content="一间木舱，一扇舷窗，一整片星海。走到窗前，再往前一步，就出了舱。">
 <meta property="og:image" content="https://podcatcher962.github.io/lanzhou/og.jpg">
 <meta property="og:url" content="https://podcatcher962.github.io/lanzhou/">
 <meta name="twitter:card" content="summary_large_image">
@@ -102,7 +102,7 @@
 <div id="veil">
   <div class="v1">兰　舟</div>
   <div class="v2">三境 · 之一</div>
-  <div class="v3">按住往里走　·　走到拱窗前　·　再往前，出舱</div>
+  <div class="v3">按住往里走　·　走到窗前　·　再往前，出舱</div>
 </div>
 
 <script>
@@ -2257,10 +2257,10 @@
 
     /* 灯罩：上窄下宽的六角灯，正对的两面一亮一暗 */
     var gr = ctx.createLinearGradient(top[0] - w, cy, top[0] + w, cy);
-    gr.addColorStop(0, sh([74, 52, 30], 0.52 + 0.26 * lit));
-    gr.addColorStop(0.30, sh([186, 138, 78], 0.54 + 0.38 * lit));
-    gr.addColorStop(0.62, sh([146, 104, 58], 0.54 + 0.28 * lit));
-    gr.addColorStop(1, sh([64, 44, 26], 0.52 + 0.22 * lit));
+    gr.addColorStop(0, sh([74, 52, 30], 0.10 + 0.68 * lit));
+    gr.addColorStop(0.30, sh([186, 138, 78], 0.11 + 0.81 * lit));
+    gr.addColorStop(0.62, sh([146, 104, 58], 0.11 + 0.71 * lit));
+    gr.addColorStop(1, sh([64, 44, 26], 0.10 + 0.64 * lit));
     ctx.fillStyle = gr;
     ctx.beginPath();
     ctx.moveTo(top[0] - w * 0.60, cy);
