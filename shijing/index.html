@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>市井 · 一条街的一天 —— 三境之二</title>
-<meta name="description" content="拖到街这头是卯时的城门，拖到那头是子时的城墙根。一条九千八百像素长的街，走完就是一天。纯 Canvas 手写，单文件，零依赖。">
+<title>市井 · 一条街，一条巷 —— 三境之二</title>
+<meta name="description" content="一条九千八百像素长的街，从卯时的城门走到子时的城墙根。五百四十个人都点得动，街边还有巷口 —— 点进去是一条真能走的巷子，尽头一道月洞门。纯 Canvas 手写，单文件，零依赖。">
 <meta name="theme-color" content="#1a1712">
 <meta property="og:type" content="website">
-<meta property="og:title" content="市井 · 一条街的一天">
-<meta property="og:description" content="拖到街这头是卯时的城门，拖到那头是子时的城墙根。走完一条街，就是一天。">
+<meta property="og:title" content="市井 · 一条街，一条巷">
+<meta property="og:description" content="走完一条街，就是一天。街边有巷口，点进去，还能往深处走。">
 <meta property="og:image" content="https://podcatcher962.github.io/shijing/og.jpg">
 <meta property="og:url" content="https://podcatcher962.github.io/shijing/">
 <meta name="twitter:card" content="summary_large_image">
@@ -67,6 +67,10 @@
   .tri-link:hover { color:rgba(226,198,146,0.95); }
   @media (max-width:560px) { .tri-link { padding:14px 16px; font-size:10px; letter-spacing:3px; } }
 </style>
+<style id="alley-css">
+  #tip.hide { opacity:0 !important; }
+  body.in-alley #hud { opacity:0.72; }
+</style>
 </head>
 <body>
 <canvas id="cv"></canvas>
@@ -78,7 +82,7 @@
   <div class="t3" id="hAlias">日中</div>
   <div class="t4" id="hSpot">虹桥</div>
 </div>
-<div id="tip">拖动 <b>行街</b> · 点人 <b>听一句</b> · 空格 <b>驻足观时</b> · R <b>回城门</b></div>
+<div id="tip">拖动 <b>行街</b> · 点人 <b>听一句</b> · 见着巷口 <b>点进去</b> · 空格 <b>驻足观时</b></div>
 <div id="veil"><div class="vt">市井</div></div>
 
 <script>
@@ -2129,7 +2133,7 @@ function updateHud(p) {
   var c = czOf(clock);
   var hh = Math.floor(c.hh), mm = Math.floor((c.hh - hh) * 60);
   var sm = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
-  var sp = spotOf();
+  var sp = (window.__ALLEY && window.__ALLEY.active()) ? window.__ALLEY.spotName() : spotOf();
   var key = c.name + c.alias + sp + sm + MODE;
   if (key === _lastHud) return;
   _lastHud = key;
@@ -2139,6 +2143,2049 @@ function updateHud(p) {
   hudEl.style.color = p.ink;
   tipEl.style.color = p.ink;
 }
+
+/* ============================================================
+   巷 —— 走进街的深处
+   街上点巷口进来。第一人称，一条十九米的窄巷。
+   墙是一户一户的：谁家墙高一点，谁家门缩进去一点，
+   檐口高低不齐，一线天光落在青石板上。
+   尽头一道月洞门。
+   ============================================================ */
+var AW = 1.14;          /* 巷半宽 */
+var AHH = 4.15;         /* 墙高（基准） */
+var ALEN = 16.5;        /* 巷长 */
+var AEYE = 1.56;        /* 眼高 */
+var ZMIN = 0.55, ZMAX = 14.0;
+
+var AL = {
+  on: false, mix: 0, tMix: 0,
+  z: 1.0, vz: 0,
+  yaw: 0, tyaw: 0, sway: 0, bob: 0,
+  near: -1,
+  press: false, px: 0, py: 0, pt: 0, moved: 0, holdY: 0, holdAcc: 0, walkIn: 0,
+  say: null, said: {},
+  gate: 0, tGate: 0, seed: false, endAt: 0,
+  snap: null, snapAt: 0, link: null
+};
+
+/* 影格 */
+var VX = 0, VY = 0, FOC = 600;
+var g = null;
+var _fog = [200, 200, 200], _mult = [255, 255, 255];
+
+/* ---------- 小工具 ---------- */
+/* 32 位整数散列：用 Math.imul 才不会在乘法里丢精度 */
+function hsh(n) {
+  n = n | 0;
+  n = Math.imul(n ^ (n >>> 15), 2246822507);
+  n = Math.imul(n ^ (n >>> 13), 3266489909);
+  n = (n ^ (n >>> 16)) >>> 0;
+  return n / 4294967296;
+}
+function h2(i, j) { return hsh(i * 7431 + j * 9151 + 17); }
+function cl(v, a, b) { return v < a ? a : (v > b ? b : v); }
+function lp(a, b, t) { return a + (b - a) * t; }
+
+/* 上色：k 是受光系数，越往上越亮；越远越化进雾里 */
+function shd(hex, z, k) {
+  var A = toRGB(hex);
+  var hz = cl(z / 38, 0.02, 0.44);
+  var r = A[0] * k, gg = A[1] * k, b = A[2] * k;
+  r *= (0.60 + 0.40 * _mult[0] / 255);
+  gg *= (0.60 + 0.40 * _mult[1] / 255);
+  b *= (0.60 + 0.40 * _mult[2] / 255);
+  var cool = (1 - cl(k, 0, 1)) * 16;
+  r -= cool * 0.55; gg -= cool * 0.22; b += cool * 0.60;
+  r += (_fog[0] - r) * hz;
+  gg += (_fog[1] - gg) * hz;
+  b += (_fog[2] - b) * hz;
+  if (r > 255) r = 255; if (gg > 255) gg = 255; if (b > 255) b = 255;
+  return 'rgb(' + (r | 0) + ',' + (gg | 0) + ',' + (b | 0) + ')';
+}
+/* 墙面受光：上亮下暗，下半截压在影子里 */
+function kUp(y, z) {
+  var up = cl((y - 0.05) / 3.90, 0, 1);
+  var k = 0.34 + 0.70 * Math.pow(up, 1.15);
+  return k * (0.97 - cl(z / 130, 0, 0.16));
+}
+/* 光从左边那条缝里下来：左墙受光，右墙落影 */
+function kSide(k, side) { return k * (side < 0 ? 1.10 : 0.80); }
+
+/* ---------- 投影 ---------- */
+var CY = 1, SY = 0;
+function alProj(x, y, z) {
+  var dz = z - AL.z;
+  var X = x * CY - dz * SY;
+  var Z = x * SY + dz * CY;
+  var yv = y - AEYE;
+  if (Z < 0.06) return null;
+  var f = FOC / Z;
+  return [VX + X * f, VY - yv * f, Z];
+}
+function alQuad(a, b, c, d) {
+  if (!a || !b || !c || !d) return false;
+  g.beginPath();
+  g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]);
+  g.lineTo(c[0], c[1]); g.lineTo(d[0], d[1]);
+  g.closePath();
+  return true;
+}
+/* 一个竖直面片：x 固定，y0..y1，z0..z1 */
+function alFace(x, y0, y1, z0, z1, col) {
+  var a = alProj(x, y0, z0), b = alProj(x, y0, z1), c = alProj(x, y1, z1), d = alProj(x, y1, z0);
+  if (!alQuad(a, b, c, d)) return false;
+  g.fillStyle = col;
+  g.fill();
+  return true;
+}
+
+/* ============================================================
+   巷口
+   ============================================================ */
+var ALLEYS = [];
+var TARGETS = [0.185, 0.335, 0.612, 0.808];
+
+function alBuildAlleys() {
+  ALLEYS = [];
+  if (!SHOPS.length) return;
+  var gaps = [];
+  for (var i = 0; i < SHOPS.length - 1; i++) {
+    var a = SHOPS[i], b = SHOPS[i + 1];
+    var x0 = a.wx + a.w;
+    var w = b.wx - x0;
+    if (w < 24 || w > 130) continue;
+    gaps.push({ wx: x0, w: w, a: a, b: b, cx: x0 + w * 0.5 });
+  }
+  for (var k = 0; k < TARGETS.length; k++) {
+    var want = TARGETS[k] * WW;
+    var best = null, bd = 1e9;
+    for (var j = 0; j < gaps.length; j++) {
+      if (Math.abs(gaps[j].cx - BX0) < 420) continue;
+      var used = false;
+      for (var m = 0; m < ALLEYS.length; m++) if (ALLEYS[m] === gaps[j]) used = true;
+      if (used) continue;
+      var dd = Math.abs(gaps[j].cx - want);
+      if (dd < bd) { bd = dd; best = gaps[j]; }
+    }
+    if (best) ALLEYS.push(best);
+  }
+}
+
+function alMouths(pp, t) {
+  g = ctx;
+  if (!ALLEYS.length) alBuildAlleys();
+  var live = 0;
+  for (var i = 0; i < ALLEYS.length; i++) {
+    var m = ALLEYS[i];
+    var sx = m.wx - cam;
+    if (sx < -m.w - 280 || sx > W + 280) { m._hit = null; continue; }
+
+    var top = surfY(m.wx + m.w * 0.5);
+    var hh = Math.min(m.a.wallH, m.b.wallH) * HS * 0.98 + 26 * HS;
+    var w = m.w;
+    var x0 = sx, x1 = sx + w;
+    var yb = top + 2 * HS, yt = top - hh;
+
+    g.save();
+    var grd = g.createLinearGradient(0, yt, 0, yb);
+    grd.addColorStop(0, 'rgba(14,11,8,0.95)');
+    grd.addColorStop(0.60, 'rgba(21,17,12,0.92)');
+    grd.addColorStop(1, 'rgba(38,30,20,0.80)');
+    g.fillStyle = grd;
+    g.beginPath();
+    g.moveTo(x0 + w * 0.05, yb);
+    g.lineTo(x0 + w * 0.11, yt);
+    g.lineTo(x1 - w * 0.11, yt);
+    g.lineTo(x1 - w * 0.05, yb);
+    g.closePath();
+    g.fill();
+
+    /* 巷尾的月洞门透出一点光 */
+    var gx = sx + w * 0.5, gy = top - hh * 0.46;
+    var gg = g.createRadialGradient(gx, gy, 0, gx, gy, hh * 0.48);
+    gg.addColorStop(0, 'rgba(255,216,152,' + (0.34 + pp.lamp * 0.30) + ')');
+    gg.addColorStop(0.34, 'rgba(240,180,110,' + (0.14 + pp.lamp * 0.12) + ')');
+    gg.addColorStop(1, 'rgba(240,180,110,0)');
+    g.fillStyle = gg;
+    g.beginPath(); g.arc(gx, gy, hh * 0.48, 0, TAU); g.fill();
+
+    g.fillStyle = 'rgba(255,228,180,' + (0.22 + pp.lamp * 0.26) + ')';
+    g.beginPath();
+    g.ellipse(gx, gy + hh * 0.09, w * 0.13, hh * 0.15, 0, 0, TAU);
+    g.fill();
+
+    /* 巷口一盏灯 */
+    var lx = sx + w * 0.5, ly = yt + hh * 0.24;
+    g.fillStyle = 'rgba(10,8,5,0.9)';
+    g.fillRect(lx - 0.7, ly - 10 * HS, 1.4, 10 * HS);
+    var lg = g.createRadialGradient(lx, ly, 0, lx, ly, 16 * HS);
+    lg.addColorStop(0, 'rgba(255,206,136,' + (0.50 + pp.lamp * 0.35) + ')');
+    lg.addColorStop(1, 'rgba(255,190,110,0)');
+    g.fillStyle = lg;
+    g.beginPath(); g.arc(lx, ly, 16 * HS, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(214,132,64,0.95)';
+    g.beginPath(); g.ellipse(lx, ly, 2.8 * HS, 3.8 * HS, 0, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(255,226,170,0.75)';
+    g.beginPath(); g.ellipse(lx, ly, 1.3 * HS, 1.9 * HS, 0, 0, TAU); g.fill();
+
+    /* 巷里的光淌到街上 */
+    var spill = g.createRadialGradient(sx + w * 0.5, yb, 0, sx + w * 0.5, yb, w * 2.6);
+    spill.addColorStop(0, 'rgba(255,214,158,' + (0.20 + pp.lamp * 0.16) + ')');
+    spill.addColorStop(0.45, 'rgba(255,206,146,' + (0.07 + pp.lamp * 0.06) + ')');
+    spill.addColorStop(1, 'rgba(255,200,140,0)');
+    g.fillStyle = spill;
+    g.beginPath();
+    g.ellipse(sx + w * 0.5, yb, w * 2.6, w * 0.9, 0, 0, TAU);
+    g.fill();
+
+    /* 门槛石 */
+    g.fillStyle = 'rgba(92,80,62,0.78)';
+    g.fillRect(x0, yb - 3 * HS, w, 3 * HS);
+    g.restore();
+
+    m._hit = { x: x0, y: yt, w: w, h: yb - yt };
+    m._cx = sx + w * 0.5;
+
+    var onS = (sx > 40 && sx + w < W - 40) ? 1 : 0;
+    m._a = lp(m._a === undefined ? 0 : m._a, onS, 0.14);
+    var near = m._a;
+    if (near > 0.02) {
+      var pulse = 0.60 + 0.40 * Math.sin(t * 1.6 + i);
+      g.save();
+      g.globalAlpha = near * pulse * 0.95;
+      g.fillStyle = 'rgba(246,230,196,0.95)';
+      g.font = Math.round(Math.max(10, 11.5 * HS)) + 'px "KaiTi","STKaiti",serif';
+      g.textAlign = 'center';
+      g.fillText('巷', sx + w * 0.5, yt - 11 * HS);
+      g.beginPath();
+      g.moveTo(sx + w * 0.5 - 3.2 * HS, yt - 8 * HS);
+      g.lineTo(sx + w * 0.5 + 3.2 * HS, yt - 8 * HS);
+      g.lineTo(sx + w * 0.5, yt - 4.2 * HS);
+      g.closePath();
+      g.fill();
+      g.restore();
+      live = 1;
+    }
+  }
+  AL.near = live;
+  if (tipEl) tipEl.classList.toggle('hide', !!live);
+}
+
+/* ============================================================
+   进 / 出
+   ============================================================ */
+function alSnap() {
+  try {
+    var c = document.createElement('canvas');
+    c.width = cv.width; c.height = cv.height;
+    c.getContext('2d').drawImage(cv, 0, 0);
+    AL.snap = c; AL.snapAt = performance.now();
+  } catch (e) { AL.snap = null; }
+}
+function alEnter(m) {
+  if (AL.on) return;
+  alSnap();
+  AL.on = true; AL.mix = 0; AL.tMix = 1;
+  AL.z = 0.85; AL.vz = 0;
+  AL.yaw = (h2(Math.round(m.wx), 3) - 0.5) * 0.24; AL.tyaw = AL.yaw;
+  AL.gate = AL.seed ? 1 : 0; AL.tGate = AL.seed ? 1 : 0;
+  AL.endAt = 0; AL.link = null;
+  AL.say = null; AL.press = false; AL.moved = 0; AL.holdAcc = 0; AL.walkIn = 1;
+  if (tipEl) tipEl.classList.add('hide');
+  document.body.classList.add('in-alley');
+}
+function alExit() {
+  if (!AL.on) return;
+  AL.tMix = 0;
+  AL.link = null; AL.say = null; AL.press = false;
+  if (tipEl) tipEl.classList.remove('hide');
+  document.body.classList.remove('in-alley');
+}
+
+/* ============================================================
+   人与话
+   ============================================================ */
+var FOLK = [
+  { id: 'wash', x: -0.62, z: 3.9, h: 0.94, kind: 'sit', ph: 0.4 },
+  { id: 'cat', x: 0.94, z: 6.2, h: 0.34, kind: 'cat', y: 1.68, ph: 0.9 },
+  { id: 'kid', x: 0.44, z: 9.5, h: 0.80, kind: 'crouch', ph: 1.9 },
+  { id: 'old', x: 0.56, z: 12.5, h: 0.98, kind: 'sit', ph: 3.3, stool: 1 }
+];
+var ALINES = {
+  wash: [
+    '水凉。这井水一年四季都凉。',
+    '衣裳是给出门的人洗的。他出去三年了。'
+  ],
+  kid: [
+    '我画的是城墙。你看，这是门。',
+    '娘说巷子尽头不能去。可门一直开着呀。'
+  ],
+  cat: [
+    '（猫看了你一眼，没有走。）',
+    '（它把尾巴绕过来，盖住自己的爪子。）'
+  ],
+  old: [
+    '这条巷子，走到底是一道门。',
+    '我在这里坐了四十年。门一直开着，没人进去。',
+    '进去的人，都带着一粒种子出来。你要是想好了，就去推。'
+  ]
+};
+function alFolkAt(mx, my) {
+  var best = null, bd = 1e9;
+  for (var i = 0; i < FOLK.length; i++) {
+    var f = FOLK[i];
+    if (!f._v) continue;
+    var hw = Math.max(16, f._w * 0.95);
+    if (mx < f._sx - hw || mx > f._sx + hw) continue;
+    if (my < f._sy - f._h * 1.30 || my > f._sy + 10) continue;
+    var d = Math.abs(mx - f._sx) + Math.abs(my - (f._sy - f._h * 0.4));
+    if (d < bd) { bd = d; best = f; }
+  }
+  return best;
+}
+function alTalk(f) {
+  var n = AL.said[f.id] || 0;
+  var pool = ALINES[f.id] || [];
+  AL.say = { f: f, text: pool[Math.min(n, pool.length - 1)], at: performance.now() };
+  AL.said[f.id] = Math.min(n + 1, pool.length);
+}
+
+/* ============================================================
+   墙：一户一户地砌
+   ============================================================ */
+var SEG = 1.45;
+var BRIDGE_Z = 8.35;      /* 过街楼 */
+
+function segIn(i, side) {
+  var s = side > 0 ? 300 : 700;
+  return 0.02 + 0.32 * h2(i, s + 1);
+}
+function segEH(i, side) {
+  var s = side > 0 ? 300 : 700;
+  var lvl = Math.floor(h2(i, s + 2) * 3);      /* 0/1/2 三档 */
+  return AHH + (lvl - 1) * 0.30;
+}
+/* 墙一直砌到檐根，不能留缝 */
+function segTop(i, side) { return segEH(i, side) + 0.32; }
+
+/* 一堵墙，从 z0 到 z1 */
+function alWall(side, i, z0, z1, pp) {
+  var ins = segIn(i, side);
+  var x = side * (AW - ins);
+  var hz = cl(z0 / 40, 0.02, 0.44);
+  var r1 = h2(i, side > 0 ? 11 : 21);
+  var r2 = h2(i, side > 0 ? 12 : 22);
+  var r3 = h2(i, side > 0 ? 13 : 23);
+
+  var EH = segTop(i, side);
+  var plaster = r1 < 0.30 ? '#cfc0a2' : (r1 < 0.58 ? '#c6b696' : (r1 < 0.80 ? '#d2c4a6' : '#bcac8e'));
+
+  /* 墙面：上亮下暗 */
+  var a = alProj(x, 0, z0), b = alProj(x, 0, z1), c = alProj(x, EH, z1), d = alProj(x, EH, z0);
+  if (!alQuad(a, b, c, d)) return;
+  var gr = g.createLinearGradient(0, c[1], 0, a[1]);
+  gr.addColorStop(0, shd(plaster, z0, kSide(kUp(EH * 0.98, z0), side)));
+  gr.addColorStop(0.34, shd(plaster, z0, kSide(kUp(EH * 0.72, z0), side)));
+  gr.addColorStop(0.72, shd(plaster, z0, kSide(kUp(1.5, z0), side)));
+  gr.addColorStop(1, shd(plaster, z0, kSide(kUp(0.05, z0), side)));
+  g.fillStyle = gr;
+  g.fill();
+
+  /* 墙面斑驳：几团深浅不一的旧灰 */
+  for (var mi = 0; mi < 3; mi++) {
+    var mz = z0 + (z1 - z0) * h2(i * 3 + mi, 61);
+    var my = 0.8 + 2.4 * h2(i * 3 + mi, 62);
+    var mp = alProj(x, my, mz);
+    if (!mp) continue;
+    var msc = FOC / (mz - AL.z);
+    var mr = (0.35 + 0.5 * h2(i * 3 + mi, 63)) * msc;
+    var mg = g.createRadialGradient(mp[0], mp[1], 0, mp[0], mp[1], mr);
+    var dark = h2(i * 3 + mi, 64);
+    mg.addColorStop(0, dark < 0.5 ? 'rgba(96,80,58,0.10)' : 'rgba(246,236,214,0.10)');
+    mg.addColorStop(1, 'rgba(120,100,70,0)');
+    g.fillStyle = mg;
+    g.beginPath(); g.ellipse(mp[0], mp[1], mr, mr * 0.8, 0, 0, TAU); g.fill();
+  }
+
+  /* 墙根砖裙 */
+  alFace(x, 0, 0.58, z0, z1, shd('#8d8474', z0, kSide(kUp(0.45, z0), side)));
+  g.save();
+  var b1 = alProj(x, 0, z0), b2 = alProj(x, 0, z1), b3 = alProj(x, 0.58, z1), b4 = alProj(x, 0.58, z0);
+  if (alQuad(b1, b2, b3, b4)) {
+    g.clip();
+    g.strokeStyle = 'rgba(44,36,26,0.18)';
+    g.lineWidth = 0.9;
+    for (var r = 1; r < 4; r++) {
+      var yy = 0.58 * r / 3;
+      var p1 = alProj(x, yy, z0), p2 = alProj(x, yy, z1);
+      if (p1 && p2) { g.beginPath(); g.moveTo(p1[0], p1[1]); g.lineTo(p2[0], p2[1]); g.stroke(); }
+    }
+    g.restore();
+  } else { g.restore(); }
+
+  /* 水渍 / 霉 */
+  if (r3 > 0.5) {
+    g.save();
+    var s1 = alProj(x, segEH(i, side) * 0.92, z0 + (z1 - z0) * 0.16);
+    var s2 = alProj(x, segEH(i, side) * 0.92, z1 - (z1 - z0) * 0.16);
+    var s3 = alProj(x, 0.5, z1 - (z1 - z0) * 0.16);
+    var s4 = alProj(x, 0.5, z0 + (z1 - z0) * 0.16);
+    if (alQuad(s1, s2, s3, s4)) {
+      g.fillStyle = 'rgba(74,66,48,' + (0.04 + 0.06 * r3) + ')';
+      g.fill();
+    }
+    g.restore();
+  }
+
+  /* 门 / 窗 / 挂件 / 光墙 */
+  if (r2 < 0.21) {
+    alDoor(side, i, z0, z1, x, pp, r1);
+  } else if (r2 < 0.35) {
+    alWin(side, i, z0, z1, x, pp, r1);
+  } else if (r2 < 0.45) {
+    alHang(side, i, z0, z1, x, pp, r1);
+  } else {
+    alCracks(side, i, z0, z1, x, pp, r1);
+  }
+
+  /* 有的门口靠墙搭个偏厦 */
+  if (r3 > 0.74 && r3 < 0.88 && z1 - z0 > 0.7) alShed(side, i, z0, z1, x, pp);
+
+  /* 墙根一层尘土，把墙和地咬住 */
+  var t1 = alProj(x, 0, z0), t2 = alProj(x, 0, z1), t3 = alProj(x, 0.30, z1), t4 = alProj(x, 0.30, z0);
+  if (alQuad(t1, t2, t3, t4)) {
+    g.fillStyle = 'rgba(36,26,16,0.20)';
+    g.fill();
+  }
+}
+
+/* 门：石门框 + 门槛 + 门墩 + 残红 */
+function alDoor(side, i, z0, z1, x, pp, r1) {
+  var w = z1 - z0;
+  var za = z0 + w * 0.26, zb = z1 - w * 0.26;
+  var top = 2.02;
+  var hz = cl(z0 / 40, 0.02, 0.44);
+
+  /* 门洞（黑） */
+  alFace(x, 0.03, top, za, zb, shd('#241a10', z0, 0.55));
+
+  /* 两扇门 */
+  var mid = (za + zb) * 0.5;
+  var lf = r1 < 0.5;
+  alFace(x, 0.03, top - 0.04, za, mid, shd(lf ? '#6d5436' : '#5e472c', z0, kUp(1.3, z0)));
+  alFace(x, 0.03, top - 0.04, mid, zb, shd(lf ? '#634b30' : '#66502f', z0, kUp(1.3, z0)));
+
+  /* 板缝 */
+  g.strokeStyle = 'rgba(26,18,10,0.34)';
+  g.lineWidth = 0.9;
+  for (var k = 1; k < 3; k++) {
+    var zz = lp(za, mid, k / 3);
+    var q1 = alProj(x, 0.1, zz), q2 = alProj(x, top - 0.1, zz);
+    if (q1 && q2) { g.beginPath(); g.moveTo(q1[0], q1[1]); g.lineTo(q2[0], q2[1]); g.stroke(); }
+    var zz2 = lp(mid, zb, k / 3);
+    var p1 = alProj(x, 0.1, zz2), p2 = alProj(x, top - 0.1, zz2);
+    if (p1 && p2) { g.beginPath(); g.moveTo(p1[0], p1[1]); g.lineTo(p2[0], p2[1]); g.stroke(); }
+  }
+  /* 门缝一线亮 */
+  var a1 = alProj(x, 0.05, mid), a2 = alProj(x, top - 0.06, mid);
+  if (a1 && a2) {
+    g.strokeStyle = 'rgba(255,206,140,' + (0.10 + pp.lamp * 0.45) + ')';
+    g.lineWidth = Math.max(0.6, 60 / (z0 + 1) * 0.03);
+    g.beginPath(); g.moveTo(a1[0], a1[1]); g.lineTo(a2[0], a2[1]); g.stroke();
+  }
+  /* 门环 */
+  var hr = alProj(x, 1.06, lp(za, mid, 0.86));
+  if (hr) {
+    g.strokeStyle = 'rgba(176,142,84,0.55)';
+    g.lineWidth = Math.max(0.8, 1.2);
+    g.beginPath(); g.arc(hr[0], hr[1], Math.max(1.2, 90 / (z0 + 1) * 0.10), 0, TAU); g.stroke();
+  }
+
+  /* 石门框 */
+  alFace(x, 0, top + 0.26, za - 0.055, za, shd('#b0a184', z0, kUp(1.6, z0)));
+  alFace(x, 0, top + 0.26, zb, zb + 0.055, shd('#b0a184', z0, kUp(1.6, z0)));
+  alFace(x, top, top + 0.26, za - 0.055, zb + 0.055, shd('#c0b195', z0, kUp(2.4, z0)));
+
+  /* 门槛 */
+  alFace(x, 0, 0.14, za - 0.06, zb + 0.06, shd('#8d8069', z0, kUp(0.5, z0)));
+  /* 门墩 */
+  var dz1 = alProj(x, 0, za - 0.16), dz2 = alProj(x, 0.42, za - 0.16);
+  if (dz1 && dz2) {
+    var dw = Math.max(2, 220 / (z0 + 1) * 0.12);
+    g.fillStyle = shd('#9a8d74', z0, kUp(0.6, z0));
+    g.beginPath();
+    g.ellipse((dz1[0] + dz2[0]) / 2, dz1[1], dw, dw * 0.9, 0, 0, TAU);
+    g.fill();
+  }
+
+  /* 门边褪色的红纸（对联） */
+  if (h2(i, 31) < 0.55 && z0 < 13) {
+    alFace(x, 0.94, 1.98, za - 0.15, za - 0.055, shd('#8f4433', z0, kUp(1.4, z0)));
+    alFace(x, 0.94, 1.98, zb + 0.055, zb + 0.15, shd('#87402f', z0, kUp(1.4, z0) * 0.96));
+  }
+  /* 门上一块旧匾 */
+  if (h2(i, 41) < 0.34 && z0 < 11) {
+    alFace(x, top + 0.32, top + 0.66, za - 0.02, zb + 0.02, shd('#6a5638', z0, kUp(2.6, z0)));
+  }
+}
+
+/* 窗：木格 + 里面一点亮 */
+function alWin(side, i, z0, z1, x, pp, r1) {
+  var w = z1 - z0;
+  var za = z0 + w * 0.30, zb = z1 - w * 0.30;
+  var y0 = 2.10, y1 = 3.06;
+  var glowIn = pp.lamp > 0.2 || r1 < 0.55;
+  alFace(x, y0, y1, za, zb, glowIn
+    ? 'rgba(255,208,142,' + (0.24 + pp.lamp * 0.55) + ')'
+    : shd('#332a1e', z0, 0.6));
+
+  /* 窗棂 */
+  g.strokeStyle = shd('#4a3826', z0, kUp(2.5, z0));
+  g.lineWidth = Math.max(0.8, 1.5);
+  for (var m = 1; m < 4; m++) {
+    var v1 = alProj(x, y0, lp(za, zb, m / 4)), v2 = alProj(x, y1, lp(za, zb, m / 4));
+    if (v1 && v2) { g.beginPath(); g.moveTo(v1[0], v1[1]); g.lineTo(v2[0], v2[1]); g.stroke(); }
+    var h1 = alProj(x, lp(y0, y1, m / 4), za), h2b = alProj(x, lp(y0, y1, m / 4), zb);
+    if (h1 && h2b) { g.beginPath(); g.moveTo(h1[0], h1[1]); g.lineTo(h2b[0], h2b[1]); g.stroke(); }
+  }
+  /* 窗框 */
+  alFace(x, y0 - 0.07, y0, za - 0.04, zb + 0.04, shd('#9e8f74', z0, kUp(2.1, z0)));
+  alFace(x, y1, y1 + 0.07, za - 0.04, zb + 0.04, shd('#9e8f74', z0, kUp(3.0, z0)));
+  alFace(x, y0, y1, za - 0.04, za, shd('#9e8f74', z0, kUp(2.5, z0)));
+  alFace(x, y0, y1, zb, zb + 0.04, shd('#9e8f74', z0, kUp(2.5, z0)));
+
+  /* 夜里窗下的光 */
+  if (pp.lamp > 0.15) {
+    var cp = alProj(x, y0, (za + zb) / 2);
+    if (cp) {
+      var rr = Math.max(8, 300 / (z0 + 1) * 0.7);
+      var gr = g.createRadialGradient(cp[0], cp[1], 0, cp[0], cp[1], rr);
+      gr.addColorStop(0, 'rgba(255,206,140,' + (0.16 * pp.lamp) + ')');
+      gr.addColorStop(1, 'rgba(255,196,120,0)');
+      g.fillStyle = gr;
+      g.beginPath(); g.arc(cp[0], cp[1], rr, 0, TAU); g.fill();
+    }
+  }
+}
+
+/* 墙上挂点东西：簸箕、蒜辫、竹竿 */
+function alHang(side, i, z0, z1, x, pp, r1) {
+  var w = z1 - z0;
+  var zc = (z0 + z1) * 0.5;
+  var cp = alProj(x, 2.34, zc);
+  if (!cp) return;
+  var sc = FOC / (zc - AL.z);
+  var hz = cl(z0 / 40, 0.02, 0.44);
+  if (r1 < 0.5) {
+    /* 簸箕 */
+    g.fillStyle = shd('#a89464', z0, kUp(2.4, z0));
+    g.beginPath();
+    g.ellipse(cp[0], cp[1], 0.26 * sc, 0.20 * sc, 0, 0, TAU);
+    g.fill();
+    g.strokeStyle = shd('#7a6947', z0, kUp(2.4, z0));
+    g.lineWidth = Math.max(0.7, 0.012 * sc);
+    g.beginPath();
+    g.ellipse(cp[0], cp[1], 0.26 * sc, 0.20 * sc, 0, Math.PI * 0.15, Math.PI * 0.85);
+    g.stroke();
+  } else {
+    /* 一挂蒜 */
+    g.strokeStyle = shd('#8a7a5a', z0, kUp(2.4, z0));
+    g.lineWidth = Math.max(0.6, 0.008 * sc);
+    g.beginPath(); g.moveTo(cp[0], cp[1] - 0.20 * sc); g.lineTo(cp[0], cp[1] + 0.14 * sc); g.stroke();
+    g.fillStyle = shd('#cfc4a4', z0, kUp(2.3, z0));
+    for (var k = 0; k < 5; k++) {
+      var yy = cp[1] - 0.14 * sc + k * 0.072 * sc;
+      g.beginPath();
+      g.ellipse(cp[0] + (k % 2 ? 0.028 : -0.028) * sc, yy, 0.032 * sc, 0.040 * sc, 0, 0, TAU);
+      g.fill();
+    }
+  }
+}
+
+/* 光墙：几道裂缝、一块剥落的灰、墙根一块拴马石 */
+function alCracks(side, i, z0, z1, x, pp, r1) {
+  var w = z1 - z0;
+  /* 裂缝 */
+  var nc = 1 + Math.floor(h2(i, 81) * 3);
+  g.strokeStyle = 'rgba(64,52,36,' + (0.10 + 0.08 * h2(i, 82)) + ')';
+  g.lineWidth = 0.9;
+  for (var k = 0; k < nc; k++) {
+    var zz = z0 + w * (0.15 + 0.7 * h2(i * 7 + k, 83));
+    var yTop = 2.4 + 1.5 * h2(i * 7 + k, 84);
+    var yBot = 0.35 + 0.9 * h2(i * 7 + k, 85);
+    var p1 = alProj(x, yTop, zz);
+    var p2 = alProj(x, (yTop + yBot) / 2, zz + w * 0.10 * (h2(i * 7 + k, 86) - 0.5));
+    var p3 = alProj(x, yBot, zz + w * 0.16 * (h2(i * 7 + k, 87) - 0.5));
+    if (p1 && p2 && p3) {
+      g.beginPath();
+      g.moveTo(p1[0], p1[1]);
+      g.lineTo(p2[0], p2[1]);
+      g.lineTo(p3[0], p3[1]);
+      g.stroke();
+    }
+  }
+  /* 墙根的拴马石 */
+  if (r1 < 0.45 && z0 < 12) {
+    var b1 = alProj(x + side * 0.18, 0, z0 + w * 0.5);
+    if (b1) {
+      var sc = FOC / (z0 + w * 0.5 - AL.z);
+      g.fillStyle = shd('#8a7f68', z0, kUp(0.4, z0));
+      g.fillRect(b1[0] - 0.09 * sc, b1[1] - 0.34 * sc, 0.18 * sc, 0.34 * sc);
+      g.fillStyle = shd('#a09579', z0, kUp(0.6, z0));
+      g.fillRect(b1[0] - 0.11 * sc, b1[1] - 0.40 * sc, 0.22 * sc, 0.07 * sc);
+    }
+  }
+}
+
+/* 两户之间的台阶：墙缩进去 / 墙高出一截，都要有一块侧面兜住 */
+function alReturn(side, i, z, pp) {
+  if (z < AL.z + 0.45) return;
+  var xa = side * (AW - segIn(i, side));
+  var xb = side * (AW - segIn(i - 1, side));
+  var ta = segTop(i, side), tb = segTop(i - 1, side);
+  if (Math.abs(xa - xb) < 0.004 && Math.abs(ta - tb) < 0.02) return;
+  var yTop = Math.max(ta, tb);
+  var p1 = alProj(xa, 0, z), p2 = alProj(xb, 0, z);
+  var p3 = alProj(xb, yTop, z), p4 = alProj(xa, yTop, z);
+  if (!alQuad(p1, p2, p3, p4)) return;
+  g.fillStyle = shd('#9a8a6b', z, kUp(1.3, z) * 0.80);
+  g.fill();
+  g.strokeStyle = 'rgba(30,22,14,0.20)';
+  g.lineWidth = 1;
+  g.stroke();
+}
+
+/* 檐：往外探、往外垂，檐底压着椽子 */
+function alEaves(pp) {
+  var n = Math.ceil(ALEN / SEG);
+  for (var i = n - 1; i >= 0; i--) {
+    var z0 = i * SEG, z1 = Math.min(ALEN, z0 + SEG);
+    if (z1 < AL.z + 0.40) continue;
+    var za = Math.max(z0, AL.z + 0.40), zb = z1;
+    for (var s = -1; s <= 1; s += 2) {
+      var ins = segIn(i, s), eh = segEH(i, s);
+      var xw = s * (AW - ins);            /* 贴墙，高 */
+      var xe = s * (AW - ins - 0.26);     /* 探出来，低 */
+      var yW = eh + 0.32, yE = eh;   /* segTop = eh+0.32 */
+
+      /* 檐底（背着光的斜面） */
+      var a = alProj(xw, yW, za), b = alProj(xw, yW, zb);
+      var c = alProj(xe, yE, zb), d = alProj(xe, yE, za);
+      if (alQuad(a, b, c, d)) {
+        g.fillStyle = shd('#2e2921', z0, 0.88);
+        g.fill();
+      }
+
+      /* 椽子：从檐口往墙里排 */
+      if (zb - za > 0.08) {
+        var rn = Math.max(1, Math.round((zb - za) / 0.34));
+        g.strokeStyle = shd('#4a4132', z0, 0.96);
+        g.lineWidth = Math.max(0.7, 26 / (z0 - AL.z + 1.4) * 0.10);
+        for (var k = 0; k <= rn; k++) {
+          var zz = lp(za, zb, k / rn);
+          var q1 = alProj(xe, yE, zz), q2 = alProj(xw, yW - 0.04, zz);
+          if (q1 && q2) { g.beginPath(); g.moveTo(q1[0], q1[1]); g.lineTo(q2[0], q2[1]); g.stroke(); }
+        }
+      }
+
+      /* 檐口：一道厚边 + 瓦当 */
+      var e1 = alProj(xe, yE - 0.10, za), e2 = alProj(xe, yE - 0.10, zb);
+      var e3 = alProj(xe, yE + 0.04, zb), e4 = alProj(xe, yE + 0.04, za);
+      if (alQuad(e1, e2, e3, e4)) {
+        g.fillStyle = shd('#5c5344', z0, 1.04);
+        g.fill();
+      }
+      /* 瓦当：檐口一排小圆 */
+      if (z0 < 12 && zb - za > 0.05) {
+        var cnt = Math.max(2, Math.round((zb - za) / 0.26));
+        for (var k2 = 0; k2 < cnt; k2++) {
+          var zz2 = lp(za, zb, (k2 + 0.5) / cnt);
+          var w = alProj(xe, yE - 0.02, zz2);
+          if (w) {
+            var rr = Math.max(0.9, 70 / (zz2 - AL.z + 1) * 0.075);
+            g.fillStyle = shd('#413a2e', z0, 1.02);
+            g.beginPath(); g.arc(w[0], w[1], rr, 0, TAU); g.fill();
+            g.fillStyle = 'rgba(236,222,190,0.16)';
+            g.beginPath(); g.arc(w[0] - rr * 0.2, w[1] - rr * 0.2, rr * 0.42, 0, TAU); g.fill();
+          }
+        }
+      }
+      /* 檐口一线亮，把顶勾出来 */
+      var l1 = alProj(xe, yE + 0.055, za), l2 = alProj(xe, yE + 0.055, zb);
+      if (l1 && l2) {
+        g.strokeStyle = 'rgba(246,236,212,' + (0.16 + 0.12 * (1 - pp.lamp)) + ')';
+        g.lineWidth = Math.max(0.9, 20 / (z0 - AL.z + 1.4) * 0.12);
+        g.beginPath(); g.moveTo(l1[0], l1[1]); g.lineTo(l2[0], l2[1]); g.stroke();
+      }
+    }
+  }
+}
+
+/* ---------- 过街楼 ---------- */
+function alBridge(pp, t) {
+  if (BRIDGE_Z < AL.z + 1.2) return;
+  var dz = BRIDGE_Z - AL.z;
+  var hz = cl(dz / 40, 0.02, 0.36);
+  var y0 = 2.86, y1 = 3.92;
+
+  /* 楼身：板壁 */
+  var a = alProj(-AW, y0, BRIDGE_Z), b = alProj(AW, y0, BRIDGE_Z);
+  var c = alProj(AW, y1, BRIDGE_Z), d = alProj(-AW, y1, BRIDGE_Z);
+  if (alQuad(a, b, c, d)) {
+    var bg = g.createLinearGradient(0, d[1], 0, a[1]);
+    bg.addColorStop(0, shd('#5a4a33', BRIDGE_Z, 0.98));
+    bg.addColorStop(1, shd('#3b3022', BRIDGE_Z, 0.72));
+    g.fillStyle = bg;
+    g.fill();
+    /* 板缝 */
+    g.strokeStyle = 'rgba(20,14,8,0.34)';
+    g.lineWidth = 0.9;
+    for (var k = -4; k <= 4; k++) {
+      var xx = k * 0.24;
+      var v1 = alProj(xx, y0, BRIDGE_Z), v2 = alProj(xx, y1, BRIDGE_Z);
+      if (v1 && v2) { g.beginPath(); g.moveTo(v1[0], v1[1]); g.lineTo(v2[0], v2[1]); g.stroke(); }
+    }
+  }
+  /* 楼板下沿 + 底下两根梁 */
+  var e1 = alProj(-AW, y0 - 0.09, BRIDGE_Z), e2 = alProj(AW, y0 - 0.09, BRIDGE_Z);
+  if (e1 && e2) {
+    g.strokeStyle = shd('#241c13', BRIDGE_Z, 1.0);
+    g.lineWidth = Math.max(1.6, 190 / dz * 0.10);
+    g.beginPath(); g.moveTo(e1[0], e1[1]); g.lineTo(e2[0], e2[1]); g.stroke();
+    g.lineWidth = Math.max(1, 190 / dz * 0.05);
+    for (var bk = 0; bk < 3; bk++) {
+      var bx = -0.66 + bk * 0.66;
+      var b1 = alProj(bx, y0, BRIDGE_Z), b2 = alProj(bx, y0 - 0.20, BRIDGE_Z);
+      if (b1 && b2) { g.beginPath(); g.moveTo(b1[0], b1[1]); g.lineTo(b2[0], b2[1]); g.stroke(); }
+    }
+  }
+
+  /* 屋顶：前坡压得很扁，只在檐口露出一条瓦 */
+  var f1 = alProj(-AW - 0.30, y1, BRIDGE_Z), f2 = alProj(AW + 0.30, y1, BRIDGE_Z);
+  var f3 = alProj(AW + 0.14, y1 + 0.52, BRIDGE_Z), f4 = alProj(-AW - 0.14, y1 + 0.52, BRIDGE_Z);
+  if (alQuad(f1, f2, f3, f4)) {
+    var rg = g.createLinearGradient(0, f3[1], 0, f1[1]);
+    rg.addColorStop(0, shd('#514a3a', BRIDGE_Z, 1.06));
+    rg.addColorStop(1, shd('#332d24', BRIDGE_Z, 0.94));
+    g.fillStyle = rg;
+    g.fill();
+    /* 瓦垄 */
+    g.strokeStyle = 'rgba(24,20,14,0.30)';
+    g.lineWidth = 0.8;
+    for (var w2 = -7; w2 <= 7; w2++) {
+      var xx2 = w2 * 0.22;
+      var t1 = alProj(xx2, y1, BRIDGE_Z), t2 = alProj(xx2 * 0.86, y1 + 0.52, BRIDGE_Z);
+      if (t1 && t2) { g.beginPath(); g.moveTo(t1[0], t1[1]); g.lineTo(t2[0], t2[1]); g.stroke(); }
+    }
+  }
+  /* 檐口厚边 */
+  if (f1 && f2) {
+    g.fillStyle = shd('#26211a', BRIDGE_Z, 0.92);
+    g.fillRect(Math.min(f1[0], f2[0]), f2[1] - 1, Math.abs(f2[0] - f1[0]), Math.max(2, 200 / dz * 0.045));
+    g.fillStyle = 'rgba(240,230,204,0.10)';
+    g.fillRect(Math.min(f1[0], f2[0]), f2[1] - 2.4, Math.abs(f2[0] - f1[0]), 1.2);
+  }
+
+  /* 楼上那扇亮窗 */
+  var wx0 = -0.20, wx1 = 0.42;
+  var w0 = alProj(wx0, y0 + 0.28, BRIDGE_Z), w1 = alProj(wx1, y0 + 0.28, BRIDGE_Z);
+  var w2 = alProj(wx1, y0 + 0.76, BRIDGE_Z), w3 = alProj(wx0, y0 + 0.76, BRIDGE_Z);
+  if (alQuad(w0, w1, w2, w3)) {
+    var op = 0.30 + pp.lamp * 0.55;
+    g.fillStyle = 'rgba(255,206,140,' + op + ')';
+    g.fill();
+    g.strokeStyle = shd('#2b2216', BRIDGE_Z, 0.9);
+    g.lineWidth = 1;
+    for (var m = 1; m < 3; m++) {
+      var v1 = alProj(lp(wx0, wx1, m / 3), y0 + 0.28, BRIDGE_Z);
+      var v2 = alProj(lp(wx0, wx1, m / 3), y0 + 0.76, BRIDGE_Z);
+      if (v1 && v2) { g.beginPath(); g.moveTo(v1[0], v1[1]); g.lineTo(v2[0], v2[1]); g.stroke(); }
+    }
+    /* 光晕 */
+    var cp = alProj((wx0 + wx1) / 2, y0 + 0.52, BRIDGE_Z);
+    if (cp) {
+      var rr = Math.max(14, 420 / dz * 0.5);
+      var gr = g.createRadialGradient(cp[0], cp[1], 0, cp[0], cp[1], rr);
+      gr.addColorStop(0, 'rgba(255,208,146,' + (0.20 * (0.3 + pp.lamp)) + ')');
+      gr.addColorStop(1, 'rgba(255,200,130,0)');
+      g.fillStyle = gr;
+      g.beginPath(); g.arc(cp[0], cp[1], rr, 0, TAU); g.fill();
+    }
+  }
+
+  /* 两侧柱子 */
+  for (var s = -1; s <= 1; s += 2) {
+    alFace(s * (AW - 0.10), 0, y0, BRIDGE_Z - 0.10, BRIDGE_Z - 0.02, shd('#4a3b29', BRIDGE_Z, 0.78));
+  }
+}
+
+/* ---------- 地：青石板 ---------- */
+function alGround(pp, t, znear) {
+  var far = ALEN;
+  var a = alProj(-AW, 0, znear), b = alProj(AW, 0, znear), c = alProj(AW, 0, far), d = alProj(-AW, 0, far);
+  if (alQuad(a, b, c, d)) {
+    var gr = g.createLinearGradient(0, c ? c[1] : 0, 0, a ? a[1] : H);
+    gr.addColorStop(0, shd('#7b6f59', far, 0.60));
+    gr.addColorStop(0.6, shd('#6e6350', 6, 0.60));
+    gr.addColorStop(1, shd('#5f5644', 1, 0.62));
+    g.fillStyle = gr;
+    g.fill();
+  }
+
+  /* 石板：一行一行，近疏远密 */
+  var rows = 32;
+  for (var i = rows - 1; i >= 0; i--) {
+    var u0 = i / rows, u1 = (i + 1) / rows;
+    var z0 = lp(znear, far, u0), z1 = lp(znear, far, u1);
+    if (z1 - z0 < 0.015) continue;
+    var off = h2(i, 3) * 0.4;
+    var cnt = 4;
+    for (var k = 0; k < cnt; k++) {
+      var xa = -AW + ((k + off) / cnt) * AW * 2;
+      var xb = -AW + ((k + 1 + off) / cnt) * AW * 2;
+      if (xa < -AW) xa = -AW;
+      if (xb > AW) xb = AW;
+      if (xb - xa < 0.04) continue;
+      var a1 = alProj(xa + 0.018, 0, z1), b1 = alProj(xb - 0.018, 0, z1);
+      var c1 = alProj(xb - 0.018, 0, z0), d1 = alProj(xa + 0.018, 0, z0);
+      if (!alQuad(a1, b1, c1, d1)) continue;
+      var tone = h2(i * 5 + k, 17);
+      var cx = (xa + xb) / 2;
+      var lit = 0.50 + 0.34 * (1 - Math.abs(cx) / AW);
+      var base = tone < 0.34 ? '#84795f' : (tone < 0.68 ? '#776d56' : '#8d8168');
+      g.fillStyle = shd(base, z0, lit);
+      g.fill();
+    }
+  }
+
+  /* 天光落在中段地上 */
+  var lpz = 6.4, lx = 0;
+  var gp = alProj(0, 0, lpz);
+  if (gp) {
+    var grr = Math.max(60, 2.0 * FOC / (lpz - AL.z));
+    var lgr = g.createRadialGradient(gp[0], gp[1], 0, gp[0], gp[1], grr);
+    lgr.addColorStop(0, 'rgba(255,240,206,0.20)');
+    lgr.addColorStop(0.5, 'rgba(255,236,198,0.08)');
+    lgr.addColorStop(1, 'rgba(255,230,190,0)');
+    g.fillStyle = lgr;
+    g.beginPath();
+    g.ellipse(gp[0], gp[1], grr, grr * 0.42, 0, 0, TAU);
+    g.fill();
+  }
+
+  /* 中间被踩亮的一道 */
+  var m1 = alProj(-0.22, 0, znear), m2 = alProj(0.22, 0, znear), m3 = alProj(0.22, 0, far), m4 = alProj(-0.22, 0, far);
+  if (alQuad(m1, m2, m3, m4)) {
+    g.fillStyle = 'rgba(238,226,196,0.10)';
+    g.fill();
+  }
+  /* 两边墙根积土 */
+  for (var s = -1; s <= 1; s += 2) {
+    var e1 = alProj(s * AW, 0, znear), e2 = alProj(s * (AW - 0.26), 0, znear);
+    var e3 = alProj(s * (AW - 0.26), 0, far), e4 = alProj(s * AW, 0, far);
+    if (alQuad(e1, e2, e3, e4)) {
+      g.fillStyle = 'rgba(52,40,26,0.16)';
+      g.fill();
+    }
+  }
+}
+
+/* ---------- 晾的布 ---------- */
+var CLOTH = [
+  { z: 5.35, n: 2, col: '#c6bda9' },
+  { z: 11.6, n: 3, col: '#8e97a0' }
+];
+function alLaundry(pp, t) {
+  for (var i = CLOTH.length - 1; i >= 0; i--) {
+    var c = CLOTH[i];
+    var dz = c.z - AL.z;
+    if (dz < 0.9) continue;
+    var a = alProj(-AW + 0.02, 2.52, c.z), b = alProj(AW - 0.02, 2.52, c.z);
+    if (!a || !b) continue;
+    g.strokeStyle = shd('#9a8560', c.z, kUp(2.8, c.z));
+    g.lineWidth = Math.max(1, 90 / dz * 0.075);
+    g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+
+    for (var k = 0; k < c.n; k++) {
+      var u = (k + 0.62) / (c.n + 0.24);
+      var x = lp(-AW + 0.24, AW - 0.24, u);
+      var wspan = 0.26 + 0.09 * h2(i * 9 + k, 5);
+      var hgt = 0.52 + 0.42 * h2(i * 9 + k, 6);
+      var sway = Math.sin(t * 0.8 + k * 1.7 + i) * 0.07;
+      var p1 = alProj(x - wspan / 2, 2.52, c.z), p2 = alProj(x + wspan / 2, 2.52, c.z);
+      var p3 = alProj(x + wspan / 2 + sway, 2.52 - hgt, c.z);
+      var p4 = alProj(x - wspan / 2 + sway, 2.52 - hgt, c.z);
+      if (!alQuad(p1, p2, p3, p4)) continue;
+      var clothCol = k % 3 === 1 ? (i === 0 ? '#a9a08a' : '#77828c') : c.col;
+      if (alQuad(p1, p2, p3, p4)) {
+        var cg = g.createLinearGradient(p1[0], 0, p2[0], 0);
+        cg.addColorStop(0, shd(clothCol, c.z, kUp(2.3, c.z) * 0.86 * (0.47 + 0.53 * (1 - pp.lamp))));
+        cg.addColorStop(0.45, shd(clothCol, c.z, kUp(2.3, c.z) * 1.06 * (0.47 + 0.53 * (1 - pp.lamp))));
+        cg.addColorStop(1, shd(clothCol, c.z, kUp(2.3, c.z) * 0.82 * (0.47 + 0.53 * (1 - pp.lamp))));
+        g.fillStyle = cg;
+        g.fill();
+      }
+      g.strokeStyle = 'rgba(36,28,18,0.16)';
+      g.lineWidth = 0.8;
+      g.beginPath();
+      g.moveTo((p1[0] + p4[0]) / 2, (p1[1] + p4[1]) / 2);
+      g.lineTo((p3[0] + p4[0]) / 2, (p3[1] + p4[1]) / 2);
+      g.stroke();
+    }
+  }
+}
+
+/* ---------- 杂物 ---------- */
+var JPOTS = [{ x: -0.82, z: 2.1, r: 0.29 }, { x: -0.78, z: 7.6, r: 0.25 }, { x: 0.84, z: 13.4, r: 0.27 }];
+function alProps(pp, t) {
+  for (var i = 0; i < JPOTS.length; i++) {
+    var o = JPOTS[i];
+    var dz = o.z - AL.z;
+    if (dz < 0.6) continue;
+    var base = alProj(o.x, 0, o.z), top = alProj(o.x, o.r * 1.9, o.z);
+    if (!base || !top) continue;
+    var rr = o.r * FOC / dz;
+    g.fillStyle = shd('#6a5b45', o.z, kUp(0.4, o.z));
+    g.beginPath(); g.ellipse(base[0], base[1], rr, rr * 0.34, 0, 0, TAU); g.fill();
+    g.fillStyle = shd('#75654d', o.z, kUp(0.7, o.z));
+    g.beginPath();
+    g.moveTo(base[0] - rr, base[1]);
+    g.quadraticCurveTo(base[0] - rr * 1.16, base[1] - (base[1] - top[1]) * 0.55, base[0] - rr * 0.86, top[1]);
+    g.lineTo(base[0] + rr * 0.86, top[1]);
+    g.quadraticCurveTo(base[0] + rr * 1.16, base[1] - (base[1] - top[1]) * 0.55, base[0] + rr, base[1]);
+    g.closePath(); g.fill();
+    g.fillStyle = shd('#241c12', o.z, 1.0);
+    g.beginPath(); g.ellipse(top[0], top[1], rr * 0.80, rr * 0.26, 0, 0, TAU); g.fill();
+  }
+
+  /* 斜靠在墙上的竹竿 */
+  var pz = 5.4;
+  if (pz - AL.z > 0.8) {
+    var b1 = alProj(-AW + 0.30, 0, pz), b2 = alProj(-AW + 0.02, 2.30, pz);
+    if (b1 && b2) {
+      g.strokeStyle = shd('#9c8a5f', pz, kUp(1.2, pz));
+      g.lineWidth = Math.max(1.2, 90 / (pz - AL.z) * 0.05);
+      g.beginPath(); g.moveTo(b1[0], b1[1]); g.lineTo(b2[0], b2[1]); g.stroke();
+      g.lineWidth = Math.max(1, 90 / (pz - AL.z) * 0.035);
+      g.beginPath(); g.moveTo(b1[0] + 5, b1[1]); g.lineTo(b2[0] + 3, b2[1]); g.stroke();
+    }
+  }
+}
+
+
+/* ---------- 偏厦：靠墙搭出来的半间棚子 ---------- */
+function alShed(side, i, z0, z1, x, pp) {
+  var out = 0.56;
+  var xo = x - side * out;
+  var yW = 2.62, yE = 2.22;
+  var a = alProj(x, yW, z0), b = alProj(x, yW, z1);
+  var c = alProj(xo, yE, z1), d = alProj(xo, yE, z0);
+  if (alQuad(a, b, c, d)) {
+    var rg = g.createLinearGradient(0, a[1], 0, d[1]);
+    rg.addColorStop(0, shd('#4a4133', z0, 0.94));
+    rg.addColorStop(1, shd('#2b261f', z0, 0.86));
+    g.fillStyle = rg;
+    g.fill();
+  }
+  /* 檐口 */
+  var e1 = alProj(xo, yE, z0), e2 = alProj(xo, yE, z1);
+  if (e1 && e2) {
+    g.strokeStyle = shd('#6a5f4a', z0, 1.0);
+    g.lineWidth = Math.max(1.2, 80 / (z0 - AL.z + 1.2) * 0.10);
+    g.beginPath(); g.moveTo(e1[0], e1[1]); g.lineTo(e2[0], e2[1]); g.stroke();
+  }
+  /* 两根柱子 */
+  for (var q = 0; q < 2; q++) {
+    var zz = q ? z1 - 0.06 : z0 + 0.06;
+    var p1 = alProj(xo, 0, zz), p2 = alProj(xo, yE, zz);
+    if (p1 && p2) {
+      g.strokeStyle = shd('#5a4a32', zz, kUp(1.0, zz));
+      g.lineWidth = Math.max(1.2, 90 / (zz - AL.z + 1.2) * 0.055);
+      g.beginPath(); g.moveTo(p1[0], p1[1]); g.lineTo(p2[0], p2[1]); g.stroke();
+    }
+  }
+  /* 棚下那一片更黑 */
+  var s1 = alProj(x, 0, z0), s2 = alProj(xo, 0, z0), s3 = alProj(xo, 0, z1), s4 = alProj(x, 0, z1);
+  if (alQuad(s1, s2, s3, s4)) {
+    g.fillStyle = 'rgba(20,14,8,0.22)';
+    g.fill();
+  }
+}
+
+/* ---------- 墙根的一堆杂物 ---------- */
+var CLUTTER = [
+  { s: -1, z: 1.75, k: 'jar' }, { s: -1, z: 2.12, k: 'jar' },
+  { s: 1, z: 1.95, k: 'stool' },
+  { s: 1, z: 3.05, k: 'basket' }, { s: 1, z: 3.34, k: 'basin' },
+  { s: -1, z: 4.35, k: 'wood' },
+  { s: 1, z: 5.55, k: 'table' },
+  { s: -1, z: 6.55, k: 'tile' },
+  { s: 1, z: 7.45, k: 'pot' },
+  { s: -1, z: 8.55, k: 'basket' },
+  { s: 1, z: 9.75, k: 'jar' }, { s: 1, z: 10.05, k: 'jar' },
+  { s: -1, z: 11.35, k: 'stool' },
+  { s: 1, z: 12.75, k: 'wood' },
+  { s: -1, z: 13.75, k: 'pot' },
+  { s: 1, z: 14.55, k: 'basket' }
+];
+
+function alClutter(pp, t) {
+  var arr = [];
+  for (var i = 0; i < CLUTTER.length; i++) {
+    var dz = CLUTTER[i].z - AL.z;
+    if (dz < 0.45) continue;
+    CLUTTER[i]._dz = dz;
+    arr.push(CLUTTER[i]);
+  }
+  arr.sort(function (a, b) { return b._dz - a._dz; });
+  for (var j = 0; j < arr.length; j++) {
+    var o = arr[j], dz2 = o._dz;
+    var x = o.s * (AW - 0.10 - 0.16 * h2(Math.round(o.z * 10), 91));
+    var base = alProj(x, 0, o.z);
+    if (!base) continue;
+    var sc = FOC / dz2;
+    var hz = cl(dz2 / 40, 0.02, 0.38);
+    var k = kUp(0.6, o.z);
+    var dk = 0.30 + hz * 0.3;
+
+    if (o.k === 'jar') {
+      var rr = 0.19 * sc;
+      g.fillStyle = shd('#5b4a34', o.z, k * 0.95);
+      g.beginPath();
+      g.moveTo(base[0] - rr, base[1]);
+      g.quadraticCurveTo(base[0] - rr * 1.22, base[1] - rr * 1.5, base[0] - rr * 0.62, base[1] - rr * 2.35);
+      g.lineTo(base[0] + rr * 0.62, base[1] - rr * 2.35);
+      g.quadraticCurveTo(base[0] + rr * 1.22, base[1] - rr * 1.5, base[0] + rr, base[1]);
+      g.closePath(); g.fill();
+      g.fillStyle = shd('#7d6a4a', o.z, k);
+      g.beginPath(); g.ellipse(base[0], base[1] - rr * 2.35, rr * 0.68, rr * 0.24, 0, 0, TAU); g.fill();
+      g.fillStyle = 'rgba(20,14,8,0.55)';
+      g.beginPath(); g.ellipse(base[0], base[1] - rr * 2.33, rr * 0.52, rr * 0.16, 0, 0, TAU); g.fill();
+    } else if (o.k === 'basket') {
+      var bw = 0.20 * sc, bh = 0.26 * sc;
+      g.fillStyle = shd('#96794d', o.z, k * 0.95);
+      g.beginPath();
+      g.moveTo(base[0] - bw, base[1]);
+      g.lineTo(base[0] - bw * 1.18, base[1] - bh);
+      g.lineTo(base[0] + bw * 1.18, base[1] - bh);
+      g.lineTo(base[0] + bw, base[1]);
+      g.closePath(); g.fill();
+      g.strokeStyle = 'rgba(38,28,16,0.28)';
+      g.lineWidth = 0.8;
+      for (var q = 1; q < 4; q++) {
+        g.beginPath();
+        g.moveTo(base[0] - bw - (bw * 0.18) * q / 4, base[1] - bh * q / 4);
+        g.lineTo(base[0] + bw + (bw * 0.18) * q / 4, base[1] - bh * q / 4);
+        g.stroke();
+      }
+      g.fillStyle = 'rgba(20,14,8,0.45)';
+      g.beginPath(); g.ellipse(base[0], base[1] - bh, bw * 1.14, bw * 0.28, 0, 0, TAU); g.fill();
+    } else if (o.k === 'stool') {
+      var sw = 0.15 * sc, sh = 0.42 * sc;
+      g.strokeStyle = shd('#6b5537', o.z, k);
+      g.lineWidth = Math.max(1, 0.028 * sc);
+      g.beginPath();
+      g.moveTo(base[0] - sw, base[1]); g.lineTo(base[0] - sw * 0.82, base[1] - sh);
+      g.moveTo(base[0] + sw, base[1]); g.lineTo(base[0] + sw * 0.82, base[1] - sh);
+      g.stroke();
+      g.fillStyle = shd('#7a6242', o.z, k);
+      g.fillRect(base[0] - sw * 0.94, base[1] - sh - 0.03 * sc, sw * 1.88, 0.05 * sc);
+    } else if (o.k === 'pot') {
+      var pr2 = 0.13 * sc;
+      g.fillStyle = shd('#8a6a4a', o.z, k);
+      g.beginPath();
+      g.moveTo(base[0] - pr2, base[1]); g.lineTo(base[0] - pr2 * 0.78, base[1] - pr2 * 1.5);
+      g.lineTo(base[0] + pr2 * 0.78, base[1] - pr2 * 1.5); g.lineTo(base[0] + pr2, base[1]);
+      g.closePath(); g.fill();
+      /* 一丛草 */
+      if (o.z < 12) {
+        g.strokeStyle = 'rgba(86,100,58,0.75)';
+        g.lineWidth = Math.max(0.9, 0.012 * sc);
+        for (var c2 = -2; c2 <= 2; c2++) {
+          g.beginPath();
+          g.moveTo(base[0], base[1] - pr2 * 1.5);
+          g.quadraticCurveTo(base[0] + c2 * pr2 * 0.7, base[1] - pr2 * 2.6,
+            base[0] + c2 * pr2 * 1.05, base[1] - pr2 * (2.4 + h2(j + c2 + 9, 5) * 1.1));
+          g.stroke();
+        }
+      }
+    } else if (o.k === 'wood') {
+      /* 一捆柴 */
+      var ww = 0.30 * sc, wh = 0.20 * sc;
+      g.fillStyle = shd('#6a5637', o.z, k * 0.95);
+      for (var q2 = 0; q2 < 5; q2++) {
+        var yy2 = base[1] - wh * (0.2 + q2 * 0.18);
+        g.beginPath();
+        g.ellipse(base[0] + (q2 % 2 ? 0.03 : -0.03) * sc, yy2, ww * 0.92, wh * 0.30, 0, 0, TAU);
+        g.fill();
+      }
+      g.strokeStyle = 'rgba(226,208,170,0.20)';
+      g.lineWidth = 0.8;
+      g.beginPath();
+      g.ellipse(base[0], base[1] - wh * 0.95, ww * 0.9, wh * 0.55, 0, 0, TAU);
+      g.stroke();
+    } else if (o.k === 'tile') {
+      /* 一摞瓦 */
+      var tw = 0.22 * sc, th = 0.055 * sc;
+      g.fillStyle = shd('#4c4538', o.z, k);
+      for (var q3 = 0; q3 < 4; q3++) {
+        g.fillRect(base[0] - tw, base[1] - th * (q3 + 1) - 0.01 * sc, tw * 2, th);
+      }
+      g.strokeStyle = 'rgba(232,220,192,0.16)';
+      g.lineWidth = 0.8;
+      g.beginPath(); g.moveTo(base[0] - tw, base[1] - th * 4); g.lineTo(base[0] + tw, base[1] - th * 4); g.stroke();
+    } else if (o.k === 'table') {
+      var lw = 0.26 * sc, lh = 0.36 * sc;
+      g.fillStyle = shd('#6a5236', o.z, k);
+      g.fillRect(base[0] - lw, base[1] - lh, lw * 2, 0.05 * sc);
+      g.strokeStyle = shd('#5b452c', o.z, k);
+      g.lineWidth = Math.max(1, 0.03 * sc);
+      g.beginPath();
+      g.moveTo(base[0] - lw * 0.85, base[1]); g.lineTo(base[0] - lw * 0.85, base[1] - lh);
+      g.moveTo(base[0] + lw * 0.85, base[1]); g.lineTo(base[0] + lw * 0.85, base[1] - lh);
+      g.stroke();
+      /* 桌上一个碗 */
+      g.fillStyle = shd('#b8ac92', o.z, k * 1.05);
+      g.beginPath();
+      g.ellipse(base[0], base[1] - lh - 0.02 * sc, 0.055 * sc, 0.022 * sc, 0, 0, TAU);
+      g.fill();
+    } else if (o.k === 'basin') {
+      var br = 0.17 * sc;
+      g.fillStyle = shd('#5f4a30', o.z, k * 0.95);
+      g.beginPath();
+      g.ellipse(base[0], base[1] - br * 0.14, br, br * 0.42, 0, 0, TAU);
+      g.fill();
+      g.fillStyle = 'rgba(150,170,175,0.20)';
+      g.beginPath();
+      g.ellipse(base[0], base[1] - br * 0.18, br * 0.78, br * 0.30, 0, 0, TAU);
+      g.fill();
+    }
+  }
+}
+
+/* ---------- 灯 ---------- */
+var ALAMPS = [{ z: 2.55, s: -1 }, { z: 6.6, s: 1 }, { z: 10.9, s: -1 }, { z: 14.4, s: 1 }];
+function alLamps(pp, t) {
+  for (var i = 0; i < ALAMPS.length; i++) {
+    var L = ALAMPS[i];
+    var dz = L.z - AL.z;
+    if (dz < 0.35) continue;
+    var x = L.s * (AW - 0.30);
+    var p = alProj(x, 2.62, L.z);
+    if (!p) continue;
+    var rr = 0.135 * FOC / dz;
+    var warm = 0.55 + pp.lamp * 0.45;
+    var pulse = 0.93 + 0.07 * Math.sin(t * 1.3 + i * 2.1);
+
+    /* 光晕 */
+    var gr = g.createRadialGradient(p[0], p[1], rr * 0.2, p[0], p[1], rr * 9);
+    gr.addColorStop(0, 'rgba(255,198,120,' + (0.26 * warm * pulse) + ')');
+    gr.addColorStop(0.30, 'rgba(250,176,96,' + (0.10 * warm * pulse) + ')');
+    gr.addColorStop(1, 'rgba(250,170,90,0)');
+    g.fillStyle = gr;
+    g.beginPath(); g.arc(p[0], p[1], rr * 9, 0, TAU); g.fill();
+
+    /* 从墙上挑出来的木杆 + 一段绳 */
+    var wIn = alProj(L.s * (AW - 0.01), 3.14, L.z);
+    var wOut = alProj(x, 3.14, L.z);
+    if (wIn && wOut) {
+      g.strokeStyle = shd('#463520', L.z, 0.9);
+      g.lineWidth = Math.max(1, rr * 0.19);
+      g.beginPath(); g.moveTo(wIn[0], wIn[1]); g.lineTo(wOut[0], wOut[1]); g.stroke();
+      g.lineWidth = Math.max(0.7, rr * 0.08);
+      g.beginPath(); g.moveTo(wOut[0], wOut[1]); g.lineTo(p[0], p[1] - rr * 1.16); g.stroke();
+    }
+    /* 灯身 */
+    var body = 0.62 + 0.28 * warm;
+    g.fillStyle = 'rgba(196,84,52,' + body + ')';
+    g.beginPath();
+    g.ellipse(p[0], p[1], rr * 0.86, rr * 1.10, 0, 0, TAU);
+    g.fill();
+    g.fillStyle = 'rgba(255,224,168,' + (0.50 + 0.32 * warm) + ')';
+    g.beginPath();
+    g.ellipse(p[0], p[1], rr * 0.44, rr * 0.66, 0, 0, TAU);
+    g.fill();
+    /* 上下箍 */
+    g.fillStyle = 'rgba(70,48,26,0.85)';
+    g.fillRect(p[0] - rr * 0.5, p[1] - rr * 1.16, rr, rr * 0.22);
+    g.fillRect(p[0] - rr * 0.5, p[1] + rr * 0.94, rr, rr * 0.22);
+    /* 穗子 */
+    if (rr > 5) {
+      g.strokeStyle = 'rgba(170,60,40,0.75)';
+      g.lineWidth = Math.max(0.8, rr * 0.06);
+      for (var k = -1; k <= 1; k++) {
+        g.beginPath();
+        g.moveTo(p[0] + k * rr * 0.16, p[1] + rr * 1.16);
+        g.lineTo(p[0] + k * rr * 0.20, p[1] + rr * 1.72);
+        g.stroke();
+      }
+    }
+  }
+}
+
+/* ---------- 人 ---------- */
+function alFolk(f, pp, t) {
+  var dz = f._dz;
+  var hz = cl(dz / 40, 0.02, 0.40);
+  var baseY = f.y || 0;
+  var foot = alProj(f.x, baseY, f.z);
+  if (!foot) { f._v = 0; return; }
+  var hpx = f.h * FOC / dz;
+  var top = foot[1] - hpx;
+  var wpx = hpx * 0.34;
+  f._v = 1; f._sx = foot[0]; f._sy = foot[1]; f._h = hpx; f._w = wpx;
+
+  var ink = shd('#2a1f14', f.z, 0.34 + hz * 0.2);
+  var rim = 'rgba(255,206,146,' + (0.26 + pp.lamp * 0.40) + ')';
+
+  g.save();
+  if (f.kind === 'cat') {
+    var cw = hpx * 1.05;
+    g.fillStyle = ink;
+    g.beginPath(); g.ellipse(foot[0], foot[1] - cw * 0.30, cw * 0.52, cw * 0.34, 0, 0, TAU); g.fill();
+    g.beginPath(); g.arc(foot[0] + cw * 0.34, foot[1] - cw * 0.62, cw * 0.24, 0, TAU); g.fill();
+    g.beginPath();
+    g.moveTo(foot[0] + cw * 0.20, foot[1] - cw * 0.78);
+    g.lineTo(foot[0] + cw * 0.26, foot[1] - cw * 1.02);
+    g.lineTo(foot[0] + cw * 0.38, foot[1] - cw * 0.80);
+    g.closePath(); g.fill();
+    g.beginPath();
+    g.moveTo(foot[0] + cw * 0.40, foot[1] - cw * 0.80);
+    g.lineTo(foot[0] + cw * 0.50, foot[1] - cw * 1.00);
+    g.lineTo(foot[0] + cw * 0.56, foot[1] - cw * 0.74);
+    g.closePath(); g.fill();
+    g.strokeStyle = ink; g.lineWidth = Math.max(1, cw * 0.10);
+    g.beginPath();
+    g.moveTo(foot[0] - cw * 0.48, foot[1] - cw * 0.26);
+    g.quadraticCurveTo(foot[0] - cw * 1.02, foot[1] - cw * 0.40, foot[0] - cw * 0.88, foot[1] - cw * 0.92);
+    g.stroke();
+    g.fillStyle = 'rgba(245,220,164,0.8)';
+    g.beginPath(); g.arc(foot[0] + cw * 0.40, foot[1] - cw * 0.66, Math.max(0.7, cw * 0.05), 0, TAU); g.fill();
+  } else {
+    var bob = Math.sin(t * 1.1 + f.ph) * hpx * 0.005;
+    var headY = top + bob;
+    var bodyTop = headY + hpx * 0.16;
+    var bodyBot = foot[1];
+    var sw = wpx * 0.64;
+
+    g.fillStyle = ink;
+    g.beginPath();
+    g.moveTo(foot[0] - sw * 0.52, bodyTop + hpx * 0.03);
+    g.quadraticCurveTo(foot[0] - sw * 1.22, bodyBot - hpx * 0.28, foot[0] - sw * 1.10, bodyBot);
+    g.lineTo(foot[0] + sw * 1.10, bodyBot);
+    g.quadraticCurveTo(foot[0] + sw * 1.22, bodyBot - hpx * 0.28, foot[0] + sw * 0.52, bodyTop + hpx * 0.03);
+    g.closePath(); g.fill();
+    g.beginPath();
+    g.ellipse(foot[0] + hpx * 0.012, headY + hpx * 0.082, hpx * 0.080, hpx * 0.096, 0, 0, TAU);
+    g.fill();
+    g.beginPath();   /* 髻 */
+    g.ellipse(foot[0] + hpx * 0.012, headY + hpx * 0.001, hpx * 0.052, hpx * 0.043, 0, 0, TAU);
+    g.fill();
+    /* 肩上一道侧光 */
+    g.strokeStyle = rim;
+    g.lineWidth = Math.max(0.8, hpx * 0.011);
+    g.beginPath();
+    g.moveTo(foot[0] + sw * 0.54, bodyTop + hpx * 0.05);
+    g.quadraticCurveTo(foot[0] + sw * 1.20, bodyBot - hpx * 0.28, foot[0] + sw * 1.08, bodyBot);
+    g.stroke();
+
+    if (f.stool) {
+      g.strokeStyle = 'rgba(52,38,24,0.85)';
+      g.lineWidth = Math.max(1, hpx * 0.013);
+      g.beginPath();
+      g.moveTo(foot[0] - sw * 0.95, bodyBot - hpx * 0.01);
+      g.lineTo(foot[0] + sw * 1.05, bodyBot - hpx * 0.01);
+      g.stroke();
+    }
+    if (f.id === 'wash') {
+      g.fillStyle = 'rgba(66,50,32,0.92)';
+      g.beginPath();
+      g.ellipse(foot[0] - hpx * 0.32, foot[1] - hpx * 0.01, hpx * 0.27, hpx * 0.075, 0, 0, TAU);
+      g.fill();
+      if (Math.sin(t * 2.1) > 0.55) {
+        g.strokeStyle = 'rgba(210,222,222,0.22)';
+        g.lineWidth = 0.9;
+        g.beginPath();
+        g.ellipse(foot[0] - hpx * 0.32, foot[1] - hpx * 0.02, hpx * 0.13, hpx * 0.03, 0, 0, TAU);
+        g.stroke();
+      }
+    }
+    if (f.id === 'kid') {
+      g.strokeStyle = 'rgba(210,198,172,0.16)';
+      g.lineWidth = Math.max(0.8, hpx * 0.012);
+      g.beginPath();
+      g.moveTo(foot[0] - hpx * 0.16, foot[1] + hpx * 0.01);
+      g.lineTo(foot[0] + hpx * 0.09, foot[1] + hpx * 0.01);
+      g.stroke();
+      g.beginPath();
+      g.moveTo(foot[0] + hpx * 0.02, foot[1] + hpx * 0.012);
+      g.lineTo(foot[0] + hpx * 0.02, foot[1] - hpx * 0.04);
+      g.stroke();
+    }
+  }
+  g.restore();
+}
+
+/* ---------- 尽头的月洞门 ---------- */
+/* ---------- 一棵树的剪影（只生成一次） ---------- */
+var _treeCv = null;
+function alTree() {
+  if (_treeCv) return _treeCv;
+  var N = 320;
+  var c = document.createElement('canvas');
+  c.width = N; c.height = N;
+  var q = c.getContext('2d');
+  var rng = 20261019;
+  function R() { rng = (rng * 1103515245 + 12345) & 0x7fffffff; return (rng % 100000) / 100000; }
+
+  function branch(x, y, ang, len, w, depth) {
+    var nx = x + Math.cos(ang) * len;
+    var ny = y + Math.sin(ang) * len;
+    q.strokeStyle = 'rgba(52,40,26,0.92)';
+    q.lineWidth = w;
+    q.lineCap = 'round';
+    q.beginPath();
+    q.moveTo(x, y);
+    q.quadraticCurveTo(x + Math.cos(ang - 0.2) * len * 0.55,
+      y + Math.sin(ang - 0.2) * len * 0.55, nx, ny);
+    q.stroke();
+    if (depth <= 0) {
+      /* 叶簇 */
+      var n = 7 + Math.floor(R() * 6);
+      for (var i = 0; i < n; i++) {
+        var a2 = R() * TAU, r2 = R() * len * 0.85;
+        var ex = nx + Math.cos(a2) * r2, ey = ny + Math.sin(a2) * r2 * 0.8;
+        q.fillStyle = 'rgba(' + (64 + Math.floor(R() * 30)) + ',' +
+          (84 + Math.floor(R() * 34)) + ',' + (46 + Math.floor(R() * 24)) + ',' +
+          (0.42 + R() * 0.28) + ')';
+        q.beginPath();
+        q.ellipse(ex, ey, 4 + R() * 9, 3 + R() * 7, R() * TAU, 0, TAU);
+        q.fill();
+      }
+      return;
+    }
+    var k = 2 + (R() < 0.35 ? 1 : 0);
+    for (var j = 0; j < k; j++) {
+      var na = ang + (R() - 0.5) * 1.25;
+      branch(nx, ny, na, len * (0.60 + R() * 0.20), w * 0.62, depth - 1);
+    }
+  }
+  /* 主干从底部往上 */
+  branch(N * 0.50, N * 1.02, -Math.PI / 2 + 0.10, N * 0.30, 13, 4);
+  _treeCv = c;
+  return c;
+}
+
+function alEndWall(pp, t) {
+  var a = alProj(-AW - 0.4, 0, ALEN), b = alProj(AW + 0.4, 0, ALEN);
+  var c = alProj(AW + 0.4, AHH + 1.0, ALEN), d = alProj(-AW - 0.4, AHH + 1.0, ALEN);
+  if (alQuad(a, b, c, d)) {
+    var gr = g.createLinearGradient(0, c[1], 0, a[1]);
+    gr.addColorStop(0, shd('#a4957a', ALEN, 0.74));
+    gr.addColorStop(0.5, shd('#ab9c80', ALEN, 0.60));
+    gr.addColorStop(1, shd('#786a54', ALEN, 0.46));
+    g.fillStyle = gr;
+    g.fill();
+  }
+  /* 墙上斑驳 */
+  if (a && b && c && d) {
+    g.save();
+    if (alQuad(a, b, c, d)) {
+      g.clip();
+      for (var i = 0; i < 10; i++) {
+        var u = h2(i, 61), v = h2(i, 62);
+        var sx = lp(Math.min(a[0], b[0]), Math.max(a[0], b[0]), u);
+        var sy = lp(c[1], a[1], v);
+        g.fillStyle = 'rgba(76,62,44,' + (0.04 + 0.06 * h2(i, 63)) + ')';
+        g.beginPath();
+        g.ellipse(sx, sy, 14 + 34 * h2(i, 64), 10 + 28 * h2(i, 65), 0, 0, TAU);
+        g.fill();
+      }
+      g.restore();
+    } else { g.restore(); }
+  }
+
+  /* 墙头压一道瓦，墙外还有人家 */
+  var c1 = alProj(-AW - 0.5, AHH + 0.92, ALEN), c2 = alProj(AW + 0.5, AHH + 0.92, ALEN);
+  var c3 = alProj(AW + 0.5, AHH + 1.16, ALEN), c4 = alProj(-AW - 0.5, AHH + 1.16, ALEN);
+  if (alQuad(c1, c2, c3, c4)) {
+    g.fillStyle = shd('#4c4536', ALEN, 1.06);
+    g.fill();
+  }
+  if (c1 && c2) {
+    g.strokeStyle = 'rgba(244,236,214,0.18)';
+    g.lineWidth = 1;
+    g.beginPath(); g.moveTo(c1[0], c1[1]); g.lineTo(c2[0], c2[1]); g.stroke();
+  }
+
+  /* 墙外的树冠与屋脊 */
+  var tp = alProj(-0.62, AHH + 2.55, ALEN);
+  if (tp) {
+    var tr = 0.95 * FOC / (ALEN - AL.z);
+    g.fillStyle = 'rgba(96,104,74,' + (0.36 * (1 - cl(pp.lamp, 0, 1)) + 0.10) + ')';
+    for (var q = 0; q < 7; q++) {
+      var aa = (q / 7) * TAU;
+      g.beginPath();
+      g.ellipse(tp[0] + Math.cos(aa) * tr * 0.55, tp[1] + Math.sin(aa) * tr * 0.30,
+        tr * 0.46, tr * 0.34, 0, 0, TAU);
+      g.fill();
+    }
+    g.strokeStyle = 'rgba(70,54,36,0.42)';
+    g.lineWidth = Math.max(1, tr * 0.05);
+    g.beginPath();
+    g.moveTo(tp[0], tp[1] + tr * 0.32);
+    g.lineTo(tp[0] - tr * 0.08, tp[1] + tr * 0.95);
+    g.stroke();
+  }
+  var rp = alProj(0.95, AHH + 1.60, ALEN);
+  if (rp) {
+    var rw = 0.75 * FOC / (ALEN - AL.z);
+    g.fillStyle = 'rgba(58,54,46,' + (0.30 + 0.16 * (1 - cl(pp.lamp, 0, 1))) + ')';
+    g.beginPath();
+    g.moveTo(rp[0] - rw, rp[1] + rw * 0.34);
+    g.lineTo(rp[0], rp[1] - rw * 0.20);
+    g.lineTo(rp[0] + rw, rp[1] + rw * 0.34);
+    g.closePath();
+    g.fill();
+  }
+
+  var R = 0.86, CT = 1.04;
+  var gc = alProj(0, CT, ALEN);
+  if (!gc) return;
+  var pr = R * FOC / (ALEN - AL.z);
+  var opn = AL.gate;
+  var glow = 0.62 + opn * 0.38;
+
+  /* 门里透出来的光 */
+  var lg = g.createRadialGradient(gc[0], gc[1], pr * 0.04, gc[0], gc[1], pr * 1.02);
+  lg.addColorStop(0, 'rgba(255,248,226,' + (0.96 * glow) + ')');
+  lg.addColorStop(0.40, 'rgba(255,226,170,' + (0.92 * glow) + ')');
+  lg.addColorStop(0.78, 'rgba(230,176,108,' + (0.78 * glow) + ')');
+  lg.addColorStop(1, 'rgba(186,132,76,' + (0.56 * glow) + ')');
+  g.fillStyle = lg;
+  g.beginPath(); g.arc(gc[0], gc[1], pr, 0, TAU); g.fill();
+
+  /* 门里的院子：一段天、一道院墙、一块地、一枝树 */
+  g.save();
+  g.beginPath(); g.arc(gc[0], gc[1], pr * 0.985, 0, TAU); g.clip();
+
+  var top2 = gc[1] - pr, bot2 = gc[1] + pr;
+  var ig = g.createLinearGradient(0, top2, 0, bot2);
+  ig.addColorStop(0, '#fff6dc');
+  ig.addColorStop(0.30, '#f6e2bc');
+  ig.addColorStop(0.60, '#e0bd8c');
+  ig.addColorStop(1, '#b98f5e');
+  g.fillStyle = ig;
+  g.fillRect(gc[0] - pr, top2, pr * 2, pr * 2);
+
+  /* 天上的几重屋脊 */
+  for (var rf = 0; rf < 3; rf++) {
+    var ry = gc[1] - pr * (0.72 - rf * 0.16);
+    var rw2 = pr * (0.55 + rf * 0.30);
+    var rx2 = gc[0] + pr * (rf % 2 ? 0.16 : -0.22);
+    g.fillStyle = 'rgba(150,126,92,' + (0.10 + rf * 0.05) + ')';
+    g.beginPath();
+    g.moveTo(rx2 - rw2, ry);
+    g.quadraticCurveTo(rx2 - rw2 * 0.4, ry - pr * 0.10, rx2, ry - pr * 0.07);
+    g.quadraticCurveTo(rx2 + rw2 * 0.4, ry - pr * 0.10, rx2 + rw2, ry);
+    g.closePath();
+    g.fill();
+  }
+
+  /* 院里的树：先画树，墙再压上去，只露冠 */
+  var wy0 = gc[1] - pr * 0.10, wy1 = gc[1] + pr * 0.50;
+  var TS = alTree();
+  if (TS) {
+    var th = pr * 1.45, tw2 = th * (TS.width / TS.height);
+    var tx0 = gc[0] + pr * 0.26 - tw2 * 0.50;
+    var ty0 = wy0 - th * 0.78;
+    g.globalAlpha = 0.80;
+    g.drawImage(TS, tx0, ty0, tw2, th);
+    g.globalAlpha = 1;
+  }
+
+  /* 院墙 */
+  g.fillStyle = 'rgba(208,178,136,0.94)';
+  g.fillRect(gc[0] - pr, wy0, pr * 2, wy1 - wy0);
+  /* 砖缝 */
+  g.strokeStyle = 'rgba(120,96,64,0.14)';
+  g.lineWidth = Math.max(0.6, pr * 0.009);
+  for (var br2 = 1; br2 < 5; br2++) {
+    var by2 = wy0 + (wy1 - wy0) * (br2 / 5);
+    g.beginPath(); g.moveTo(gc[0] - pr, by2); g.lineTo(gc[0] + pr, by2); g.stroke();
+  }
+  /* 顶上一线亮 */
+  g.fillStyle = 'rgba(255,246,220,0.30)';
+  g.fillRect(gc[0] - pr, wy0, pr * 2, pr * 0.030);
+  /* 墙帽 */
+  g.fillStyle = 'rgba(126,110,84,0.62)';
+  g.fillRect(gc[0] - pr, wy0 - pr * 0.075, pr * 2, pr * 0.075);
+  g.fillStyle = 'rgba(255,244,216,0.35)';
+  g.fillRect(gc[0] - pr, wy0 - pr * 0.075, pr * 2, pr * 0.018);
+  /* 墙影 */
+  var wsh = g.createLinearGradient(0, wy0, 0, wy0 + pr * 0.42);
+  wsh.addColorStop(0, 'rgba(120,96,64,0.18)');
+  wsh.addColorStop(1, 'rgba(120,96,64,0)');
+  g.fillStyle = wsh;
+  g.fillRect(gc[0] - pr, wy0, pr * 2, pr * 0.42);
+
+  /* 地 */
+  g.fillStyle = 'rgba(196,166,120,0.92)';
+  g.fillRect(gc[0] - pr, wy1, pr * 2, bot2 - wy1);
+  var dsh = g.createLinearGradient(0, wy1, 0, bot2);
+  dsh.addColorStop(0, 'rgba(120,96,64,0.22)');
+  dsh.addColorStop(1, 'rgba(120,96,64,0.02)');
+  g.fillStyle = dsh;
+  g.fillRect(gc[0] - pr, wy1, pr * 2, bot2 - wy1);
+  /* 地上的砖缝 */
+  g.strokeStyle = 'rgba(110,86,56,0.16)';
+  g.lineWidth = Math.max(0.7, pr * 0.010);
+  for (var gl2 = 1; gl2 < 4; gl2++) {
+    var gy = wy1 + (bot2 - wy1) * (gl2 / 4);
+    g.beginPath(); g.moveTo(gc[0] - pr, gy); g.lineTo(gc[0] + pr, gy); g.stroke();
+  }
+
+  /* 院里的一盏灯 */
+  var lp2 = gc[0] - pr * 0.54, lp3 = wy0 + pr * 0.16;
+  g.fillStyle = 'rgba(214,126,62,0.85)';
+  g.beginPath(); g.ellipse(lp2, lp3, pr * 0.038, pr * 0.050, 0, 0, TAU); g.fill();
+  g.fillStyle = 'rgba(255,226,166,0.9)';
+  g.beginPath(); g.ellipse(lp2, lp3, pr * 0.020, pr * 0.028, 0, 0, TAU); g.fill();
+  var gr2 = g.createRadialGradient(lp2, lp3, 0, lp2, lp3, pr * 0.34);
+  gr2.addColorStop(0, 'rgba(255,208,140,0.34)');
+  gr2.addColorStop(1, 'rgba(255,200,130,0)');
+  g.fillStyle = gr2;
+  g.beginPath(); g.arc(lp2, lp3, pr * 0.34, 0, TAU); g.fill();
+
+  g.restore();
+
+  /* 石圈 */
+  if (pr > 6) {
+    /* 门外一圈影，把门从墙上"挖"出来 */
+    var shd2 = g.createRadialGradient(gc[0], gc[1], pr * 0.98, gc[0], gc[1], pr * 1.42);
+    shd2.addColorStop(0, 'rgba(40,28,16,0.34)');
+    shd2.addColorStop(0.55, 'rgba(40,28,16,0.12)');
+    shd2.addColorStop(1, 'rgba(40,28,16,0)');
+    g.fillStyle = shd2;
+    g.beginPath(); g.arc(gc[0], gc[1], pr * 1.42, 0, TAU); g.fill();
+
+    /* 一圈石头砌的门套 */
+    var NS = 26;
+    var r0 = pr, r1 = pr * 1.19;
+    for (var q = 0; q < NS; q++) {
+      var a0 = (q / NS) * TAU, a1 = ((q + 1) / NS) * TAU;
+      g.beginPath();
+      g.arc(gc[0], gc[1], r1, a0 + 0.006, a1 - 0.006);
+      g.arc(gc[0], gc[1], r0, a1 - 0.006, a0 + 0.006, true);
+      g.closePath();
+      var tone = h2(q, 41);
+      g.fillStyle = shd(tone < 0.4 ? '#8e7d5f' : (tone < 0.75 ? '#9d8b6b' : '#83725a'),
+        ALEN, 0.86 + tone * 0.24);
+      g.fill();
+    }
+    g.lineWidth = Math.max(1, pr * 0.018);
+    g.strokeStyle = 'rgba(36,26,16,0.30)';
+    g.beginPath(); g.arc(gc[0], gc[1], pr, 0, TAU); g.stroke();
+    g.beginPath(); g.arc(gc[0], gc[1], r1, 0, TAU); g.stroke();
+
+    /* 门额：一块小石匾 */
+    if (pr > 40) {
+      var qy = gc[1] - pr * 1.30;
+      g.fillStyle = shd('#6f6047', ALEN, 0.94);
+      g.fillRect(gc[0] - pr * 0.40, qy - pr * 0.22, pr * 0.80, pr * 0.20);
+      g.fillStyle = 'rgba(232,216,180,0.22)';
+      g.fillRect(gc[0] - pr * 0.40, qy - pr * 0.22, pr * 0.80, pr * 0.032);
+    }
+    g.lineWidth = Math.max(0.8, pr * 0.020);
+    g.strokeStyle = 'rgba(246,230,198,' + (0.22 + opn * 0.28) + ')';
+    g.beginPath(); g.arc(gc[0], gc[1], pr * 0.952, 0, TAU); g.stroke();
+  }
+  /* 门下的一道石阶 */
+  var s1 = alProj(-AW * 0.7, 0, ALEN - 0.5), s2 = alProj(AW * 0.7, 0, ALEN - 0.5);
+  var s3 = alProj(AW * 0.7, 0.16, ALEN - 0.5), s4 = alProj(-AW * 0.7, 0.16, ALEN - 0.5);
+  if (alQuad(s1, s2, s3, s4)) {
+    g.fillStyle = shd('#9e8f74', ALEN - 0.5, 0.80);
+    g.fill();
+  }
+
+  /* 门下地上被照亮的一片 */
+  if (pr > 30) {
+    var sp = alProj(0, 0, ALEN - 1.15);
+    if (sp) {
+      var sr = pr * 1.30;
+      var sg = g.createRadialGradient(sp[0], sp[1], 0, sp[0], sp[1], sr);
+      sg.addColorStop(0, 'rgba(255,230,180,' + (0.26 + opn * 0.22) + ')');
+      sg.addColorStop(0.5, 'rgba(255,220,170,0.10)');
+      sg.addColorStop(1, 'rgba(255,214,160,0)');
+      g.fillStyle = sg;
+      g.beginPath();
+      g.ellipse(sp[0], sp[1], sr, sr * 0.40, 0, 0, TAU);
+      g.fill();
+    }
+  }
+
+  AL.gateSX = gc[0]; AL.gateSY = gc[1]; AL.gateR = pr;
+
+  if (opn > 0.01) {
+    g.save();
+    g.globalCompositeOperation = 'lighter';
+    var og = g.createRadialGradient(gc[0], gc[1], pr * 0.2, gc[0], gc[1], pr * (3.4 + opn * 6));
+    og.addColorStop(0, 'rgba(255,234,186,' + (0.34 * opn) + ')');
+    og.addColorStop(0.5, 'rgba(255,220,160,' + (0.10 * opn) + ')');
+    og.addColorStop(1, 'rgba(255,220,160,0)');
+    g.fillStyle = og;
+    g.fillRect(0, 0, W, H);
+    g.restore();
+  }
+}
+
+/* ---------- 天光 / 浮尘 / 雾 ---------- */
+function alShaft(pp, t) {
+  var day = 1 - cl(pp.lamp, 0, 1);
+  if (day < 0.06) return;
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  var gr = g.createLinearGradient(0, 0, 0, H * 0.95);
+  gr.addColorStop(0, 'rgba(255,242,210,' + (0.075 * day) + ')');
+  gr.addColorStop(0.5, 'rgba(255,234,194,' + (0.030 * day) + ')');
+  gr.addColorStop(1, 'rgba(255,228,182,0)');
+  g.fillStyle = gr;
+  g.beginPath();
+  g.moveTo(W * 0.33, -10);
+  g.lineTo(W * 0.73, -10);
+  g.lineTo(W * 0.90, H);
+  g.lineTo(W * 0.24, H);
+  g.closePath();
+  g.fill();
+  g.restore();
+}
+var MOTES = [];
+function alInitMotes() {
+  MOTES = [];
+  for (var i = 0; i < 30; i++) {
+    MOTES.push({
+      x: (h2(i, 31) - 0.5) * 1.7,
+      y: 0.3 + h2(i, 32) * 3.2,
+      z: 1.0 + h2(i, 33) * 16,
+      ph: h2(i, 34) * TAU,
+      sp: 0.10 + h2(i, 35) * 0.22
+    });
+  }
+}
+/* 一层纸的颗粒，别让墙看起来像塑料 */
+function alGrain() {
+  if (!TEX) return;
+  g.globalCompositeOperation = 'overlay';
+  g.globalAlpha = 0.14;
+  g.drawImage(TEX, 0, 0, W, H);
+  g.globalAlpha = 0.07;
+  g.drawImage(TEX, -W * 0.37, -H * 0.22, W * 1.9, H * 1.9);
+  g.globalAlpha = 1;
+  g.globalCompositeOperation = 'source-over';
+}
+
+function alMotes(pp, t) {
+  if (!MOTES.length) alInitMotes();
+  var day = 1 - cl(pp.lamp * 1.4, 0, 1);
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  for (var i = 0; i < MOTES.length; i++) {
+    var m = MOTES[i];
+    var p = alProj(m.x + Math.sin(t * 0.4 + m.ph) * 0.10, m.y + Math.sin(t * m.sp + m.ph) * 0.20, m.z);
+    if (!p) continue;
+    var a = (0.05 + 0.055 * Math.sin(t * 1.3 + m.ph)) * (0.3 + day * 0.8);
+    g.fillStyle = 'rgba(255,238,196,' + a + ')';
+    g.beginPath(); g.arc(p[0], p[1], Math.max(0.5, 24 / p[2] * 1.1), 0, TAU); g.fill();
+  }
+  g.restore();
+}
+function alHaze(pp) {
+  var gr = g.createRadialGradient(VX, VY, H * 0.08, VX, VY, H * 0.90);
+  gr.addColorStop(0, 'rgba(255,240,210,' + (0.02 + pp.lamp * 0.02) + ')');
+  gr.addColorStop(0.52, 'rgba(255,240,210,0)');
+  gr.addColorStop(1, 'rgba(18,12,6,0.34)');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, W, H);
+}
+
+/* ---------- 说话 ---------- */
+function alSayB(pp, t) {
+  if (!AL.say) return;
+  var age = (performance.now() - AL.say.at) / 1000;
+  if (age > 7.5) { AL.say = null; return; }
+  var a = age < 0.3 ? age / 0.3 : (age > 6.4 ? Math.max(0, (7.5 - age) / 1.1) : 1);
+  var f = AL.say.f;
+  var bx, by;
+  if (f && f._v) { bx = f._sx; by = f._sy - f._h * 1.24 - 14; }
+  else { bx = W * 0.5; by = H * 0.44; }
+  bx = cl(bx, 120, W - 120);
+  by = Math.max(88, by);
+
+  g.save();
+  g.globalAlpha = a;
+  var fs = Math.max(13, Math.min(17, H * 0.021));
+  g.font = fs + 'px "KaiTi","STKaiti",serif';
+  var tw = g.measureText(AL.say.text).width;
+  var pw = tw + 34, phh = fs + 24;
+  var rx = bx - pw / 2, ry = by - phh;
+
+  g.fillStyle = 'rgba(20,15,10,0.90)';
+  g.strokeStyle = 'rgba(206,172,112,' + (0.30 + 0.35 * a) + ')';
+  g.lineWidth = 1;
+  var rr = 7;
+  g.beginPath();
+  g.moveTo(rx + rr, ry);
+  g.lineTo(rx + pw - rr, ry); g.quadraticCurveTo(rx + pw, ry, rx + pw, ry + rr);
+  g.lineTo(rx + pw, ry + phh - rr); g.quadraticCurveTo(rx + pw, ry + phh, rx + pw - rr, ry + phh);
+  g.lineTo(bx + 6, ry + phh);
+  g.lineTo(bx + 1, ry + phh + 7);
+  g.lineTo(bx - 1, ry + phh);
+  g.lineTo(rx + rr, ry + phh); g.quadraticCurveTo(rx, ry + phh, rx, ry + phh - rr);
+  g.lineTo(rx, ry + rr); g.quadraticCurveTo(rx, ry, rx + rr, ry);
+  g.closePath();
+  g.fill(); g.stroke();
+
+  g.fillStyle = 'rgba(242,228,202,0.96)';
+  g.font = fs + 'px "KaiTi","STKaiti",serif';
+  g.textAlign = 'center';
+  g.fillText(AL.say.text, bx, ry + phh - 9);
+  g.restore();
+}
+
+/* ---------- 结尾 ---------- */
+function alEndCard(pp) {
+  if (!AL.seed || !AL.endAt) return;
+  var age = (performance.now() - AL.endAt) / 1000;
+  if (age < 0.4) return;
+  var a = cl((age - 0.4) / 1.2, 0, 1);
+
+  var fs1 = Math.max(15, Math.min(21, H * 0.025));
+  var fs2 = Math.max(10, Math.min(12.5, H * 0.0152));
+  var pw = Math.min(W * 0.9, 560);
+  var phh = fs1 + fs2 * 3 + 68;
+  var px = (W - pw) / 2, py = H - phh - Math.max(26, H * 0.055);
+
+  g.save();
+  g.globalAlpha = a;
+  g.fillStyle = 'rgba(18,13,8,0.82)';
+  g.strokeStyle = 'rgba(196,162,104,0.34)';
+  g.lineWidth = 1;
+  var rr = 10;
+  g.beginPath();
+  g.moveTo(px + rr, py);
+  g.lineTo(px + pw - rr, py); g.quadraticCurveTo(px + pw, py, px + pw, py + rr);
+  g.lineTo(px + pw, py + phh - rr); g.quadraticCurveTo(px + pw, py + phh, px + pw - rr, py + phh);
+  g.lineTo(px + rr, py + phh); g.quadraticCurveTo(px, py + phh, px, py + phh - rr);
+  g.lineTo(px, py + rr); g.quadraticCurveTo(px, py, px + rr, py);
+  g.closePath();
+  g.fill(); g.stroke();
+
+  g.textAlign = 'center';
+  g.fillStyle = 'rgba(246,234,210,0.96)';
+  g.font = fs1 + 'px "KaiTi","STKaiti",serif';
+  g.fillText('你带走了一粒种子。', W / 2, py + fs1 + 20);
+
+  g.fillStyle = 'rgba(198,178,146,0.74)';
+  g.font = fs2 + 'px "KaiTi","STKaiti",serif';
+  g.fillText('它不重，攥在手里也不亮。', W / 2, py + fs1 + fs2 + 42);
+  g.fillText('可从此以后，你走过的地方，总有一小块是暖的。', W / 2, py + fs1 + fs2 * 2 + 50);
+
+  g.fillStyle = 'rgba(206,172,112,' + (0.52 + 0.24 * Math.sin(performance.now() / 700)) + ')';
+  g.font = (fs2 - 0.5) + 'px "KaiTi","STKaiti",serif';
+  var ly = py + phh - 20;
+  var lt = '门后是别处 · 去《心房》看那些种子 →';
+  g.fillText(lt, W / 2, ly);
+  var tw = g.measureText(lt).width;
+  AL.link = { x: W / 2 - tw / 2 - 8, y: ly - fs2 - 2, w: tw + 16, h: fs2 + 10 };
+  g.restore();
+}
+
+function alHud(pp) {
+  var a = AL.mix;
+  if (a < 0.2) return;
+  g.save();
+  g.globalAlpha = cl((a - 0.2) / 0.6, 0, 1) * 0.56;
+  g.textAlign = 'center';
+  g.fillStyle = 'rgba(240,226,200,0.86)';
+  g.font = Math.max(9.5, Math.min(11, H * 0.0134)) + 'px "KaiTi","STKaiti",serif';
+
+  var deep = Math.max(0, Math.round(AL.z - 0.85));
+  var hint;
+  if (AL.seed) hint = '巷底 · 门开着';
+  else if (AL.z > ZMAX - 0.5) hint = '门前 · 轻点那道光';
+  else hint = '巷中 · ' + deep + ' 步　·　按住往上走，往下退';
+  g.fillText(hint, W / 2, H - Math.max(18, H * 0.031));
+
+  g.globalAlpha *= 0.7;
+  g.textAlign = 'left';
+  g.fillText('Esc 回街上', Math.max(16, W * 0.028), H - Math.max(18, H * 0.031));
+  g.restore();
+}
+
+/* ============================================================
+   整幅
+   ============================================================ */
+function alScene(pp, t, dt) {
+  g = ctx;
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  g.globalAlpha = 1;
+  g.globalCompositeOperation = 'source-over';
+
+  VX = W * 0.5 + AL.yaw * W * 0.16;
+  VY = H * 0.515 + AL.bob * H * 0.010;
+  FOC = H * 0.76;
+  CY = Math.cos(AL.yaw * 0.62);
+  SY = Math.sin(AL.yaw * 0.62);
+
+  var FM = toRGB(pp.fog); _fog[0] = FM[0]; _fog[1] = FM[1]; _fog[2] = FM[2];
+  var MM = toRGB(pp.mult); _mult[0] = MM[0]; _mult[1] = MM[1]; _mult[2] = MM[2];
+
+  var znear = AL.z + 0.42;
+
+  /* 天 */
+  var skyG = g.createLinearGradient(0, 0, 0, VY + H * 0.06);
+  skyG.addColorStop(0, mixHex(pp.top, '#ffffff', 0.05));
+  skyG.addColorStop(0.5, pp.top);
+  skyG.addColorStop(1, mixHex(pp.top, pp.bot, 0.62));
+  g.fillStyle = skyG;
+  g.fillRect(0, 0, W, H);
+
+  /* 巷底那一点光，先漫出来 */
+  var fg = g.createRadialGradient(VX, VY * 0.96, 0, VX, VY * 0.96, H * 0.62);
+  fg.addColorStop(0, 'rgba(255,236,196,' + (0.13 + pp.lamp * 0.08) + ')');
+  fg.addColorStop(0.35, 'rgba(252,222,172,' + (0.05 + pp.lamp * 0.04) + ')');
+  fg.addColorStop(1, 'rgba(250,214,160,0)');
+  g.fillStyle = fg;
+  g.fillRect(0, 0, W, H);
+
+  /* 尽头 */
+  alEndWall(pp, t);
+
+  /* 地 */
+  alGround(pp, t, znear);
+
+  /* 两侧墙，由远及近 */
+  var n = Math.ceil(ALEN / SEG);
+  for (var i = n - 1; i >= 0; i--) {
+    var z0 = i * SEG, z1 = Math.min(ALEN, z0 + SEG);
+    var za = Math.max(z0, AL.z + 0.42);
+    if (z1 - za < 0.012) continue;
+    alWall(-1, i, za, z1, pp);
+    alWall(1, i, za, z1, pp);
+    if (i > 0) { alReturn(-1, i, za, pp); alReturn(1, i, za, pp); }
+    if (BRIDGE_Z > za && BRIDGE_Z < z1) alBridge(pp, t);
+  }
+
+  alEaves(pp);
+
+  alLaundry(pp, t);
+  alProps(pp, t);
+  alClutter(pp, t);
+  alLamps(pp, t);
+
+  /* 人 */
+  var list = [];
+  for (var j = 0; j < FOLK.length; j++) {
+    var dz = FOLK[j].z - AL.z;
+    if (dz < 0.5) { FOLK[j]._v = 0; continue; }
+    FOLK[j]._dz = dz;
+    list.push(FOLK[j]);
+  }
+  list.sort(function (x, y) { return y._dz - x._dz; });
+  for (var k = 0; k < list.length; k++) alFolk(list[k], pp, t);
+
+  alShaft(pp, t);
+  alMotes(pp, t);
+  alHaze(pp);
+  alGrain();
+  alSayB(pp, t);
+}
+
+/* ============================================================
+   推进
+   ============================================================ */
+function alTick(dt, t, pp) {
+  AL.mix += (AL.tMix - AL.mix) * Math.min(1, dt * 4.2);
+  if (AL.tMix === 0 && AL.mix < 0.01) {
+    AL.on = false; AL.mix = 0; AL.snap = null;
+    if (tipEl) tipEl.classList.remove('hide');
+  }
+  if (!AL.on) return;
+
+  var tz = AL.z;
+  if (AL.press) {
+    AL.holdAcc += dt;
+    if (AL.holdAcc > 0.16) AL.z += AL.walkIn * 2.15 * dt;
+  }
+  AL.z = cl(AL.z, ZMIN - 0.2, ZMAX);
+  AL.vz = (AL.z - tz) / Math.max(0.0001, dt);
+
+  var moving = Math.abs(AL.vz) > 0.15;
+  AL.bob += dt * (moving ? 2.4 : 0.5);
+
+  AL.yaw += (AL.tyaw - AL.yaw) * Math.min(1, dt * 3.2);
+  AL.tyaw *= (1 - Math.min(1, dt * 0.5));
+  AL.gate += (AL.tGate - AL.gate) * Math.min(1, dt * 1.6);
+
+  if (AL.tGate > 0.5 && !AL.seed && AL.gate > 0.35) {
+    AL.seed = true;
+    AL.endAt = performance.now();
+    try { localStorage.setItem('sanjing.seed.shijing', '1'); } catch (e) { }
+  }
+  if (AL.press && AL.walkIn < -0.4 && AL.z <= ZMIN + 0.02) alExit();
+}
+
+function alPaint(pp, t, dt) {
+  if (!AL.on && AL.mix <= 0.002) return;
+  var m = cl(AL.mix, 0, 1);
+
+  alScene(pp, t, dt);
+
+  if (m < 0.995 && AL.snap) {
+    var age = (performance.now() - AL.snapAt) / 1000;
+    var k = 1 + cl(age / 0.85, 0, 1) * 1.5;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.globalAlpha = cl(1 - age / 0.85, 0, 1);
+    ctx.drawImage(AL.snap, W / 2 - W * k / 2, H / 2 - H * k / 2, W * k, H * k);
+    ctx.globalAlpha = 1;
+  }
+
+  g = ctx;
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  alEndCard(pp);
+  alHud(pp);
+}
+
+/* ============================================================
+   输入
+   ============================================================ */
+function alCaptures() { return AL.on || AL.mix > 0.02; }
+
+function alDown(e) {
+  AL.press = true;
+  AL.px = e.clientX; AL.py = e.clientY; AL.holdY = e.clientY;
+  AL.pt = performance.now(); AL.moved = 0; AL.holdAcc = 0;
+  AL.walkIn = 1;
+  try { cv.setPointerCapture(e.pointerId); } catch (err) { }
+}
+function alMove(e) {
+  if (!AL.press) return;
+  var dx = e.clientX - AL.px;
+  AL.moved = Math.max(AL.moved, Math.abs(dx) + Math.abs(e.clientY - AL.py));
+  AL.px = e.clientX;
+  AL.tyaw = cl(AL.tyaw - dx * 0.0024, -0.62, 0.62);
+  AL.walkIn = cl(1 + (AL.holdY - e.clientY) / 70, -1.2, 1.7);
+}
+function alUp(e) {
+  var dur = performance.now() - AL.pt;
+  var tap = AL.moved < 10 && dur < 430;
+  AL.press = false; AL.walkIn = 0;
+  if (!tap) return;
+
+  var mx = e.clientX, my = e.clientY;
+  if (AL.seed && AL.link) {
+    var L = AL.link;
+    if (mx > L.x && mx < L.x + L.w && my > L.y && my < L.y + L.h) {
+      window.location.href = 'https://podcatcher962.github.io/xinfang/';
+      return;
+    }
+  }
+  var f = alFolkAt(mx, my);
+  if (f) { alTalk(f); return; }
+
+  if (AL.gateR > 24) {
+    var dx2 = mx - AL.gateSX, dy2 = my - AL.gateSY;
+    if (dx2 * dx2 + dy2 * dy2 < (AL.gateR * 1.18) * (AL.gateR * 1.18)) {
+      if (AL.z > ZMAX - 3.2) {
+        AL.tGate = 1; AL.say = null;
+        if (!AL.seed) AL.endAt = performance.now();
+      } else {
+        AL.say = { f: null, text: '还远。往里走。', at: performance.now() };
+      }
+      return;
+    }
+  }
+  if (AL.say) AL.say = null;
+}
+function alWheel(e) {
+  AL.z = cl(AL.z + e.deltaY * 0.010, ZMIN, ZMAX);
+  AL.walkIn = 0;
+}
+function alKey(e) {
+  var k = e.key;
+  if (k === 'Escape') { alExit(); return true; }
+  if (k === 'ArrowDown' || k === 's' || k === 'S') {
+    AL.z = cl(AL.z - 1.1, ZMIN, ZMAX);
+    if (AL.z <= ZMIN + 0.01) alExit();
+    return true;
+  }
+  if (k === 'ArrowUp' || k === 'w' || k === 'W') {
+    AL.z = cl(AL.z + 1.1, ZMIN, ZMAX);
+    return true;
+  }
+  if (k === 'Enter' && AL.z > ZMAX - 3.2) { AL.tGate = 1; return true; }
+  return true;
+}
+
+/* ============================================================
+   对外
+   ============================================================ */
+window.__ALLEY = {
+  captures: alCaptures,
+  full: function () { return AL.mix > 0.985; },
+  active: function () { return AL.on; },
+  drawMouths: alMouths,
+  tapMouth: function (mx, my) {
+    if (!ALLEYS.length) alBuildAlleys();
+    for (var i = 0; i < ALLEYS.length; i++) {
+      var m = ALLEYS[i];
+      if (!m._hit) continue;
+      var h = m._hit;
+      if (mx > h.x - 8 && mx < h.x + h.w + 8 && my > h.y && my < h.y + h.h) {
+        alEnter(m); return true;
+      }
+    }
+    return false;
+  },
+  spotName: function () {
+    if (!AL.on) return spotOf();
+    var deep = Math.max(0, Math.round(AL.z - 0.85));
+    if (AL.seed) return '巷底 · 门开着';
+    if (AL.z > ZMAX - 0.5) return '门前';
+    return '巷中 · ' + deep + ' 步';
+  },
+  enter: function (i) { if (!ALLEYS.length) alBuildAlleys(); alEnter(ALLEYS[i || 0]); },
+  exit: alExit,
+  tick: alTick,
+  paint: alPaint,
+  pointerDown: alDown,
+  pointerMove: alMove,
+  pointerUp: alUp,
+  wheel: alWheel,
+  key: alKey,
+  get state() {
+    return {
+      on: AL.on, mix: +AL.mix.toFixed(3), z: +AL.z.toFixed(2),
+      yaw: +AL.yaw.toFixed(3), gate: +AL.gate.toFixed(2), seed: AL.seed,
+      said: JSON.parse(JSON.stringify(AL.said)), alleys: ALLEYS.length
+    };
+  },
+  get mouthRects() {
+    return ALLEYS.map(function (m) { return m._hit; });
+  },
+  setZ: function (v) { AL.z = cl(v, ZMIN, ZMAX); },
+  folk: function () {
+    return FOLK.map(function (f) {
+      return { id: f.id, v: f._v || 0, x: f._sx, y: f._sy, h: f._h };
+    });
+  },
+  talk: function (id) {
+    for (var i = 0; i < FOLK.length; i++) if (FOLK[i].id === id) { alTalk(FOLK[i]); return true; }
+    return false;
+  },
+  get say() { return AL.say ? AL.say.text : null; },
+  get linkRect() { return AL.link; }
+};
 
 /* ============================ 主循环 ============================ */
 var lastT = 0;
@@ -2171,6 +4218,13 @@ function frame(now) {
   g.globalCompositeOperation = 'source-over';
   g.globalAlpha = 1;
 
+  if (window.__ALLEY && window.__ALLEY.full()) {
+    window.__ALLEY.tick(dt, t, p);
+    window.__ALLEY.paint(p, t, dt);
+    updateHud(p);
+    return;
+  }
+
   drawSky(p, t);
   if (!DBG_OFF.far) drawFar(p);
   if (!DBG_OFF.mid) { drawMid(p, t); drawWall(p, t); }
@@ -2187,9 +4241,13 @@ function frame(now) {
   if (!DBG_OFF.fore) drawTrees(p, t);
   if (!DBG_OFF.light) { drawLight(p, t); drawLamps(p, t); drawWindowGlow(p); }
   if (!DBG_OFF.fore) drawFore(p, t);
+  if (!DBG_OFF.shops) window.__ALLEY.drawMouths(p, t);
   if (!DBG_OFF.atmos) drawAtmos(p, t);
   drawTex();
   drawSay(p, t);
+
+  window.__ALLEY.tick(dt, t, p);
+  window.__ALLEY.paint(p, t, dt);
 
   updateHud(p);
 }
@@ -2199,12 +4257,14 @@ var dragging = false, dragX = 0, dragCam = 0, lastMove = 0;
 
 var downX = 0, downY = 0, downT = 0, movedPx = 0;
 cv.addEventListener('pointerdown', function (e) {
+  if (window.__ALLEY && window.__ALLEY.captures()) { window.__ALLEY.pointerDown(e); return; }
   dragging = true; dragX = e.clientX; dragCam = tCam;
   downX = e.clientX; downY = e.clientY; downT = performance.now(); movedPx = 0;
   cv.classList.add('drag'); lastMove = performance.now();
   try { cv.setPointerCapture(e.pointerId); } catch (err) { }
 });
 cv.addEventListener('pointermove', function (e) {
+  if (window.__ALLEY && window.__ALLEY.captures()) { window.__ALLEY.pointerMove(e); return; }
   if (!dragging) return;
   movedPx = Math.max(movedPx, Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY));
   tCam = clamp(dragCam - (e.clientX - dragX) * 1.25, 0, Math.max(0, WW - W));
@@ -2212,23 +4272,27 @@ cv.addEventListener('pointermove', function (e) {
 });
 function endDrag(e) { dragging = false; cv.classList.remove('drag'); lastMove = performance.now(); }
 cv.addEventListener('pointerup', function (e) {
+  if (window.__ALLEY && window.__ALLEY.captures()) { window.__ALLEY.pointerUp(e); return; }
   var wasDrag = movedPx > 9 || (performance.now() - downT > 420);
   endDrag(e);
   if (wasDrag) return;
   /* 轻点：找最近的人 */
   var q = personAt(e.clientX, e.clientY);
-  if (q) { sayTo(q); }
-  else { if (SAY) SAY = null; }
+  if (q) { sayTo(q); return; }
+  if (window.__ALLEY && window.__ALLEY.tapMouth(e.clientX, e.clientY)) return;
+  if (SAY) SAY = null;
 });
 cv.addEventListener('pointercancel', endDrag);
 
 cv.addEventListener('wheel', function (e) {
   e.preventDefault();
+  if (window.__ALLEY && window.__ALLEY.captures()) { window.__ALLEY.wheel(e); return; }
   tCam = clamp(tCam + e.deltaY * 1.5 + e.deltaX * 1.5, 0, Math.max(0, WW - W));
   lastMove = performance.now();
 }, { passive: false });
 
 window.addEventListener('keydown', function (e) {
+  if (window.__ALLEY && window.__ALLEY.captures()) { if (window.__ALLEY.key(e)) return; }
   var k = e.key;
   if (k === ' ') {
     e.preventDefault();
@@ -2261,6 +4325,7 @@ setTimeout(function () { hudEl.classList.add('on'); tipEl.classList.add('on'); }
 
 /* ============================ 测试接口 ============================ */
 window.__SJ = {
+  get alley() { return window.__ALLEY; },
   geom: function () { return { W: W, H: H, HS: +HS.toFixed(3), HY: +HY.toFixed(1), WW: WW, BRISE: +BRISE.toFixed(1) }; },
   get cam() { return cam; },
   setCam: function (v) { tCam = clamp(v, 0, Math.max(0, WW - W)); cam = tCam; },
