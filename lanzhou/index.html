@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>兰舟 · 一间舱 —— 三境之一</title>
-<meta name="description" content="一艘东方的星舰。你从舱内走到舷窗，再走出舱外，看见整艘兰舟悬在无边的星海里。时间可以加速，星可以取名。纯 Canvas 手写，单文件，零依赖。">
+<title>兰舟 · 月洞窗外 —— 三境之一</title>
+<meta name="description" content="一艘东方的星舰：一节环形的舱，尽头一整面拱形巨窗，窗前一道铜栏。按住往里走，走到窗边，再往前一步就出了舱。窗外两万两千颗星。纯 Canvas 手写，单文件，零依赖。">
 <meta name="theme-color" content="#04060c">
 <meta property="og:type" content="website">
 <meta property="og:title" content="兰舟 · 月洞窗外">
-<meta property="og:description" content="一间木舱，一扇舷窗，一整片星海。走到窗前，再往前一步，就出了舱。">
+<meta property="og:description" content="环形的舱，一道一道肋从身边过去；尽头一整面拱窗，窗里什么也没有，只有宇宙。">
 <meta property="og:image" content="https://podcatcher962.github.io/lanzhou/og.jpg">
 <meta property="og:url" content="https://podcatcher962.github.io/lanzhou/">
 <meta name="twitter:card" content="summary_large_image">
@@ -102,7 +102,7 @@
 <div id="veil">
   <div class="v1">兰　舟</div>
   <div class="v2">三境 · 之一</div>
-  <div class="v3">按住往里走　·　走到窗前　·　再往前，出舱</div>
+  <div class="v3">按住往里走　·　走到拱窗前　·　再往前，出舱</div>
 </div>
 
 <script>
@@ -1320,15 +1320,13 @@
 (function () {
 
   /* ---------- 尺寸（米，y 相对眼高） ---------- */
-  var EYE = 1.42;
-  var HW = 2.58;            /* 半宽 */
-  var ZW = 6.60;            /* 后墙 */
-  var CEIL = 1.28;          /* 天花（相对眼高，净高 2.70） */
+  var EYE = 1.55;           /* 眼高 */
+  var HW = 2.86;            /* 半宽（舱宽 5.72 米） */
+  var ZW = 11.60;           /* 舱长：走到头是一整面巨窗 */
+  var CEIL = 1.45;          /* 天花（相对眼高，净高 3.00） */
   var FLO = -EYE;
-  var PORT_Y = 0.06;        /* 舷窗中心高度 */
-  var PORT_R = 0.655;       /* 舷窗半径 */
-  var ZMAX = 4.96;          /* 走到这里，舷窗正好铺满视野 */
-  var ZMIN = 0.10;
+  var ZMAX = 8.55;          /* 走到这里，巨窗铺满视野 */
+  var ZMIN = 4.95;          /* 开场：站在廊子中段，窗在远处 */
 
   /* ---------- 相机 ---------- */
   var CAM = {
@@ -1359,21 +1357,25 @@
   var nameCursor = 0;
 
   /* ---------- 颜色 ---------- */
-  var C_FLOOR = [112, 82, 54];
-  var C_FLOOR2 = [88, 63, 41];
-  var C_WALL = [122, 95, 64];
-  var C_WAIN = [74, 55, 37];
-  var C_CEIL = [84, 65, 45];
-  var C_BEAM = [64, 49, 33];
-  var C_RING = [104, 78, 48];
-  var C_RING_D = [62, 45, 27];
-  var C_BRASS = [186, 146, 84];
-  var C_TABLE = [70, 50, 34];
-  var C_SILK = [128, 92, 58];
+  /* 宇航的冷：钢蓝灰。中式的暖：朱红与铜。两样都不多，只在结构上点一笔。 */
+  var C_HULL = [56, 66, 78];      /* 舱壁 */
+  var C_HULL_D = [26, 32, 40];    /* 舱壁暗面 */
+  var C_RIB = [80, 90, 103];      /* 环形肋 */
+  var C_RIB_HI = [148, 164, 180]; /* 肋的内缘 */
+  var C_DECK = [42, 48, 57];      /* 地板 */
+  var C_GRATE = [14, 18, 23];     /* 格栅缝 */
+  var C_TRIM = [72, 31, 25];      /* 朱红：腰线与长毯 */
+  var C_TRIM_H = [146, 64, 46];
+  var C_WOOD = [96, 68, 45];      /* 木裙板 */
+  var C_BRASS = [176, 140, 88];   /* 铜 */
+  var C_BRASS_H = [214, 178, 120];
 
   function sh(rgb, k) {
     k = k === undefined ? 1 : k;
-    return 'rgb(' + ((rgb[0] * k) | 0) + ',' + ((rgb[1] * k) | 0) + ',' + ((rgb[2] * k) | 0) + ')';
+    var r = rgb[0] * k, g = rgb[1] * k, b = rgb[2] * k;
+    return 'rgb(' + (r > 255 ? 255 : r | 0) + ',' +
+                    (g > 255 ? 255 : g | 0) + ',' +
+                    (b > 255 ? 255 : b | 0) + ')';
   }
   function rgba(rgb, a) {
     return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + a + ')';
@@ -1418,246 +1420,493 @@
     return base * (0.30 + 0.70 * ST.lamp);
   }
 
-  /* ================= 房间 ================= */
-  var FAR = 0;
+  /* ================= 舱体 · 环形观星廊 ================= */
+  /*
+    不是方盒子。
+    断面是「平底 + 竖墙 + 收肩 + 浅拱」，沿舱长每 RIB 米一道环形肋，
+    肋间是舱板、步步锦格心、朱红腰线。尽头一整面拱形巨窗，窗前一道铜栏。
+    舱内只有两种光：窗外的星，和三盏宫灯。
+  */
 
-  function drawRoom() {
-    FAR = 0;
+  var RIB = 1.55;              /* 环形肋间距 */
+  var RIB_IN = 0.052;          /* 肋向舱内凸出的厚度 */
 
-    /* 地板 */
-    var kF = lampK(1.0);
-    var a = pj(-HW, FLO, CAM.z + 0.85);
-    var b = pj(HW, FLO, CAM.z + 0.85);
-    var c = pj(HW, FLO, ZW);
-    var d = pj(-HW, FLO, ZW);
-    if (a && b && c && d) {
-      var grd = ctx.createLinearGradient(0, a[1], 0, d[1]);
-      grd.addColorStop(0, sh(C_FLOOR2, kF * 0.95));
-      grd.addColorStop(1, sh(C_FLOOR, kF * 0.62));
-      quad(a, b, c, d, grd);
+  /* 断面半宽：下段竖直到 32%，往上收弧，顶部收到 66.5% */
+  function hullX(y) {
+    var h = (y - FLO) / (CEIL - FLO);
+    if (h <= 0.30) return HW;
+    var k = clamp((h - 0.30) / 0.70, 0, 1);
+    return HW * (1 - 0.452 * k * k);
+  }
+  var TOPW = HW * 0.548;
 
-      /* 地板缝 */
-      ctx.strokeStyle = rgba([18, 12, 8], 0.45);
+  /* 顶拱：中间微微起弧，够一点弧度就行，不做穹顶 */
+  function hullY(x) {
+    var u = clamp(Math.abs(x) / TOPW, 0, 1);
+    return CEIL - 0.095 * (1 - Math.sqrt(Math.max(0, 1 - u * u)));
+  }
+
+  /* 断面：左下角起，沿左壁上，过顶，沿右壁下 */
+  var SEC = [], SECN = [];
+  (function () {
+    var N = 22, j, y, x, a, b, tx, ty, L, nx, ny, midY;
+    for (j = 0; j <= N; j++) {
+      y = FLO + (CEIL - FLO) * (j / N);
+      SEC.push([-hullX(y), y]);
+    }
+    for (j = 1; j < 9; j++) {
+      x = -TOPW + 2 * TOPW * (j / 9);
+      SEC.push([x, hullY(x)]);
+    }
+    for (j = N; j >= 0; j--) {
+      y = FLO + (CEIL - FLO) * (j / N);
+      SEC.push([hullX(y), y]);
+    }
+    midY = (FLO + CEIL) * 0.5;
+    for (j = 0; j < SEC.length; j++) {
+      a = SEC[Math.max(0, j - 1)];
+      b = SEC[Math.min(SEC.length - 1, j + 1)];
+      tx = b[0] - a[0]; ty = b[1] - a[1];
+      L = Math.hypot(tx, ty) || 1;
+      nx = -ty / L; ny = tx / L;
+      if (nx * (0 - SEC[j][0]) + ny * (midY - SEC[j][1]) < 0) { nx = -nx; ny = -ny; }
+      SECN.push([nx, ny]);
+    }
+  })();
+
+  /* ---------- 灯 ---------- */
+  var HULL_LAMPS = [
+    { x: -1.62, z: 2.35 },
+    { x: 1.62, z: 4.75 },
+    { x: -1.48, z: 7.15 },
+    { x: 1.38, z: 9.45 }
+  ];
+
+  function lampAt(x, y, z) {
+    var ly = CEIL - 0.86, s = 0, i, L, dx, dy, dz, d2;
+    for (i = 0; i < HULL_LAMPS.length; i++) {
+      L = HULL_LAMPS[i];
+      dx = x - L.x; dy = (y - ly) * 0.85; dz = z - L.z;
+      d2 = dx * dx + dy * dy + dz * dz;
+      s += 1 / (1 + d2 * 1.15);
+    }
+    return s * ST.lamp;
+  }
+
+  /* 舱壁受光：上亮下暗、左亮右暗、近窗发冷、灯下泛暖、远处沉黑 */
+  function hullLight(x, y, z, side) {
+    var h = clamp((y - FLO) / (CEIL - FLO), 0, 1);
+    /* 主光来自窗：沿舱长做纵深，近处压暗，靠窗那一截才亮起来 */
+    var dw = clamp((ZW - z) / 8.6, 0, 1);
+    var k = 0.205 + 0.545 * Math.pow(dw, 1.30);
+    /* 上下只差一档，不然天花板会整片发白 */
+    k *= 0.68 + 0.42 * Math.pow(h, 0.85);
+    if (side < 0) k *= 1.14;
+    else if (side > 0) k *= 0.84;
+    /* 灯：只在灯附近提一小块，暖的 */
+    k += lampAt(x, y, z) * 0.46 * (0.55 + 0.45 * ST.lamp);
+    k *= (0.30 + 0.70 * ST.lamp);
+    return k;
+    return k;
+  }
+
+  /* ================= 地板 ================= */
+  function drawDeck(z0, z1, zc) {
+    var a = pj(-HW, FLO, z0), b = pj(HW, FLO, z0);
+    var c = pj(HW, FLO, z1), d = pj(-HW, FLO, z1);
+    if (!a || !b || !c || !d) return;
+    var dw = clamp((ZW - zc) / 8.6, 0, 1);
+    var k = (0.21 + 0.40 * Math.pow(dw, 1.10)) * (0.42 + 0.58 * ST.lamp)
+          + lampAt(0, FLO + 0.2, zc) * 0.40;
+    quad(a, b, c, d, sh(C_DECK, k));
+
+    /* 中央朱红长毯：从舱门一直铺到窗台下 */
+    var mw = 0.58;
+    var e = pj(-mw, FLO, z0), f = pj(mw, FLO, z0);
+    var g2 = pj(mw, FLO, z1), h2 = pj(-mw, FLO, z1);
+    if (e && f && g2 && h2) quad(e, f, g2, h2, sh(C_TRIM, k * 0.66));
+
+    /* 毯边铜线 */
+    if (z0 - CAM.z < 13) {
+      ctx.strokeStyle = rgba(C_BRASS, 0.22 + 0.16 * ST.lamp);
       ctx.lineWidth = 1;
-      for (var i = 1; i < 8; i++) {
-        var xx = -HW + i * (HW * 2 / 8);
-        var p1 = pj(xx, FLO, CAM.z + 0.85), p2 = pj(xx, FLO, ZW);
-        if (p1 && p2) {
-          ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+      for (var s = -1; s <= 1; s += 2) {
+        var q1 = pj(s * mw, FLO, z0), q2 = pj(s * mw, FLO, z1);
+        if (q1 && q2) { ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke(); }
+      }
+    }
+
+    /* 两侧格栅：横条 */
+    if (z0 - CAM.z < 15) {
+      ctx.strokeStyle = rgba(C_GRATE, 0.50);
+      ctx.lineWidth = 1;
+      var gz, q3, q4, q5, q6;
+      for (gz = Math.ceil(z0 / 0.22) * 0.22; gz < z1; gz += 0.22) {
+        q3 = pj(-HW + 0.14, FLO, gz); q4 = pj(-mw - 0.07, FLO, gz);
+        if (q3 && q4) { ctx.beginPath(); ctx.moveTo(q3[0], q3[1]); ctx.lineTo(q4[0], q4[1]); ctx.stroke(); }
+        q5 = pj(mw + 0.07, FLO, gz); q6 = pj(HW - 0.14, FLO, gz);
+        if (q5 && q6) { ctx.beginPath(); ctx.moveTo(q5[0], q5[1]); ctx.lineTo(q6[0], q6[1]); ctx.stroke(); }
+      }
+    }
+  }
+
+  /* ================= 墙根走线槽 ================= */
+  function drawConduit(z0, z1) {
+    if (z0 - CAM.z > 20) return;
+    var s, i, q1, q2, a, b, c, d;
+    for (s = -1; s <= 1; s += 2) {
+      var x = s * (HW - 0.030);
+      a = pj(x, FLO + 0.070, z0); b = pj(x, FLO + 0.070, z1);
+      c = pj(x, FLO + 0.238, z1); d = pj(x, FLO + 0.238, z0);
+      if (a && b && c && d) quad(a, b, c, d, sh(C_HULL_D, 0.62 + 0.30 * ST.lamp));
+
+      var ys = [FLO + 0.108, FLO + 0.150, FLO + 0.194];
+      for (i = 0; i < 3; i++) {
+        q1 = pj(x, ys[i], z0); q2 = pj(x, ys[i], z1);
+        if (!q1 || !q2) continue;
+        ctx.strokeStyle = rgba(C_RIB_HI, i === 1 ? 0.30 : 0.15);
+        ctx.lineWidth = Math.max(1, 0.011 * FOC / q1[2]);
+        ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke();
+      }
+    }
+  }
+
+  /* ================= 地板地灯 ================= */
+  function drawDeckLights(z0, z1) {
+    if (z0 - CAM.z > 17 || ST.lamp < 0.04) return;
+    var z, s, q, f, r;
+
+    /* 两条贴着地毯的灯带：从脚下一直拉到窗台，把眼睛带过去 */
+    if (z0 - CAM.z < 12) {
+      for (s = -1; s <= 1; s += 2) {
+        var xb = s * 0.615;
+        var t1 = pj(xb - 0.016, FLO, z0), t2 = pj(xb + 0.016, FLO, z0);
+        var t3 = pj(xb + 0.016, FLO, z1), t4 = pj(xb - 0.016, FLO, z1);
+        if (t1 && t2 && t3 && t4) {
+          var lg = ctx.createLinearGradient(0, t1[1], 0, t4[1]);
+          lg.addColorStop(0, 'rgba(255,198,136,' + (0.30 + 0.28 * ST.lamp) + ')');
+          lg.addColorStop(0.55, 'rgba(255,190,128,' + (0.16 + 0.16 * ST.lamp) + ')');
+          lg.addColorStop(1, 'rgba(255,186,124,' + (0.07 + 0.07 * ST.lamp) + ')');
+          quad(t1, t2, t3, t4, lg);
+          /* 灯带的软光 */
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.globalAlpha = 0.055 * ST.lamp;
+          var cxp = (t1[0] + t2[0]) * 0.5, cyp = (t1[1] + t4[1]) * 0.5;
+          var hh = Math.abs(t1[1] - t4[1]) * 0.9 + 20;
+          ctx.drawImage(SOFT_GOLD, cxp - hh * 0.5, cyp - hh * 0.5, hh, hh);
+          ctx.restore();
         }
       }
-      /* 横缝 */
-      for (var z = Math.ceil(CAM.z / 1.15) * 1.15; z < ZW; z += 1.15) {
-        var q1 = pj(-HW, FLO, z), q2 = pj(HW, FLO, z);
-        if (q1 && q2) {
-          ctx.globalAlpha = clamp(1 - (z - CAM.z) / 9, 0.05, 0.4);
-          ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-      }
     }
 
-    /* 天花 */
-    var kC = lampK(0.82);
-    var e = pj(-HW, CEIL, CAM.z + 0.85);
-    var f = pj(HW, CEIL, CAM.z + 0.85);
-    var g = pj(HW, CEIL, ZW);
-    var h = pj(-HW, CEIL, ZW);
-    if (e && f && g && h) {
-      var gr2 = ctx.createLinearGradient(0, e[1], 0, h[1]);
-      gr2.addColorStop(0, sh(C_CEIL, kC * 0.62));
-      gr2.addColorStop(1, sh(C_CEIL, kC * 1.0));
-      quad(e, f, g, h, gr2);
-    }
-
-    /* 天花板横梁 */
-    for (var bz = Math.ceil((CAM.z + 0.4) / 1.05) * 1.05; bz < ZW - 0.2; bz += 1.05) {
-      var bh = 0.13;
-      var t1 = pj(-HW, CEIL, bz), t2 = pj(HW, CEIL, bz);
-      var t3 = pj(HW, CEIL - bh, bz), t4 = pj(-HW, CEIL - bh, bz);
-      if (t1 && t2 && t3 && t4) quad(t1, t2, t3, t4, sh(C_BEAM, kC * 0.72));
-      var s1 = pj(-HW, CEIL - bh, bz), s2 = pj(HW, CEIL - bh, bz);
-      var s3 = pj(HW, CEIL - bh, bz + 0.09), s4 = pj(-HW, CEIL - bh, bz + 0.09);
-      if (s1 && s2 && s3 && s4) quad(s1, s2, s3, s4, sh(C_BEAM, kC * 1.05));
-    }
-
-    /* 侧墙 */
-    drawSide(-1, kC);
-    drawSide(1, kC);
-
-    /* 后墙 */
-    var kF2 = lampK(1.0);
-    var w1 = pj(-HW, FLO, ZW), w2 = pj(HW, FLO, ZW);
-    var w3 = pj(HW, CEIL, ZW), w4 = pj(-HW, CEIL, ZW);
-    if (w1 && w2 && w3 && w4) {
-      quad(w1, w2, w3, w4, sh(C_WALL, kF2 * 0.66));
-      /* 护墙板 */
-      var p1b = pj(-HW, FLO + 0.92, ZW), p2b = pj(HW, FLO + 0.92, ZW);
-      var p3b = pj(HW, FLO, ZW), p4b = pj(-HW, FLO, ZW);
-      if (p1b && p2b) quad(p1b, p2b, p3b, p4b, sh(C_WAIN, kF2 * 0.86));
-      /* 木板缝 */
-      ctx.strokeStyle = rgba([26, 17, 10], 0.26);
-      ctx.lineWidth = 1;
-      for (var px2 = -HW + 0.30; px2 < HW; px2 += 0.30) {
-        var u1 = pj(px2, FLO, ZW), u2 = pj(px2, CEIL, ZW);
-        if (u1 && u2) { ctx.beginPath(); ctx.moveTo(u1[0], u1[1]); ctx.lineTo(u2[0], u2[1]); ctx.stroke(); }
-      }
-      ctx.strokeStyle = rgba([150, 116, 66], 0.20 * (0.4 + 0.6 * ST.lamp));
-      ctx.lineWidth = 1.2;
-      if (p1b && p2b) { ctx.beginPath(); ctx.moveTo(p1b[0], p1b[1]); ctx.lineTo(p2b[0], p2b[1]); ctx.stroke(); }
-    }
-  }
-
-  function drawSide(side, kC) {
-    var x = side * HW;
-    var a = pj(x, FLO, CAM.z + 0.85), b = pj(x, FLO, ZW);
-    var c = pj(x, CEIL, ZW), d = pj(x, CEIL, CAM.z + 0.85);
-    if (!a || !b || !c || !d) return;
-    quad(a, b, c, d, sh(C_WALL, kC * 0.74));
-    /* 护墙板 */
-    var a2 = pj(x, FLO, CAM.z + 0.85), b2 = pj(x, FLO + 0.92, CAM.z + 0.85);
-    var c2 = pj(x, FLO + 0.92, ZW), d2 = pj(x, FLO, ZW);
-    if (a2 && b2 && c2 && d2) quad(a2, b2, c2, d2, sh(C_WAIN, kC * 0.90));
-    /* 侧墙板缝 */
-    ctx.strokeStyle = rgba([24, 16, 10], 0.22);
-    ctx.lineWidth = 1;
-    for (var zz2 = Math.ceil((CAM.z + 0.4) / 0.30) * 0.30; zz2 < ZW; zz2 += 0.30) {
-      var v1 = pj(x, FLO, zz2), v2 = pj(x, CEIL, zz2);
-      if (v1 && v2) { ctx.beginPath(); ctx.moveTo(v1[0], v1[1]); ctx.lineTo(v2[0], v2[1]); ctx.stroke(); }
-    }
-
-    /* 立柱 */
-    for (var z = Math.ceil((CAM.z + 0.5) / 2.05) * 2.05; z < ZW - 0.1; z += 2.05) {
-      var cw = 0.075;
-      var q1 = pj(x, FLO, z), q2 = pj(x, FLO, z + cw);
-      var q3 = pj(x, CEIL, z + cw), q4 = pj(x, CEIL, z);
-      if (q1 && q2 && q3 && q4) quad(q1, q2, q3, q4, sh(C_BEAM, kC * 0.82));
-    }
-  }
-
-  /* ================= 陈设 ================= */
-  function drawLamp(x, z, t) {
-    var hangY = CEIL - 0.02;
-    var top = pj(x, hangY, z);
-    var bot = pj(x, hangY - 0.62, z);
-    if (!top || !bot) return;
-    var f = FOC / top[2];
-    var w = 0.20 * f;
-
-    /* 吊绳 */
-    ctx.strokeStyle = rgba([24, 18, 12], 0.85);
-    ctx.lineWidth = Math.max(1, 0.012 * f);
-    ctx.beginPath(); ctx.moveTo(top[0], top[1]); ctx.lineTo(bot[0], bot[1] - 0.30 * f); ctx.stroke();
-
-    /* 灯罩 */
-    var cy = bot[1] - 0.28 * f;
-    var lit = ST.lamp;
-    var g1 = ctx.createLinearGradient(top[0] - w, cy, top[0] + w, cy);
-    g1.addColorStop(0, sh([92, 66, 40], 0.7 + 0.3 * lit));
-    g1.addColorStop(0.5, sh([150, 108, 62], 0.75 + 0.5 * lit));
-    g1.addColorStop(1, sh([86, 60, 36], 0.7 + 0.3 * lit));
-    ctx.fillStyle = g1;
-    ctx.beginPath();
-    ctx.moveTo(top[0] - w * 0.62, cy - 0.26 * f);
-    ctx.lineTo(top[0] + w * 0.62, cy - 0.26 * f);
-    ctx.lineTo(top[0] + w, cy + 0.16 * f);
-    ctx.lineTo(top[0] - w, cy + 0.16 * f);
-    ctx.closePath();
-    ctx.fill();
-
-    /* 灯下暖光 */
-    if (lit > 0.05) {
-      var gs = (1.6 + 0.6 * lit) * f * 0.9;
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.globalAlpha = 0.34 * lit;
-      ctx.drawImage(SOFT_GOLD, top[0] - gs / 2, cy + 0.1 * f - gs / 2, gs, gs);
-      ctx.restore();
-    }
-
-    /* 流苏 */
-    ctx.strokeStyle = rgba([120, 40, 32], 0.55);
-    ctx.lineWidth = Math.max(1, 0.008 * f);
-    for (var i = -1; i <= 1; i++) {
-      ctx.beginPath();
-      ctx.moveTo(top[0] + i * w * 0.6, cy + 0.16 * f);
-      ctx.lineTo(top[0] + i * w * 0.72, cy + 0.40 * f);
-      ctx.stroke();
-    }
-  }
-
-  function drawTable(t) {
-    var tx = 0.86, tz = ZW - 2.55, ty = FLO + 0.36;
-    var hw = 0.62, hd = 0.30;
-    var a = pj(tx - hw, ty, tz - hd), b = pj(tx + hw, ty, tz - hd);
-    var c = pj(tx + hw, ty, tz + hd), d = pj(tx - hw, ty, tz + hd);
-    if (!a || !b || !c || !d) return;
-    var k = lampK(1);
-    quad(a, b, c, d, sh(C_TABLE, k * 0.95));
-    /* 桌面高光 */
-    ctx.strokeStyle = rgba([190, 150, 96], 0.10 + 0.10 * ST.lamp);
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-    /* 桌腿 */
-    var legs = [[tx - hw + 0.06, tz - hd + 0.06], [tx + hw - 0.06, tz - hd + 0.06],
-                [tx + hw - 0.06, tz + hd - 0.06], [tx - hw + 0.06, tz + hd - 0.06]];
-    for (var i = 0; i < 4; i++) {
-      var p1 = pj(legs[i][0], ty, legs[i][1]);
-      var p2 = pj(legs[i][0], FLO, legs[i][1]);
-      if (p1 && p2) {
-        ctx.strokeStyle = sh(C_TABLE, k * 0.7);
-        ctx.lineWidth = Math.max(1, 0.05 * (FOC / p1[2]));
-        ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
-      }
-    }
-
-    /* 香炉 */
-    var cx = tx - 0.02, cz = tz + 0.02, cyy = ty + 0.13;
-    var pc = pj(cx, cyy, cz);
-    if (pc) {
-      var f = FOC / pc[2];
-      var rw = 0.135 * f;
-      var grd = ctx.createRadialGradient(pc[0] - rw * 0.3, pc[1] - rw * 0.3, 0, pc[0], pc[1], rw);
-      grd.addColorStop(0, sh([132, 116, 94], k));
-      grd.addColorStop(1, sh([58, 48, 38], k));
-      ctx.fillStyle = grd;
-      ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rw, rw * 0.72, 0, 0, TAU); ctx.fill();
-      ctx.fillStyle = sh([96, 80, 62], k * 0.9);
-      ctx.beginPath(); ctx.ellipse(pc[0], pc[1] - rw * 0.44, rw * 0.34, rw * 0.20, 0, 0, TAU); ctx.fill();
-
-      /* 青烟 */
-      if (ST.lamp > 0.05) {
+    for (z = Math.ceil(z0 / 1.68) * 1.68; z < z1; z += 1.68) {
+      for (s = -1; s <= 1; s += 2) {
+        q = pj(s * 0.74, FLO, z);
+        if (!q) continue;
+        f = FOC / q[2];
+        r = 0.022 * f;
+        if (r < 0.4) continue;
+        /* 嵌在地板里的小方灯 */
+        ctx.fillStyle = 'rgba(255,208,150,' + (0.20 + 0.32 * ST.lamp) + ')';
+        ctx.beginPath();
+        ctx.ellipse(q[0], q[1], r * 1.9, r * 0.72, 0, 0, TAU);
+        ctx.fill();
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        for (var s = 0; s < 26; s++) {
-          var pr = ((t * 0.11 + s / 21) % 1);
-          var yy = pc[1] - rw * 0.5 - pr * 0.95 * f;
-          var amp = (0.03 + pr * 0.16) * f;
-          var xx = pc[0] + Math.sin(pr * 5.0 + s * 1.6 + t * 0.5) * amp;
-          var al = Math.pow(1 - pr, 2.1) * 0.16 * ST.lamp;
-          var rr = (0.012 + pr * 0.062) * f;
-          ctx.globalAlpha = al;
-          ctx.drawImage(SOFT_WARM, xx - rr, yy - rr, rr * 2, rr * 2);
-        }
+        ctx.globalAlpha = 0.10 * ST.lamp;
+        var gs = r * 13;
+        ctx.drawImage(SOFT_GOLD, q[0] - gs / 2, q[1] - gs / 2, gs, gs);
         ctx.restore();
       }
     }
   }
 
-  /* ================= 舷窗 ================= */
-  function portPoly(r, seg) {
-    var pts = [], ok = true;
-    for (var i = 0; i < seg; i++) {
-      var a = i / seg * TAU;
-      var q = pj(Math.cos(a) * r, PORT_Y + Math.sin(a) * r, ZW);
-      if (!q) { ok = false; break; }
-      pts.push([q[0], q[1]]);
+  /* ================= 腰线 ================= */
+  function drawWaist(z0, z1, zc) {
+    if (z0 - CAM.z > 18) return;
+    var wy0 = FLO + 0.84, wy1 = wy0 + 0.064, s, xw;
+    for (s = -1; s <= 1; s += 2) {
+      xw = s * HW;
+      var w1 = pj(xw, wy0, z0), w2 = pj(xw, wy0, z1);
+      var w3 = pj(xw, wy1, z1), w4 = pj(xw, wy1, z0);
+      if (w1 && w2 && w3 && w4) {
+        quad(w1, w2, w3, w4, sh(C_TRIM_H, hullLight(xw, wy1, zc, s) * 1.22));
+        /* 上沿一线亮 */
+        ctx.strokeStyle = rgba(C_BRASS_H, 0.16 + 0.14 * ST.lamp);
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(w4[0], w4[1]); ctx.lineTo(w3[0], w3[1]); ctx.stroke();
+      }
     }
-    return ok ? pts : null;
   }
 
-  function pathPoly(pts) {
+  /* ================= 步步锦格心 ================= */
+  function drawLattice(side, z0, z1, zc) {
+    var x = side * HW;
+    var ya = FLO + 1.02, yb = FLO + 2.42;
+    var za = z0 + 0.17, zb = z1 - 0.17;
+    if (zb - za < 0.30) return;
+    var p1 = pj(x, ya, za), p2 = pj(x, ya, zb);
+    var p3 = pj(x, yb, zb), p4 = pj(x, yb, za);
+    if (!p1 || !p2 || !p3 || !p4) return;
+    var k = hullLight(x, ya, zc, side);
+
+    /* 底衬：比舱壁略深，把格心托出来 */
+    quad(p1, p2, p3, p4, sh(k > 0.28 ? C_WOOD : C_HULL_D, k * 0.74));
+
+    var lw = Math.max(0.8, 0.012 * FOC / p1[2]);
+    ctx.strokeStyle = rgba(C_RIB_HI, 0.26 + 0.24 * ST.lamp);
+    ctx.lineWidth = lw;
+
+    var i, q1, q2;
+    /* 竖棂：四道 */
+    for (i = 1; i < 4; i++) {
+      var zz = za + (zb - za) * (i / 4);
+      q1 = pj(x, ya, zz); q2 = pj(x, yb, zz);
+      if (q1 && q2) { ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke(); }
+    }
+    /* 横棂：三道，中间那道断开一点，成「步步锦」的错落 */
+    for (i = 1; i < 3; i++) {
+      var yy = ya + (yb - ya) * (i / 3);
+      q1 = pj(x, yy, za); q2 = pj(x, yy, zb);
+      if (q1 && q2) { ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke(); }
+    }
+    /* 外框：铜色，比棂亮 */
+    ctx.strokeStyle = rgba(C_BRASS_H, 0.30 + 0.28 * ST.lamp);
+    ctx.lineWidth = lw * 1.6;
     ctx.beginPath();
+    ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]);
+    ctx.lineTo(p3[0], p3[1]); ctx.lineTo(p4[0], p4[1]);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  /* ================= 天花灯槽 ================= */
+  var SCW = 0.19, SCH = 0.105;
+
+  function drawCeilSlot(z0, z1, zc) {
+    if (z1 > ZW - 1.55) return;      /* 让开窗拱，别从窗顶穿过去 */
+    if (z0 < CAM.z + 1.35) return;   /* 也别铺到头顶：近处那一截会糊成一大片 */
+    var s, a, b, c, d;
+    var kb = 0.50 + 0.50 * ST.lamp;
+    for (s = -1; s <= 1; s += 2) {
+      a = pj(s * SCW, CEIL, z0); b = pj(s * SCW, CEIL, z1);
+      c = pj(s * SCW, CEIL - SCH, z1); d = pj(s * SCW, CEIL - SCH, z0);
+      if (a && b && c && d) quad(a, b, c, d, sh(C_HULL_D, kb * 0.9));
+    }
+    var e = pj(-SCW, CEIL - SCH, z0), f = pj(SCW, CEIL - SCH, z0);
+    var g2 = pj(SCW, CEIL - SCH, z1), h2 = pj(-SCW, CEIL - SCH, z1);
+    if (e && f && g2 && h2) {
+      /* 槽底：不是死白，是压暗的暖光，免得抢窗 */
+      var lit = 0.038 + 0.082 * ST.lamp;
+      quad(e, f, g2, h2, 'rgba(255,222,172,' + lit + ')');
+      /* 溢出来的那点光 */
+      if (ST.lamp > 0.04 && z0 - CAM.z < 12) {
+        var mx = (e[0] + f[0]) * 0.5, my = (e[1] + f[1]) * 0.5;
+        var rr = Math.abs(e[0] - f[0]) * 1.9 + 10;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = 0.055 * ST.lamp;
+        ctx.drawImage(SOFT_WARM, mx - rr, my - rr, rr * 2, rr * 2);
+        ctx.restore();
+      }
+    }
+  }
+
+  /* ================= 藻井横框：每隔两道肋一个 ================= */
+  function drawCoffer(z, zc) {
+    if (z - CAM.z > 16) return;
+    var y = CEIL - SCH - 0.004;
+    var a = pj(-0.80, y, z), b = pj(0.80, y, z);
+    if (!a || !b) return;
+    var f = FOC / a[2];
+    ctx.strokeStyle = rgba(C_BRASS, 0.26 + 0.24 * ST.lamp);
+    ctx.lineWidth = Math.max(1, 0.020 * f);
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    /* 四角斗拱：两小段折线 */
+    ctx.strokeStyle = rgba(C_RIB_HI, 0.16 + 0.14 * ST.lamp);
+    ctx.lineWidth = Math.max(1, 0.012 * f);
+    var i, xx;
+    for (i = 0; i < 2; i++) {
+      xx = i ? 0.80 : -0.80;
+      var p1 = pj(xx, y, z), p2 = pj(xx * 0.86, y, z - 0.10);
+      var p3 = pj(xx * 0.86, y, z + 0.10), p4 = pj(xx, y - 0.13, z);
+      if (p1 && p2) { ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); }
+      if (p1 && p3) { ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p3[0], p3[1]); ctx.stroke(); }
+      if (p1 && p4) { ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p4[0], p4[1]); ctx.stroke(); }
+    }
+  }
+
+  /* ================= 一段舱：z0 近，z1 远 ================= */
+  function drawBay(z0, z1, t) {
+    if (z1 - CAM.z < 0.04) return;
+    var zc = (z0 + z1) * 0.5;
+    var i, A, B, p1, p2, p3, p4, mx, my, side, k, col;
+
+    drawDeck(z0, z1, zc);
+
+    /* 舱壁：沿断面一段一段铺 */
+    for (i = 0; i < SEC.length - 1; i++) {
+      A = SEC[i]; B = SEC[i + 1];
+      p1 = pj(A[0], A[1], z0);
+      p2 = pj(B[0], B[1], z0);
+      p3 = pj(B[0], B[1], z1);
+      p4 = pj(A[0], A[1], z1);
+      if (!p1 || !p2 || !p3 || !p4) continue;
+      mx = (A[0] + B[0]) * 0.5;
+      my = (A[1] + B[1]) * 0.5;
+      side = mx < -0.004 ? -1 : (mx > 0.004 ? 1 : 0);
+      k = hullLight(mx, my, zc, side);
+      /* 腰线以下包木裙板：上半舱是钢，下半舱是木 */
+      col = (my < FLO + 0.86) ? sh(C_WOOD, k * 1.06) : sh(C_HULL, k);
+      quad(p1, p2, p3, p4, col);
+      /* 补缝：相邻面共边处会有半透明的白线，用同色描一道 */
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+    }
+
+    drawWaist(z0, z1, zc);
+    drawConduit(z0, z1);
+
+    /* 木纹：几道竖向的细线，长短不一 */
+    if (z0 - CAM.z < 6.5) {
+      var gs2, gx, gz, ga, gb;
+      ctx.strokeStyle = 'rgba(20,12,7,0.20)';
+      ctx.lineWidth = 1;
+      for (gs2 = 0; gs2 < 10; gs2++) {
+        gz = z0 + (z1 - z0) * ((gs2 * 0.37 + 0.19) % 1);
+        gx = ((gs2 % 2) ? 1 : -1) * HW;
+        var yTop2 = FLO + 0.24 + 0.50 * ((gs2 * 0.61) % 1);
+        ga = pj(gx, FLO + 0.05, gz); gb = pj(gx, yTop2, gz);
+        if (ga && gb) { ctx.beginPath(); ctx.moveTo(ga[0], ga[1]); ctx.lineTo(gb[0], gb[1]); ctx.stroke(); }
+      }
+    }
+
+    /* 裙板的板缝：只画近处，远处本来就看不见 */
+    if (z0 - CAM.z < 8.5) {
+      var ws, wy, wa, wb;
+      ctx.strokeStyle = rgba([26, 17, 10], 0.34);
+      ctx.lineWidth = 1;
+      for (ws = -1; ws <= 1; ws += 2) {
+        var wx = ws * HW;
+        for (var wj = 0; wj < 3; wj++) {
+          wy = FLO + 0.20 + wj * 0.21;
+          wa = pj(wx, wy, z0); wb = pj(wx, wy, z1);
+          if (wa && wb) { ctx.beginPath(); ctx.moveTo(wa[0], wa[1]); ctx.lineTo(wb[0], wb[1]); ctx.stroke(); }
+        }
+      }
+    }
+    drawDeckLights(z0, z1);
+    /* 隔一段一扇格心：排得太满会像一排窗户，不像舱 */
+    if (Math.floor((ZW - z0) / RIB) % 3 === 0 && z0 - CAM.z < 10.5) {
+      drawLattice(-1, z0, z1, zc);
+      drawLattice(1, z0, z1, zc);
+    }
+    drawCeilSlot(z0, z1, zc);
+  }
+
+  /* ================= 环形肋 ================= */
+  function drawRib(z, t) {
+    if (z - CAM.z < 0.10) return;
+    var i, A, B, NA, NB, p1, p2, p3, p4, mx, my, side, k;
+
+    /* 先在远侧投一圈影：肋不投影就只是一条线，立不起来 */
+    var zs = z + 0.16;
+    for (i = 0; i < SEC.length - 1; i++) {
+      A = SEC[i]; B = SEC[i + 1];
+      NA = SECN[i]; NB = SECN[i + 1];
+      var s1 = pj(A[0] + NA[0] * 0.15, A[1] + NA[1] * 0.15, zs);
+      var s2 = pj(B[0] + NB[0] * 0.15, B[1] + NB[1] * 0.15, zs);
+      var s3 = pj(B[0] + NB[0] * 0.02, B[1] + NB[1] * 0.02, zs);
+      var s4 = pj(A[0] + NA[0] * 0.02, A[1] + NA[1] * 0.02, zs);
+      if (!s1 || !s2 || !s3 || !s4) continue;
+      quad(s1, s2, s3, s4, 'rgba(4,6,10,0.26)');
+    }
+
+    for (i = 0; i < SEC.length - 1; i++) {
+      A = SEC[i]; B = SEC[i + 1];
+      NA = SECN[i]; NB = SECN[i + 1];
+      p1 = pj(A[0], A[1], z);
+      p2 = pj(B[0], B[1], z);
+      p3 = pj(B[0] + NB[0] * RIB_IN, B[1] + NB[1] * RIB_IN, z);
+      p4 = pj(A[0] + NA[0] * RIB_IN, A[1] + NA[1] * RIB_IN, z);
+      if (!p1 || !p2 || !p3 || !p4) continue;
+      mx = (A[0] + B[0]) * 0.5;
+      my = (A[1] + B[1]) * 0.5;
+      side = mx < -0.004 ? -1 : (mx > 0.004 ? 1 : 0);
+      k = hullLight(mx, my, z, side);
+      quad(p1, p2, p3, p4, sh(C_RIB, k * 0.58 + 0.30));
+      /* 端面补边 */
+      ctx.strokeStyle = sh(C_RIB, k * 0.54 + 0.26);
+      ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+    }
+
+    /* 内缘一条亮线：把肋从墙上"提"起来 */
+    ctx.beginPath();
+    var started = false, q;
+    for (i = 0; i < SEC.length; i++) {
+      q = pj(SEC[i][0] + SECN[i][0] * RIB_IN, SEC[i][1] + SECN[i][1] * RIB_IN, z);
+      if (!q) { started = false; continue; }
+      if (!started) { ctx.moveTo(q[0], q[1]); started = true; }
+      else ctx.lineTo(q[0], q[1]);
+    }
+    ctx.strokeStyle = rgba(C_RIB_HI, 0.20 + 0.20 * ST.lamp);
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+  }
+
+  /* ================= 整个舱体 ================= */
+  function drawHull(t) {
+    var zNear = CAM.z - 0.28;
+    var zA, zB, bay = 0;
+    /* ★ 舱壁要从「肋的远端」开始画。若从 zB 开始，下一段舱壁会正好
+       盖住上一道肋 —— 肋就永远看不见。留下 RW 这段给肋。 */
+    var RW = 0.14;
+    for (zA = ZW; zA > zNear + 0.02; zA -= RIB) {
+      zB = Math.max(zNear, zA - RIB);
+      if (zB + RW < zA) drawBay(zB + RW, zA, t);
+      drawRib(zB, t);
+      if (bay % 2 === 0) drawCoffer(zB, 0);
+      bay++;
+      if (zB <= zNear) break;
+    }
+  }
+
+  /* ================= 巨窗 ================= */
+  var PW = 2.10;                /* 窗半宽 */
+  var PYB = FLO + 0.50;         /* 窗台 */
+  var PYS = CEIL - PW;          /* 拱脚：让拱顶正好顶在舱顶上 */
+
+  function portPts(pw, pyb, pys, n) {
+    var pts = [], i, th;
+    n = n || 40;
+    pts.push([-pw, pyb]);
+    pts.push([pw, pyb]);
+    pts.push([pw, pys]);
+    for (i = 1; i <= n; i++) {
+      th = Math.PI * (i / n);
+      pts.push([pw * Math.cos(th), pys + pw * Math.sin(th)]);
+    }
+    return pts;
+  }
+
+  function portPath(pw, pyb, pys, n) {
+    var pts = portPts(pw, pyb, pys, n), out = [], i, q;
+    for (i = 0; i < pts.length; i++) {
+      q = pj(pts[i][0], pts[i][1], ZW);
+      if (!q) return null;
+      out.push([q[0], q[1]]);
+    }
+    return out;
+  }
+
+  function tracePoly(pts) {
     ctx.moveTo(pts[0][0], pts[0][1]);
     for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
     ctx.closePath();
@@ -1676,129 +1925,256 @@
 
   function drawPort(t) {
     syncSky();
-    var inner = portPoly(PORT_R, 84);
+    var inner = portPath(PW, PYB, PYS, 40);
     if (!inner) return;
-    var ctr = pj(0, PORT_Y, ZW);
-    if (!ctr) return;
-    var edge = pj(PORT_R, PORT_Y, ZW);
-    if (!edge) return;
-    var pr = Math.hypot(edge[0] - ctr[0], edge[1] - ctr[1]);
-    var pcx = ctr[0], pcy = ctr[1];
-    PORTMAP = { pcx: pcx, pcy: pcy, k: pr / RAD, pr: pr };
+    var outerAll = portPath(PW + 0.165, PYB - 0.165, PYS, 40);
 
-    /* 外面的星空：把缓存星图按圆对圆贴进来 */
+    /* 前壁：从舱体断面挖掉窗，剩下的就是窗周围那道墙。
+       不画这一块，窗框外面就是空的 —— 像贴在黑背景上的一张画。 */
+    if (outerAll) {
+      ctx.beginPath();
+      var si2, sw1 = true;
+      for (si2 = 0; si2 < SEC.length; si2++) {
+        var sp = pj(SEC[si2][0], SEC[si2][1], ZW);
+        if (!sp) { sw1 = false; break; }
+        if (si2 === 0) ctx.moveTo(sp[0], sp[1]);
+        else ctx.lineTo(sp[0], sp[1]);
+      }
+      if (sw1) {
+        ctx.closePath();
+        tracePoly(outerAll);
+        var kfw = hullLight(0, FLO + 1.0, ZW, 0) * 0.92;
+        ctx.fillStyle = sh(C_HULL, kfw);
+        ctx.fill('evenodd');
+
+        /* 前壁上的加强环：绕着窗再箍一道，宽 0.30 */
+        var ring2 = portPath(PW + 0.50, PYB - 0.50, PYS, 40);
+        if (ring2) {
+          ctx.beginPath();
+          tracePoly(ring2);
+          tracePoly(outerAll);
+          ctx.fillStyle = sh(C_HULL_D, kfw * 0.86);
+          ctx.fill('evenodd');
+          /* 门套：外缘一道铜线，再切几道缝，读起来像砌起来的，不是喷出来的 */
+          ctx.strokeStyle = rgba(C_BRASS, 0.09 + 0.11 * ST.lamp);
+          ctx.lineWidth = 1.4;
+          ctx.beginPath(); tracePoly(ring2); ctx.stroke();
+
+          /* 凸边：外法兰那一圈的迎光侧提亮，门套才有厚度 */
+          ctx.strokeStyle = rgba(C_BRASS_H, 0.05 + 0.09 * ST.lamp);
+          ctx.lineWidth = 1.0;
+          ctx.beginPath(); tracePoly(outerAll); ctx.stroke();
+
+          /* 分段缝 */
+          var sg2, ip, op, dxs, dys, dls;
+          for (sg2 = 0; sg2 < 9; sg2++) {
+            ip = Math.floor(sg2 / 9 * ring2.length) % ring2.length;
+            op = outerAll[ip];
+            if (!op) continue;
+            dxs = op[0] - ring2[ip][0];
+            dys = op[1] - ring2[ip][1];
+            dls = Math.hypot(dxs, dys) || 1;
+            ctx.strokeStyle = 'rgba(6,8,11,0.42)';
+            ctx.lineWidth = 1.3;
+            ctx.beginPath();
+            ctx.moveTo(ring2[ip][0], ring2[ip][1]);
+            ctx.lineTo(op[0], op[1]);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    var cTop = pj(0, PYS + PW, ZW);
+    var cBot = pj(0, PYB, ZW);
+    var cCtr = pj(0, (PYB + PYS + PW) * 0.5, ZW);
+    if (!cTop || !cBot || !cCtr) return;
+
+    var hpx = Math.abs(cTop[1] - cBot[1]);
+    var aspect = (PW * 2) / ((PYS + PW) - PYB);
+    var pcx = cCtr[0], pcy = cCtr[1];
+    var pr = hpx * 0.5;
+    PORTMAP = { pcx: pcx, pcy: pcy, k: pr / RAD, pr: pr, aspect: aspect };
+
+    /* 窗外：星空 */
     ctx.save();
-    pathPoly(inner);
+    ctx.beginPath();          /* ★ 漏了这句，clip 会沿用上一段路径 —— 窗就没了 */
+    tracePoly(inner);
     ctx.clip();
-    ctx.globalCompositeOperation = 'source-over';
-    var k = pr / RAD;                      /* 放大倍率 */
-    var SW = RAD * 2;                      /* 源区域固定 = 取满整幅星星 */
+    ctx.fillStyle = '#03050a';
+    ctx.fillRect(0, 0, W, H);
+
+    var srcH = RAD * 2;
+    var srcW = Math.min(W, RAD * 2 * aspect);
+    var dstW = hpx * (srcW / srcH);
+    var dstH = hpx;
+
     if (ST.spin) {
       ctx.translate(pcx, pcy);
       ctx.rotate(ST.spin);
       ctx.translate(-pcx, -pcy);
     }
-    ctx.drawImage(SKY, CX - SW / 2, CY - SW / 2, SW, SW,
-                  pcx - pr, pcy - pr, pr * 2, pr * 2);
+    var sx0 = (CX - srcW / 2) * DPR, sy0 = (CY - srcH / 2) * DPR;
+    var sw0 = srcW * DPR, sh0 = srcH * DPR;
+    var dx0 = pcx - dstW / 2, dy0 = pcy - dstH / 2;
+
+    /* 两遍：第一遍压暗，让星云退成底色；第二遍只把星提出来。
+       一遍直接贴，星会被星云的辉光吃掉 —— 窗越大越明显。 */
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    var okFilter = false;
+    try { ctx.filter = 'brightness(0.56) saturate(1.05)'; okFilter = true; } catch (e2) { }
+    ctx.drawImage(SKY, sx0, sy0, sw0, sh0, dx0, dy0, dstW, dstH);
+    if (okFilter) {
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.filter = 'brightness(1.02) contrast(1.85) saturate(0.92)';
+      ctx.drawImage(SKY, sx0, sy0, sw0, sh0, dx0, dy0, dstW, dstH);
+      ctx.filter = 'none';
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    /* 玻璃：极淡的一道斜光，证明这不是洞 */
+    if (ST.lamp > 0.05) {
+      var gl = ctx.createLinearGradient(pcx - dstW * 0.5, pcy - dstH * 0.5,
+                                        pcx + dstW * 0.1, pcy + dstH * 0.5);
+      gl.addColorStop(0, 'rgba(196,214,236,0)');
+      gl.addColorStop(0.36, 'rgba(196,214,236,' + (0.014 * ST.lamp) + ')');
+      gl.addColorStop(0.44, 'rgba(214,230,248,' + (0.026 * ST.lamp) + ')');
+      gl.addColorStop(0.52, 'rgba(196,214,236,' + (0.009 * ST.lamp) + ')');
+      gl.addColorStop(1, 'rgba(196,214,236,0)');
+      ctx.fillStyle = gl;
+      ctx.fillRect(pcx - dstW / 2, pcy - dstH / 2, dstW, dstH);
+    }
+
+    /* 窗洞内壁的暗：四边各压一道，不是径向 —— 窗是宽矩形，径向会把两侧糊死 */
+    var bw = dstW * 0.040, bh = dstH * 0.058;
+    var gl1 = ctx.createLinearGradient(dx0, 0, dx0 + bw, 0);
+    gl1.addColorStop(0, 'rgba(0,0,0,0.40)'); gl1.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gl1; ctx.fillRect(dx0, dy0, bw, dstH);
+    var gl2 = ctx.createLinearGradient(dx0 + dstW, 0, dx0 + dstW - bw, 0);
+    gl2.addColorStop(0, 'rgba(0,0,0,0.40)'); gl2.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gl2; ctx.fillRect(dx0 + dstW - bw, dy0, bw, dstH);
+    var gl3 = ctx.createLinearGradient(0, dy0 + dstH, 0, dy0 + dstH - bh);
+    gl3.addColorStop(0, 'rgba(0,0,0,0.38)'); gl3.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gl3; ctx.fillRect(dx0, dy0 + dstH - bh, dstW, bh);
+    var gl4 = ctx.createLinearGradient(0, dy0, 0, dy0 + bh);
+    gl4.addColorStop(0, 'rgba(0,0,0,0.30)'); gl4.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gl4; ctx.fillRect(dx0, dy0, dstW, bh);
     ctx.restore();
 
-    /* 窗洞内壁的阴影 */
-    ctx.save();
-    pathPoly(inner);
-    ctx.clip();
-    var shd = ctx.createRadialGradient(pcx, pcy, pr * 0.70, pcx, pcy, pr * 1.02);
-    shd.addColorStop(0, 'rgba(0,0,0,0)');
-    shd.addColorStop(1, 'rgba(0,0,0,0.62)');
-    ctx.fillStyle = shd;
-    ctx.fillRect(pcx - pr, pcy - pr, pr * 2, pr * 2);
-    ctx.restore();
-
-    /* 木框（annulus：外圈 + 内圈，evenodd 挖洞） */
-    var outer = portPoly(PORT_R + 0.085, 84);
-    if (outer) {
-      var ring = ctx.createLinearGradient(pcx - pr, pcy - pr, pcx + pr, pcy + pr);
-      var kk = 0.28 + 0.72 * ST.lamp;
-      ring.addColorStop(0, sh(C_RING_D, kk));
-      ring.addColorStop(0.34, sh(C_RING, kk));
-      ring.addColorStop(0.62, sh(C_RING, kk * 1.12));
-      ring.addColorStop(1, sh(C_RING_D, kk * 0.9));
+    /* 窗框：外法兰 + 内框，evenodd 挖洞 */
+    var outer = outerAll;
+    var mid = portPath(PW + 0.052, PYB - 0.052, PYS, 40);
+    if (outer && mid) {
+      var kk = 0.20 + 0.46 * ST.lamp;
+      var ring = ctx.createLinearGradient(pcx - hpx * 0.95, pcy - hpx * 0.75,
+                                          pcx + hpx * 0.95, pcy + hpx * 0.85);
+      ring.addColorStop(0, sh(C_RIB, kk * 0.92));
+      ring.addColorStop(0.28, sh(C_HULL_D, kk * 1.35));
+      ring.addColorStop(0.52, sh(C_RIB, kk * 1.18));
+      ring.addColorStop(0.74, sh(C_HULL_D, kk * 1.05));
+      ring.addColorStop(1, sh(C_HULL_D, kk * 0.80));
       ctx.fillStyle = ring;
       ctx.beginPath();
-      ctx.moveTo(outer[0][0], outer[0][1]);
-      for (var oi = 1; oi < outer.length; oi++) ctx.lineTo(outer[oi][0], outer[oi][1]);
-      ctx.closePath();
-      ctx.moveTo(inner[0][0], inner[0][1]);
-      for (var ii2 = 1; ii2 < inner.length; ii2++) ctx.lineTo(inner[ii2][0], inner[ii2][1]);
-      ctx.closePath();
+      tracePoly(outer);
+      tracePoly(inner);
       ctx.fill('evenodd');
 
-      /* 外缘倒角：迎光的一侧提亮，背光的一侧压暗 */
-      var bevel = portPoly(PORT_R + 0.085, 84);
-      var bev2 = portPoly(PORT_R + 0.062, 84);
-      if (bevel && bev2) {
-        var bg = ctx.createLinearGradient(pcx - pr, pcy - pr, pcx + pr, pcy + pr);
-        bg.addColorStop(0, 'rgba(198,160,104,' + (0.16 + 0.16 * ST.lamp) + ')');
-        bg.addColorStop(0.5, 'rgba(0,0,0,0)');
-        bg.addColorStop(1, 'rgba(0,0,0,0.42)');
-        ctx.fillStyle = bg;
-        ctx.beginPath();
-        ctx.moveTo(bevel[0][0], bevel[0][1]);
-        for (var bi = 1; bi < bevel.length; bi++) ctx.lineTo(bevel[bi][0], bevel[bi][1]);
-        ctx.closePath();
-        ctx.moveTo(bev2[0][0], bev2[0][1]);
-        for (var bi2 = 1; bi2 < bev2.length; bi2++) ctx.lineTo(bev2[bi2][0], bev2[bi2][1]);
-        ctx.closePath();
-        ctx.fill('evenodd');
-      }
-
-      /* 木纹：几道不闭合的弧，只在框上 */
-      ctx.save();
+      /* 内框：一圈铜 */
+      var ring2 = ctx.createLinearGradient(pcx - hpx * 0.9, pcy - hpx * 0.7,
+                                           pcx + hpx * 0.9, pcy + hpx * 0.8);
+      ring2.addColorStop(0, sh(C_BRASS, kk * 1.05));
+      ring2.addColorStop(0.5, sh(C_BRASS_H, kk * 0.62));
+      ring2.addColorStop(1, sh(C_BRASS, kk * 0.70));
+      ctx.fillStyle = ring2;
       ctx.beginPath();
-      ctx.moveTo(outer[0][0], outer[0][1]);
-      for (var oi2 = 1; oi2 < outer.length; oi2++) ctx.lineTo(outer[oi2][0], outer[oi2][1]);
-      ctx.closePath();
-      ctx.moveTo(inner[0][0], inner[0][1]);
-      for (var ii3 = 1; ii3 < inner.length; ii3++) ctx.lineTo(inner[ii3][0], inner[ii3][1]);
-      ctx.closePath();
-      ctx.clip('evenodd');
-      ctx.strokeStyle = 'rgba(30,20,10,0.20)';
-      ctx.lineWidth = Math.max(1, pr * 0.006);
-      for (var gi = 0; gi < 5; gi++) {
-        var rr2 = PORT_R + 0.012 + gi * 0.017;
-        var gp = portPoly(rr2, 60);
-        if (!gp) continue;
-        ctx.beginPath();
-        ctx.moveTo(gp[0][0], gp[0][1]);
-        for (var gj = 1; gj < gp.length; gj++) ctx.lineTo(gp[gj][0], gp[gj][1]);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      /* 内壁的一线高光（迎窗光） */
-      ctx.strokeStyle = rgba([208, 172, 118], 0.14 + 0.16 * ST.lamp);
-      ctx.lineWidth = Math.max(1, pr * 0.009);
-      pathPoly(inner);
-      ctx.stroke();
+      tracePoly(mid);
+      tracePoly(inner);
+      ctx.fill('evenodd');
     }
-    /* 内圈暗边 */
-    ctx.strokeStyle = rgba([16, 11, 7], 0.85);
-    ctx.lineWidth = Math.max(1, pr * 0.012);
-    pathPoly(inner);
+
+    /* 窗台：一块伸出来的铜板，人可以扶 */
+    var st1 = pj(-PW - 0.16, PYB, ZW), st2 = pj(PW + 0.16, PYB, ZW);
+    var st3 = pj(PW + 0.16, PYB - 0.075, ZW - 0.20);
+    var st4 = pj(-PW - 0.16, PYB - 0.075, ZW - 0.20);
+    if (st1 && st2 && st3 && st4) {
+      var sg = ctx.createLinearGradient(st1[0], st1[1], st4[0], st4[1]);
+      sg.addColorStop(0, sh(C_BRASS, 0.26 + 0.30 * ST.lamp));
+      sg.addColorStop(0.55, sh(C_BRASS_H, 0.20 + 0.26 * ST.lamp));
+      sg.addColorStop(1, sh(C_BRASS, 0.16 + 0.20 * ST.lamp));
+      quad(st1, st2, st3, st4, sg);
+      ctx.strokeStyle = rgba(C_BRASS_H, 0.16 + 0.18 * ST.lamp);
+      ctx.lineWidth = Math.max(1, hpx * 0.003);
+      ctx.beginPath(); ctx.moveTo(st4[0], st4[1]); ctx.lineTo(st3[0], st3[1]); ctx.stroke();
+
+      /* 窗台前沿刻一行小字。看不清才对，看得清的人会心一笑。 */
+      if (hpx > 300) {
+        ctx.save();
+        ctx.globalAlpha = 0.20 + 0.22 * ST.lamp;
+        ctx.fillStyle = 'rgb(' + C_BRASS_H[0] + ',' + C_BRASS_H[1] + ',' + C_BRASS_H[2] + ')';
+        ctx.font = Math.max(7, hpx * 0.020) + 'px "KaiTi","STKaiti",serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('三 垣 二 十 八 宿', (st4[0] + st3[0]) * 0.5, (st4[1] + st3[1]) * 0.5);
+        ctx.restore();
+      }
+    }
+
+    /* 内缘一圈压黑：窗是有厚度的 */
+    ctx.strokeStyle = 'rgba(8,10,14,0.92)';
+    ctx.lineWidth = Math.max(1.2, hpx * 0.008);
+    ctx.beginPath();
+    tracePoly(inner);
     ctx.stroke();
 
-    /* 铜钉：二十八宿 */
-    var mid = portPoly(PORT_R + 0.043, 28);
-    if (mid) {
-      for (var i = 0; i < 28; i++) {
-        var p = mid[i];
-        var glow = 0.30 + 0.55 * Math.max(0, Math.sin(t * 1.05 + i * 0.92));
-        var rr = Math.max(1.2, pr * (0.010 + 0.006 * glow));
-        ctx.fillStyle = 'rgba(' + C_BRASS[0] + ',' + C_BRASS[1] + ',' + C_BRASS[2] + ',' + (0.30 + 0.55 * ST.lamp) + ')';
+    /* 迎光侧一线高光 */
+    ctx.strokeStyle = rgba(C_BRASS_H, 0.10 + 0.14 * ST.lamp);
+    ctx.lineWidth = Math.max(1, hpx * 0.004);
+    ctx.beginPath();
+    tracePoly(inner);
+    ctx.stroke();
+
+    /* 分段缝：把法兰切成一段一段，像拼装的舱段，不是一整圈塑料 */
+    if (outer && mid) {
+      var segs = 28, si, ii, po, pi2, dx, dy, dl;
+      for (si = 0; si < segs; si++) {
+        ii = Math.floor(si / segs * outer.length) % outer.length;
+        po = outer[ii]; pi2 = mid[ii];
+        if (!po || !pi2) continue;
+        ctx.strokeStyle = 'rgba(7,9,12,' + (0.55 + 0.25 * ST.lamp) + ')';
+        ctx.lineWidth = Math.max(1, hpx * 0.008);
+        ctx.beginPath();
+        ctx.moveTo(po[0], po[1]);
+        ctx.lineTo(pi2[0], pi2[1]);
+        ctx.stroke();
+        /* 缝两侧各一颗铆钉 */
+        dx = po[0] - pcx; dy = po[1] - pcy;
+        dl = Math.hypot(dx, dy) || 1;
+        var rr2 = Math.max(1, hpx * 0.0042);
+        ctx.fillStyle = 'rgba(' + C_BRASS_H[0] + ',' + C_BRASS_H[1] + ',' + C_BRASS_H[2] + ',' + (0.18 + 0.34 * ST.lamp) + ')';
+        ctx.beginPath();
+        ctx.arc(po[0] - dx / dl * hpx * 0.030, po[1] - dy / dl * hpx * 0.030, rr2, 0, TAU);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(po[0] - dx / dl * hpx * 0.092, po[1] - dy / dl * hpx * 0.092, rr2 * 0.86, 0, TAU);
+        ctx.fill();
+      }
+    }
+
+    /* 铜钉：二十八宿，钉在法兰上 */
+    if (outer) {
+      var cnt = 28;
+      for (var i = 0; i < cnt; i++) {
+        var idx = Math.floor(i / cnt * outer.length) % outer.length;
+        var p = outer[idx];
+        var glow = 0.28 + 0.52 * Math.max(0, Math.sin(t * 0.85 + i * 0.92));
+        var rr = Math.max(1.2, hpx * (0.0055 + 0.0035 * glow));
+        ctx.fillStyle = 'rgba(' + C_BRASS[0] + ',' + C_BRASS[1] + ',' + C_BRASS[2] + ',' + (0.34 + 0.50 * ST.lamp) + ')';
         ctx.beginPath(); ctx.arc(p[0], p[1], rr, 0, TAU); ctx.fill();
         if (ST.lamp > 0.05) {
           ctx.save();
           ctx.globalCompositeOperation = 'lighter';
-          ctx.globalAlpha = 0.16 * glow * ST.lamp;
+          ctx.globalAlpha = 0.13 * glow * ST.lamp;
           var gs = rr * 7;
           ctx.drawImage(SOFT_GOLD, p[0] - gs, p[1] - gs, gs * 2, gs * 2);
           ctx.restore();
@@ -1807,53 +2183,304 @@
     }
   }
 
-  /* ================= 星光落在地上 ================= */
-  function drawBeam(t) {
-    var ctr = pj(0, PORT_Y, ZW);
-    if (!ctr) return;
-    var edge = pj(PORT_R, PORT_Y, ZW);
-    if (!edge) return;
-    var pr = Math.hypot(edge[0] - ctr[0], edge[1] - ctr[1]);
+  /* ================= 窗前铜栏 ================= */
+  function drawRail(t) {
+    var zr = ZW - 1.28;
+    var yT = FLO + 1.03, yM = FLO + 0.62;
+    var xr = 1.80;
+    var a = pj(-xr, yT, zr), b = pj(xr, yT, zr);
+    if (!a || !b) return;
+    var f = FOC / a[2];
+    var lit = 0.24 + 0.56 * ST.lamp;
 
-    /* 地上的光斑 */
-    var fz = ZW - 1.05;
-    var fp = pj(0, FLO, fz);
-    if (fp) {
-      var f = FOC / fp[2];
-      var rx = 0.95 * f, ry = 0.30 * f;
-      var g = ctx.createRadialGradient(fp[0], fp[1], 0, fp[0], fp[1], rx);
-      g.addColorStop(0, 'rgba(206,216,255,' + (0.15 + 0.16 * (1 - ST.lamp)) + ')');
-      g.addColorStop(0.45, 'rgba(176,196,255,' + (0.05 + 0.08 * (1 - ST.lamp)) + ')');
-      g.addColorStop(1, 'rgba(150,176,255,0)');
+    /* 横杆两根 */
+    var yy, w, i;
+    for (i = 0; i < 2; i++) {
+      yy = i ? yM : yT;
+      var q1 = pj(-xr, yy, zr), q2 = pj(xr, yy, zr);
+      if (!q1 || !q2) continue;
+      w = Math.max(1.4, (i ? 0.024 : 0.034) * f);
+      var gr = ctx.createLinearGradient(q1[0], q1[1] - w, q2[0], q2[1] + w);
+      gr.addColorStop(0, sh(C_BRASS, lit * 0.9));
+      gr.addColorStop(0.42, sh(C_BRASS_H, lit * 0.78));
+      gr.addColorStop(1, sh(C_BRASS, lit * 0.52));
+      ctx.strokeStyle = gr;
+      ctx.lineWidth = w;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke();
+      ctx.lineCap = 'butt';
+    }
+
+    /* 立柱三根 */
+    var xs = [-xr, 0, xr];
+    for (i = 0; i < 3; i++) {
+      var l1 = pj(xs[i], yT, zr), l2 = pj(xs[i], FLO, zr);
+      if (!l1 || !l2) continue;
+      ctx.strokeStyle = sh(C_BRASS, lit * 0.72);
+      ctx.lineWidth = Math.max(1, 0.020 * f);
+      ctx.beginPath(); ctx.moveTo(l1[0], l1[1]); ctx.lineTo(l2[0], l2[1]); ctx.stroke();
+      /* 柱脚一个方墩 */
+      var b1 = pj(xs[i] - 0.045, FLO + 0.05, zr), b2 = pj(xs[i] + 0.045, FLO + 0.05, zr);
+      if (b1 && b2) {
+        ctx.strokeStyle = sh(C_BRASS, lit * 0.5);
+        ctx.lineWidth = Math.max(1, 0.048 * f);
+        ctx.beginPath(); ctx.moveTo(b1[0], b1[1]); ctx.lineTo(b2[0], b2[1]); ctx.stroke();
+      }
+    }
+  }
+
+  /* ================= 宫灯 ================= */
+  function drawLamp(x, z, t) {
+    var hangY = CEIL - SCH - 0.02;
+    var top = pj(x, hangY, z);
+    var bot = pj(x, hangY - 0.66, z);
+    if (!top || !bot) return;
+    var f = FOC / top[2];
+    if (f < 2) return;
+    var w = 0.235 * f;
+
+    /* 铜钩 */
+    ctx.strokeStyle = rgba(C_BRASS, 0.30 + 0.50 * ST.lamp);
+    ctx.lineWidth = Math.max(1, 0.010 * f);
+    ctx.beginPath();
+    ctx.moveTo(top[0], top[1]);
+    ctx.lineTo(top[0], top[1] + 0.13 * f);
+    ctx.stroke();
+    /* 钩子上的小环 */
+    ctx.beginPath();
+    ctx.arc(top[0], top[1] + 0.045 * f, 0.030 * f, 0, TAU);
+    ctx.stroke();
+
+    var lit = ST.lamp;
+    var cy = bot[1];        /* 灯罩顶 */
+    var cyB = cy + 0.40 * f;/* 灯罩底 */
+
+    /* 灯罩：上窄下宽的六角灯，正对的两面一亮一暗 */
+    var gr = ctx.createLinearGradient(top[0] - w, cy, top[0] + w, cy);
+    gr.addColorStop(0, sh([74, 52, 30], 0.52 + 0.26 * lit));
+    gr.addColorStop(0.30, sh([186, 138, 78], 0.54 + 0.38 * lit));
+    gr.addColorStop(0.62, sh([146, 104, 58], 0.54 + 0.28 * lit));
+    gr.addColorStop(1, sh([64, 44, 26], 0.52 + 0.22 * lit));
+    ctx.fillStyle = gr;
+    ctx.beginPath();
+    ctx.moveTo(top[0] - w * 0.60, cy);
+    ctx.lineTo(top[0] + w * 0.60, cy);
+    ctx.lineTo(top[0] + w, cyB);
+    ctx.lineTo(top[0] - w, cyB);
+    ctx.closePath();
+    ctx.fill();
+
+    /* 朱红立棱：六角的两道边 */
+    ctx.strokeStyle = rgba([120, 42, 34], 0.50 + 0.30 * lit);
+    ctx.lineWidth = Math.max(1, 0.012 * f);
+    var i, px;
+    for (i = -1; i <= 1; i += 1) {
+      px = top[0] + i * w * 0.62;
+      ctx.beginPath();
+      ctx.moveTo(px, cy + 0.012 * f);
+      ctx.lineTo(px * 1.0 + i * w * 0.20, cyB);
+      ctx.stroke();
+    }
+
+    /* 灯面横骨：三道，细的，像糊纸的竹骨 */
+    ctx.strokeStyle = 'rgba(58,40,24,0.42)';
+    ctx.lineWidth = Math.max(1, 0.006 * f);
+    var bb2;
+    for (bb2 = 1; bb2 <= 3; bb2++) {
+      var t2 = bb2 / 4;
+      var lx2 = top[0] - (w * 0.60 + (w - w * 0.60) * t2);
+      var rx2 = top[0] + (w * 0.60 + (w - w * 0.60) * t2);
+      var yy3 = cy + (cyB - cy) * t2;
+      ctx.beginPath(); ctx.moveTo(lx2, yy3); ctx.lineTo(rx2, yy3); ctx.stroke();
+    }
+
+    /* 上下铜箍 */
+    ctx.strokeStyle = sh(C_BRASS_H, 0.55 + 0.40 * lit);
+    ctx.lineWidth = Math.max(1, 0.016 * f);
+    ctx.beginPath(); ctx.moveTo(top[0] - w * 0.62, cy + 0.006 * f); ctx.lineTo(top[0] + w * 0.62, cy + 0.006 * f); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(top[0] - w, cyB); ctx.lineTo(top[0] + w, cyB); ctx.stroke();
+
+    /* 灯下的暖光 */
+    if (lit > 0.05) {
+      var gs = (1.9 + 0.7 * lit) * f * 0.9;
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
-      ctx.translate(fp[0], fp[1]);
-      ctx.scale(1, ry / rx);
-      ctx.translate(-fp[0], -fp[1]);
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(fp[0], fp[1], rx, 0, TAU); ctx.fill();
+      ctx.globalAlpha = 0.19 * lit;
+      ctx.drawImage(SOFT_GOLD, top[0] - gs / 2, (cy + cyB) / 2 - gs / 2, gs, gs);
       ctx.restore();
     }
 
-    /* 光柱：三层叠加，越往外越淡，边不硬 */
+    /* 底部铜坠 */
+    ctx.fillStyle = sh(C_BRASS, 0.45 + 0.35 * lit);
+    ctx.beginPath();
+    ctx.ellipse(top[0], cyB + 0.022 * f, w * 0.20, 0.020 * f, 0, 0, TAU);
+    ctx.fill();
+
+    /* 流苏：三股，朱红 */
+    ctx.strokeStyle = rgba([116, 38, 30], 0.42 + 0.28 * lit);
+    ctx.lineWidth = Math.max(1, 0.008 * f);
+    for (i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(top[0] + i * w * 0.42, cyB + 0.030 * f);
+      ctx.lineTo(top[0] + i * w * 0.56, cyB + 0.26 * f);
+      ctx.stroke();
+    }
+  }
+
+  /* ================= 舱里的一张矮几 ================= */
+  function drawAltar(t) {
+    var tx = -1.34, tz = 7.05, ty = FLO + 0.60;
+    var hw = 0.52, hd = 0.26, tt = 0.045;   /* 半宽、半深、板厚 */
+    var k = 0.42 + 0.58 * ST.lamp;
+    var kk = k + lampAt(tx, ty, tz) * 0.7;
+
+    /* 桌腿 */
+    var lx = [[-hw + 0.05, -hd + 0.05], [hw - 0.05, -hd + 0.05],
+              [hw - 0.05, hd - 0.05], [-hw + 0.05, hd - 0.05]];
+    var i, a, b, f;
+    for (i = 0; i < 4; i++) {
+      a = pj(tx + lx[i][0], ty, tz + lx[i][1]);
+      b = pj(tx + lx[i][0], FLO, tz + lx[i][1]);
+      if (!a || !b) continue;
+      f = FOC / a[2];
+      ctx.strokeStyle = sh([42, 30, 22], kk * 0.78);
+      ctx.lineWidth = Math.max(1, 0.052 * f);
+      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    }
+
+    /* 桌面：顶面 + 前沿 */
+    var p1 = pj(tx - hw, ty, tz - hd), p2 = pj(tx + hw, ty, tz - hd);
+    var p3 = pj(tx + hw, ty, tz + hd), p4 = pj(tx - hw, ty, tz + hd);
+    if (p1 && p2 && p3 && p4) {
+      quad(p1, p2, p3, p4, sh([58, 40, 28], kk * 0.96));
+      /* 桌面一道反光 */
+      ctx.strokeStyle = rgba([176, 142, 96], 0.10 + 0.16 * ST.lamp);
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+    }
+    var q1 = pj(tx - hw, ty, tz - hd), q2 = pj(tx + hw, ty, tz - hd);
+    var q3 = pj(tx + hw, ty - tt, tz - hd), q4 = pj(tx - hw, ty - tt, tz - hd);
+    if (q1 && q2 && q3 && q4) quad(q1, q2, q3, q4, sh([34, 23, 16], kk * 0.80));
+
+    /* 香炉：三足小鼎 */
+    var cx = tx + 0.04, cz = tz + 0.02, cy = ty + 0.115;
+    var pc = pj(cx, cy, cz);
+    if (pc) {
+      f = FOC / pc[2];
+      var rw = 0.088 * f;
+      var grd = ctx.createRadialGradient(pc[0] - rw * 0.35, pc[1] - rw * 0.35, 0, pc[0], pc[1], rw);
+      grd.addColorStop(0, sh([150, 128, 96], kk));
+      grd.addColorStop(1, sh([56, 44, 32], kk * 0.9));
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rw, rw * 0.74, 0, 0, TAU); ctx.fill();
+      /* 口沿 */
+      ctx.fillStyle = sh([108, 88, 64], kk);
+      ctx.beginPath();
+      ctx.ellipse(pc[0], pc[1] - rw * 0.46, rw * 0.40, rw * 0.20, 0, 0, TAU);
+      ctx.fill();
+
+      /* 青烟 */
+      if (ST.lamp > 0.05) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (var sm = 0; sm < 22; sm++) {
+          var pr2 = ((t * 0.09 + sm / 19) % 1);
+          var yy2 = pc[1] - rw * 0.55 - pr2 * 0.78 * f;
+          var amp2 = (0.02 + pr2 * 0.11) * f;
+          var xx2 = pc[0] + Math.sin(pr2 * 4.6 + sm * 1.7 + t * 0.42) * amp2
+                          + pr2 * 0.10 * f;
+          var al2 = Math.pow(1 - pr2, 2.2) * 0.15 * ST.lamp;
+          var rr3 = (0.010 + pr2 * 0.050) * f;
+          ctx.globalAlpha = al2;
+          ctx.drawImage(SOFT_WARM, xx2 - rr3, yy2 - rr3, rr3 * 2, rr3 * 2);
+        }
+        ctx.restore();
+      }
+    }
+
+    /* 蒲团：地上一块圆垫，就在几旁 */
+    var pu = pj(tx + 1.02, FLO, tz + 0.62);
+    if (pu) {
+      f = FOC / pu[2];
+      var pr3 = 0.30 * f;
+      var gp = ctx.createRadialGradient(pu[0], pu[1] - pr3 * 0.10, pr3 * 0.1, pu[0], pu[1], pr3);
+      gp.addColorStop(0, sh([64, 30, 26], kk * 0.90));
+      gp.addColorStop(1, sh([30, 16, 14], kk * 0.75));
+      ctx.fillStyle = gp;
+      ctx.beginPath();
+      ctx.ellipse(pu[0], pu[1], pr3, pr3 * 0.36, 0, 0, TAU);
+      ctx.fill();
+      ctx.strokeStyle = rgba([132, 58, 44], 0.22 + 0.18 * ST.lamp);
+      ctx.lineWidth = Math.max(1, 0.012 * f);
+      ctx.beginPath();
+      ctx.ellipse(pu[0], pu[1], pr3 * 0.96, pr3 * 0.34, 0, 0, TAU);
+      ctx.stroke();
+    }
+  }
+
+  /* ================= 星光落在地上 ================= */
+  function drawBeam(t) {
+    var fp = pj(0, FLO, ZW - 2.05);
+    if (!fp) return;
+    var f = FOC / fp[2];
+    var lit = 0.13 + 0.12 * (1 - ST.lamp);
+
+    /* 地上：窗的倒影拖成一条长光带，一路铺到脚下 */
+    var near = pj(0, FLO, ZW - 0.10), far2 = pj(0, FLO, ZW - 3.40);
+    if (near && far2) {
+      var wN = PW * 0.92, wF = PW * 1.04;
+      var a1 = pj(-wN, FLO, ZW - 0.10), b1 = pj(wN, FLO, ZW - 0.10);
+      var a2 = pj(-wF, FLO, ZW - 3.40), b2 = pj(wF, FLO, ZW - 3.40);
+      if (a1 && b1 && a2 && b2) {
+        var gg = ctx.createLinearGradient(0, (a1[1] + b1[1]) * 0.5, 0, (a2[1] + b2[1]) * 0.5);
+        gg.addColorStop(0, 'rgba(206,220,250,' + lit + ')');
+        gg.addColorStop(0.42, 'rgba(186,204,248,' + (lit * 0.52) + ')');
+        gg.addColorStop(1, 'rgba(160,184,240,0)');
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = gg;
+        ctx.beginPath();
+        ctx.moveTo(a1[0], a1[1]); ctx.lineTo(b1[0], b1[1]);
+        ctx.lineTo(b2[0], b2[1]); ctx.lineTo(a2[0], a2[1]);
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    /* 再补一小片最亮的：就在窗台下 */
+    var rx = 1.30 * f, ry = 0.44 * f;
+    var g = ctx.createRadialGradient(fp[0], fp[1], 0, fp[0], fp[1], rx);
+    g.addColorStop(0, 'rgba(212,226,255,' + (lit * 0.80) + ')');
+    g.addColorStop(0.5, 'rgba(180,200,248,' + (lit * 0.30) + ')');
+    g.addColorStop(1, 'rgba(150,176,236,0)');
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.translate(fp[0], fp[1]);
+    ctx.scale(1, ry / rx);
+    ctx.translate(-fp[0], -fp[1]);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(fp[0], fp[1], rx, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    /* 空中：三层极淡的光，从窗口漫出来 */
     var layers = [
-      { w: 0.62, a: 0.10, y: 0.0 },
-      { w: 0.86, a: 0.055, y: 0.02 },
-      { w: 1.08, a: 0.030, y: 0.04 }
+      { w: 0.80, a: 0.062 },
+      { w: 1.04, a: 0.034 },
+      { w: 1.30, a: 0.017 }
     ];
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     for (var li = 0; li < layers.length; li++) {
       var L = layers[li];
-      var lp = pj(-PORT_R * L.w, PORT_Y - PORT_R * L.w, ZW);
-      var rp = pj(PORT_R * L.w, PORT_Y - PORT_R * L.w, ZW);
-      var lb = pj(-1.45 * L.w, FLO, ZW - 1.05);
-      var rb = pj(1.45 * L.w, FLO, ZW - 1.05);
+      var lp = pj(-PW * L.w, PYS + PW * 0.86, ZW);
+      var rp = pj(PW * L.w, PYS + PW * 0.86, ZW);
+      var lb = pj(-2.2 * L.w, FLO, ZW - 2.05);
+      var rb = pj(2.2 * L.w, FLO, ZW - 2.05);
       if (!lp || !rp || !lb || !rb) continue;
       var g2 = ctx.createLinearGradient(0, lp[1], 0, lb[1]);
-      g2.addColorStop(0, 'rgba(186,202,255,' + L.a * (1.0 + 0.9 * (1 - ST.lamp)) + ')');
-      g2.addColorStop(0.55, 'rgba(172,192,255,' + L.a * 0.42 * (1.0 + (1 - ST.lamp)) + ')');
-      g2.addColorStop(1, 'rgba(158,180,255,0)');
+      g2.addColorStop(0, 'rgba(182,200,252,' + (L.a * (1.0 + 0.8 * (1 - ST.lamp))) + ')');
+      g2.addColorStop(0.58, 'rgba(168,190,252,' + (L.a * 0.38) + ')');
+      g2.addColorStop(1, 'rgba(156,180,250,0)');
       ctx.fillStyle = g2;
       ctx.beginPath();
       ctx.moveTo(lp[0], lp[1]); ctx.lineTo(rp[0], rp[1]);
@@ -1866,10 +2493,14 @@
 
   /* ================= 舱内浮尘 ================= */
   var MOTE = [];
-  for (var mi = 0; mi < 46; mi++) {
+  for (var mi = 0; mi < 56; mi++) {
     MOTE.push({
-      x: R(-HW * 0.9, HW * 0.9), y: R(FLO + 0.1, CEIL - 0.1), z: R(ZW - 3.2, ZW),
-      ph: R(0, TAU), sp: R(0.15, 0.5), sz: R(0.004, 0.012)
+      x: R(-HW * 0.86, HW * 0.86),
+      y: R(FLO + 0.12, CEIL - 0.12),
+      z: R(ZW - 7.0, ZW - 0.2),
+      ph: R(0, TAU),
+      sp: R(0.12, 0.42),
+      sz: R(0.0035, 0.011)
     });
   }
   function drawMotes(t) {
@@ -1877,14 +2508,17 @@
     ctx.globalCompositeOperation = 'lighter';
     for (var i = 0; i < MOTE.length; i++) {
       var m = MOTE[i];
-      var yy = m.y + Math.sin(t * m.sp + m.ph) * 0.06;
-      var xx = m.x + Math.cos(t * m.sp * 0.7 + m.ph) * 0.05;
+      var yy = m.y + Math.sin(t * m.sp + m.ph) * 0.07;
+      var xx = m.x + Math.cos(t * m.sp * 0.65 + m.ph) * 0.06;
       var p = pj(xx, yy, m.z);
       if (!p) continue;
       var f = FOC / p[2];
       var rr = m.sz * f;
       if (rr < 0.3) continue;
-      ctx.globalAlpha = 0.10 + 0.22 * (0.4 + 0.6 * Math.sin(t * 1.4 + m.ph));
+      var al = 0.10 + 0.20 * (0.4 + 0.6 * Math.sin(t * 1.3 + m.ph));
+      /* 靠窗的尘被星光照亮，靠里的被灯照亮 */
+      var nw = clamp((m.z - (ZW - 7.0)) / 7.0, 0, 1);
+      ctx.globalAlpha = al * (0.45 + 0.55 * nw);
       ctx.drawImage(SOFT_WARM, p[0] - rr, p[1] - rr, rr * 2, rr * 2);
     }
     ctx.restore();
@@ -1892,21 +2526,26 @@
 
   /* ================= 舱内一帧 ================= */
   function drawCabin(t) {
-    ctx.fillStyle = '#05060b';
+    ctx.fillStyle = '#04060c';
     ctx.fillRect(0, 0, W, H);
 
-    drawRoom();
+    drawPort(t);          /* 最远：巨窗 */
+    drawHull(t);          /* 由远及近：舱壁、肋、格心、灯槽 */
+    drawAltar(t);         /* 舱里唯一一件人做的东西 */
+
+    /* 灯：从远到近 */
+    for (var li2 = HULL_LAMPS.length - 1; li2 >= 0; li2--) {
+      drawLamp(HULL_LAMPS[li2].x, HULL_LAMPS[li2].z, t);
+    }
+
+    drawRail(t);
     drawBeam(t);
-    drawPort(t);
-    drawTable(t);
-    drawLamp(-1.42, 2.05, t);
-    drawLamp(1.42, 4.15, t);
     drawMotes(t);
 
     /* 暗角 */
-    var vg = ctx.createRadialGradient(VX, VY, Math.min(W, H) * 0.28, VX, VY, Math.max(W, H) * 0.78);
+    var vg = ctx.createRadialGradient(VX, VY, Math.min(W, H) * 0.30, VX, VY, Math.max(W, H) * 0.80);
     vg.addColorStop(0, 'rgba(0,0,0,0)');
-    vg.addColorStop(1, 'rgba(0,0,0,0.55)');
+    vg.addColorStop(1, 'rgba(0,0,0,0.60)');
     ctx.fillStyle = vg;
     ctx.fillRect(0, 0, W, H);
   }
@@ -2164,7 +2803,7 @@
     return rec;
   }
   function drawNamed() {
-    if (MODE === 'cabin' && CAM.z < 4.15) return;
+    if (MODE === 'cabin' && CAM.z < ZMAX - 1.15) return;
     for (var i = 0; i < NAMED.length; i++) {
       var r = NAMED[i];
       var p = starScreen(r.s);
@@ -2270,7 +2909,7 @@
 
   function updateCam(dt) {
     if (CAM.walk && MODE === 'cabin') {
-      CAM.tz = clamp(CAM.tz + dt * 1.72, 0.10, ZMAX);
+      CAM.tz = clamp(CAM.tz + dt * 1.72, ZMIN, ZMAX);
     }
     CAM.z += (CAM.tz - CAM.z) * Math.min(1, dt * 9);
 
