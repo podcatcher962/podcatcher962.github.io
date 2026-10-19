@@ -1652,7 +1652,9 @@
     var k = hullLight(x, ya, zc, side);
 
     /* 底衬：比舱壁略深，把格心托出来 */
-    quad(p1, p2, p3, p4, sh(k > 0.28 ? C_WOOD : C_HULL_D, k * 0.74));
+    quad(p1, p2, p3, p4, sh(k > 0.28 ? C_WOOD : C_HULL_D, k * 0.62));
+    /* 糊纸：极淡的一层暖。有纸，隔扇才像隔扇；没纸，那一格就是个洞 */
+    quad(p1, p2, p3, p4, 'rgba(198,148,94,' + (0.030 + 0.062 * ST.lamp) + ')');
 
     var lw = Math.max(0.8, 0.012 * FOC / p1[2]);
     ctx.strokeStyle = rgba(C_RIB_HI, 0.26 + 0.24 * ST.lamp);
@@ -1681,59 +1683,43 @@
     ctx.stroke();
   }
 
-  /* ================= 天花灯槽 ================= */
-  var SCW = 0.19, SCH = 0.105;
+  /* ================= 天花灯槽 =================
+     一条很窄的暗槽，只在近处亮一点点，越远越沉。
+     原来这里铺 0.38 宽的亮片，远看是一块浮在天花上的亮楔子，
+     比窗还抢眼 —— 舱里只该有一个亮的东西，就是那扇窗。 */
+  var SCW = 0.115, SCH = 0.085;
 
   function drawCeilSlot(z0, z1, zc) {
-    if (z1 > ZW - 1.55) return;      /* 让开窗拱，别从窗顶穿过去 */
-    if (z0 < CAM.z + 1.35) return;   /* 也别铺到头顶：近处那一截会糊成一大片 */
+    if (z1 > ZW - 2.60) return;      /* 让开窗拱，别从窗顶穿过去 */
+    if (z0 < CAM.z + 1.20) return;   /* 也别铺到头顶：近处那一截会糊成一大片 */
     var s, a, b, c, d;
-    var kb = 0.50 + 0.50 * ST.lamp;
+    var kb = 0.42 + 0.58 * ST.lamp;
     for (s = -1; s <= 1; s += 2) {
       a = pj(s * SCW, CEIL, z0); b = pj(s * SCW, CEIL, z1);
       c = pj(s * SCW, CEIL - SCH, z1); d = pj(s * SCW, CEIL - SCH, z0);
-      if (a && b && c && d) quad(a, b, c, d, sh(C_HULL_D, kb * 0.9));
+      if (a && b && c && d) quad(a, b, c, d, sh(C_HULL_D, kb * 0.55));
     }
     var e = pj(-SCW, CEIL - SCH, z0), f = pj(SCW, CEIL - SCH, z0);
     var g2 = pj(SCW, CEIL - SCH, z1), h2 = pj(-SCW, CEIL - SCH, z1);
     if (e && f && g2 && h2) {
-      /* 槽底：不是死白，是压暗的暖光，免得抢窗 */
-      var lit = 0.038 + 0.082 * ST.lamp;
+      /* 远端渐隐：近处留一点暖，远处只剩黑 */
+      var dk = clamp((z0 - CAM.z) / 8.0, 0, 1);
+      var lit = (0.026 + 0.070 * ST.lamp) * (1 - 0.74 * dk);
       quad(e, f, g2, h2, 'rgba(255,222,172,' + lit + ')');
-      /* 溢出来的那点光 */
-      if (ST.lamp > 0.04 && z0 - CAM.z < 12) {
+      /* 槽口两道细边：有线，槽才立得住 */
+      ctx.strokeStyle = rgba(C_BRASS, (0.10 + 0.16 * ST.lamp) * (1 - 0.65 * dk));
+      ctx.lineWidth = Math.max(0.8, 0.007 * FOC / e[2]);
+      ctx.beginPath(); ctx.moveTo(e[0], e[1]); ctx.lineTo(f[0], f[1]); ctx.stroke();
+      /* 溢出来的那点光，压到几乎只是一层暖雾 */
+      if (ST.lamp > 0.04 && z0 - CAM.z < 9) {
         var mx = (e[0] + f[0]) * 0.5, my = (e[1] + f[1]) * 0.5;
-        var rr = Math.abs(e[0] - f[0]) * 1.9 + 10;
+        var rr = Math.abs(e[0] - f[0]) * 2.2 + 12;
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        ctx.globalAlpha = 0.055 * ST.lamp;
+        ctx.globalAlpha = 0.030 * ST.lamp * (1 - dk);
         ctx.drawImage(SOFT_WARM, mx - rr, my - rr, rr * 2, rr * 2);
         ctx.restore();
       }
-    }
-  }
-
-  /* ================= 藻井横框：每隔两道肋一个 ================= */
-  function drawCoffer(z, zc) {
-    if (z - CAM.z > 16) return;
-    var y = CEIL - SCH - 0.004;
-    var a = pj(-0.80, y, z), b = pj(0.80, y, z);
-    if (!a || !b) return;
-    var f = FOC / a[2];
-    ctx.strokeStyle = rgba(C_BRASS, 0.26 + 0.24 * ST.lamp);
-    ctx.lineWidth = Math.max(1, 0.020 * f);
-    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-    /* 四角斗拱：两小段折线 */
-    ctx.strokeStyle = rgba(C_RIB_HI, 0.16 + 0.14 * ST.lamp);
-    ctx.lineWidth = Math.max(1, 0.012 * f);
-    var i, xx;
-    for (i = 0; i < 2; i++) {
-      xx = i ? 0.80 : -0.80;
-      var p1 = pj(xx, y, z), p2 = pj(xx * 0.86, y, z - 0.10);
-      var p3 = pj(xx * 0.86, y, z + 0.10), p4 = pj(xx, y - 0.13, z);
-      if (p1 && p2) { ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); }
-      if (p1 && p3) { ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p3[0], p3[1]); ctx.stroke(); }
-      if (p1 && p4) { ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p4[0], p4[1]); ctx.stroke(); }
     }
   }
 
@@ -1872,7 +1858,6 @@
       zB = Math.max(zNear, zA - RIB);
       if (zB + RW < zA) drawBay(zB + RW, zA, t);
       drawRib(zB, t);
-      if (bay % 2 === 0) drawCoffer(zB, 0);
       bay++;
       if (zB <= zNear) break;
     }
