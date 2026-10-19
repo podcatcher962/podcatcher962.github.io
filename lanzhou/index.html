@@ -2466,7 +2466,7 @@
       var rb = pj(2.2 * L.w, FLO, ZW - 2.05);
       if (!lp || !rp || !lb || !rb) continue;
       var g2 = ctx.createLinearGradient(0, lp[1], 0, lb[1]);
-      g2.addColorStop(0, 'rgba(182,200,252,' + (L.a * (1.0 + 0.8 * (1 - ST.lamp))) + ')');
+      g2.addColorStop(0, 'rgba(182,200,252,' + (L.a * (1.0 + 0.12 * (1 - ST.lamp))) + ')');
       g2.addColorStop(0.58, 'rgba(168,190,252,' + (L.a * 0.38) + ')');
       g2.addColorStop(1, 'rgba(156,180,250,0)');
       ctx.fillStyle = g2;
