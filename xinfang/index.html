@@ -186,8 +186,23 @@ function nearDoor() {
   return best;
 }
 
+var EMPTY_TRIED = false;
 function pushDoor(i) {
   if (i < 0 || SEEDS.indexOf(i) >= 0) return false;
+  /* 第七扇是空的。别的门推开有一粒种子，这一扇推不开——
+     门后没有人，只有一句你一直没说出口的话。
+     它不是奖励，是这趟路里唯一一处"推不动"。 */
+  if (DOORS[i].txt === null) {
+    if (EMPTY_TRIED) return false;
+    EMPTY_TRIED = true;
+    tip.innerHTML = '这扇门推不开　·　门后是你自己';
+    tip.classList.add('on');
+    setTimeout(function () {
+      tip.innerHTML = '按住 往前走　·　走到门边，轻点 推门';
+      tip.classList.remove('on');
+    }, 3800);
+    return false;
+  }
   SEEDS.push(i);
   DOORS_SEEDED = SEEDS.length;
   return true;
@@ -1066,6 +1081,10 @@ function drawSeedMotes(t) {
     var _sl = document.getElementById('seedline');
     if (_sl) {
       var _txt = SEEDS.length > 0 ? ('你带走了 ' + SEEDS.length + ' 枚种子　·　它们会记得你来过') : '门都还开着　·　你什么也没有带走';
+      /* 试过那扇空门，就把这一处"推不动"也认下来 */
+      if (EMPTY_TRIED) {
+        _txt += SEEDS.length > 0 ? '　·　也有一扇是空的，那扇后面是你自己' : '　·　只有那扇空门，你推过';
+      }
       /* 巷子深处带出来的那一粒，也算数 */
       try {
         if (localStorage.getItem('sanjing.seed.shijing') === '1') {
