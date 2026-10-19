@@ -60,6 +60,15 @@
     #sign { display:none; }
   }
 </style>
+
+<style id="tri-css">
+  .tri-link { position:fixed; left:0; bottom:0; z-index:60; padding:20px 24px;
+    font-family:"Songti SC","STSong","SimSun",serif; font-size:11px; letter-spacing:4px;
+    color:rgba(160,132,86,0.50); text-decoration:none; transition:color .45s ease;
+    -webkit-tap-highlight-color:transparent; }
+  .tri-link:hover { color:rgba(226,198,146,0.95); }
+  @media (max-width:560px) { .tri-link { padding:14px 16px; font-size:10px; letter-spacing:3px; } }
+</style>
 </head>
 <body>
 <canvas id="sky"></canvas>
@@ -1452,5 +1461,6 @@
   boot();
 })();
 </script>
+<a class="tri-link" href="../sanjing/" title="回到三境">← 三　境</a>
 </body>
 </html>
