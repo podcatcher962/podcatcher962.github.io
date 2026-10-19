@@ -2146,7 +2146,7 @@ function updateHud(p) {
 
 /* ============================================================
    巷 —— 走进街的深处
-   街上点巷口进来。第一人称，一条十九米的窄巷。
+   街上点巷口进来。第一人称，一条十六米半的窄巷。
    墙是一户一户的：谁家墙高一点，谁家门缩进去一点，
    檐口高低不齐，一线天光落在青石板上。
    尽头一道月洞门。
@@ -2186,10 +2186,14 @@ function h2(i, j) { return hsh(i * 7431 + j * 9151 + 17); }
 function cl(v, a, b) { return v < a ? a : (v > b ? b : v); }
 function lp(a, b, t) { return a + (b - a) * t; }
 
-/* 上色：k 是受光系数，越往上越亮；越远越化进雾里 */
+/* 上色：k 是受光系数，越往上越亮；越远越化进雾里
+   雾按"离眼睛多远"算，不是按世界坐标 z 算——
+   不然人走到巷尾贴着墙，墙还按十二米外的浓度化，颜色和细节全糊掉。 */
 function shd(hex, z, k) {
   var A = toRGB(hex);
-  var hz = cl(z / 38, 0.02, 0.44);
+  var dz = z - AL.z;
+  if (dz < 0) dz *= 0.30;                 /* 眼后的东西不给它加雾 */
+  var hz = cl(dz / 30, 0.006, 0.40);
   var r = A[0] * k, gg = A[1] * k, b = A[2] * k;
   r *= (0.60 + 0.40 * _mult[0] / 255);
   gg *= (0.60 + 0.40 * _mult[1] / 255);
@@ -2206,7 +2210,8 @@ function shd(hex, z, k) {
 function kUp(y, z) {
   var up = cl((y - 0.05) / 3.90, 0, 1);
   var k = 0.34 + 0.70 * Math.pow(up, 1.15);
-  return k * (0.97 - cl(z / 130, 0, 0.16));
+  var dz = z - AL.z; if (dz < 0) dz = 0;
+  return k * (0.99 - cl(dz / 95, 0, 0.14));
 }
 /* 光从左边那条缝里下来：左墙受光，右墙落影 */
 function kSide(k, side) { return k * (side < 0 ? 1.10 : 0.80); }
@@ -2491,21 +2496,8 @@ function alWall(side, i, z0, z1, pp) {
   g.fillStyle = gr;
   g.fill();
 
-  /* 墙面斑驳：几团深浅不一的旧灰 */
-  for (var mi = 0; mi < 3; mi++) {
-    var mz = z0 + (z1 - z0) * h2(i * 3 + mi, 61);
-    var my = 0.8 + 2.4 * h2(i * 3 + mi, 62);
-    var mp = alProj(x, my, mz);
-    if (!mp) continue;
-    var msc = FOC / (mz - AL.z);
-    var mr = (0.35 + 0.5 * h2(i * 3 + mi, 63)) * msc;
-    var mg = g.createRadialGradient(mp[0], mp[1], 0, mp[0], mp[1], mr);
-    var dark = h2(i * 3 + mi, 64);
-    mg.addColorStop(0, dark < 0.5 ? 'rgba(96,80,58,0.10)' : 'rgba(246,236,214,0.10)');
-    mg.addColorStop(1, 'rgba(120,100,70,0)');
-    g.fillStyle = mg;
-    g.beginPath(); g.ellipse(mp[0], mp[1], mr, mr * 0.8, 0, 0, TAU); g.fill();
-  }
+  /* 墙面本身的老：抹灰斑驳、雨痕、墙根潮 */
+  alSkin(side, i, z0, z1, x, r1);
 
   /* 墙根砖裙 */
   alFace(x, 0, 0.58, z0, z1, shd('#8d8474', z0, kSide(kUp(0.45, z0), side)));
@@ -2557,6 +2549,107 @@ function alWall(side, i, z0, z1, pp) {
     g.fillStyle = 'rgba(36,26,16,0.20)';
     g.fill();
   }
+}
+
+/* ---------- 墙面材质 ----------
+   一段墙一米四长、四米高，在这条巷子里占屏幕一大块。
+   只给一层明暗渐变，它就是一堵新砌的水泥板。
+   这一层加的是"旧"：抹灰掉得不匀、雨水从檐口淌下来留下竖痕、
+   墙根常年潮着，往上慢慢淡掉。全部按户号固定，不逐帧随机。 */
+function alSkin(side, i, z0, z1, x, r1) {
+  var EH = segTop(i, side);
+  var a = alProj(x, 0, z0), b = alProj(x, 0, z1),
+      c = alProj(x, EH, z1), d = alProj(x, EH, z0);
+  if (!alQuad(a, b, c, d)) return;
+  g.save();
+  g.globalCompositeOperation = 'source-over';
+  g.globalAlpha = 1;
+  g.clip();
+  g.beginPath();
+
+  var w = z1 - z0;
+
+  /* 抹灰斑驳，分三档：
+     大块管整面墙的不匀（一两米），中块是补过的灰，
+     小块是起皮。只有大块在八米外还看得见，所以先把它立住。 */
+  var mLayer = [
+    { n: 3,  r0: 0.95, r1: 2.60, a0: 0.045, a1: 0.085, seed: 131 },
+    { n: 8,  r0: 0.34, r1: 1.05, a0: 0.070, a1: 0.150, seed: 231 },
+    { n: 14, r0: 0.06, r1: 0.30, a0: 0.090, a1: 0.200, seed: 331 }
+  ];
+  for (var ly = 0; ly < mLayer.length; ly++) {
+    var L = mLayer[ly];
+    for (var mi = 0; mi < L.n; mi++) {
+      var sk = i * 101 + ly * 37 + mi;
+      var sz = z0 + w * (0.06 + 0.88 * h2(sk, L.seed));
+      if (sz - AL.z < 0.35) continue;
+      /* 最小的那层只在近处画，远了看不见还费笔 */
+      if (ly === 2 && sz - AL.z > 7.5) continue;
+      var sy = 0.25 + (EH - 0.45) * h2(sk, L.seed + 1);
+      var sp = alProj(x, sy, sz);
+      if (!sp) continue;
+      var sc = FOC / (sz - AL.z);
+      var rx = (L.r0 + (L.r1 - L.r0) * h2(sk, L.seed + 2)) * sc;
+      var ry = rx * (0.55 + 1.35 * h2(sk, L.seed + 3));
+      var dk = h2(sk, L.seed + 4);
+      var amax = L.a0 + (L.a1 - L.a0) * h2(sk, L.seed + 5);
+      var mg = g.createRadialGradient(sp[0], sp[1], 0, sp[0], sp[1], rx);
+      if (dk < 0.56) {
+        mg.addColorStop(0, 'rgba(44,31,17,' + amax + ')');
+        mg.addColorStop(0.52, 'rgba(44,31,17,' + (amax * 0.42) + ')');
+        mg.addColorStop(1, 'rgba(44,31,17,0)');
+      } else {
+        mg.addColorStop(0, 'rgba(255,248,228,' + (amax * 0.85) + ')');
+        mg.addColorStop(1, 'rgba(255,248,228,0)');
+      }
+      g.fillStyle = mg;
+      g.beginPath(); g.ellipse(sp[0], sp[1], rx, ry, 0, 0, TAU); g.fill();
+    }
+  }
+
+  /* 雨痕：从檐根往下淌的那几道，越往下越淡 */
+  var nr = 4 + Math.floor(h2(i, 141) * 6);
+  for (var ri = 0; ri < nr; ri++) {
+    var rz = z0 + w * (0.06 + 0.88 * h2(i * 13 + ri, 142));
+    if (rz - AL.z < 0.32) continue;
+    var yb = EH * (0.20 + 0.62 * h2(i * 13 + ri, 143));
+    var q1 = alProj(x, EH - 0.14, rz), q2 = alProj(x, yb, rz);
+    if (!q1 || !q2) continue;
+    var wid = Math.max(0.7, (0.016 + 0.042 * h2(i * 13 + ri, 144)) * FOC / (rz - AL.z));
+    var lg = g.createLinearGradient(0, q1[1], 0, q2[1]);
+    lg.addColorStop(0, 'rgba(40,29,16,0)');
+    lg.addColorStop(0.28, 'rgba(40,29,16,' + (0.055 + 0.065 * h2(i * 13 + ri, 145)) + ')');
+    lg.addColorStop(0.72, 'rgba(40,29,16,' + (0.030 + 0.045 * h2(i * 13 + ri, 146)) + ')');
+    lg.addColorStop(1, 'rgba(40,29,16,0)');
+    g.strokeStyle = lg;
+    g.lineWidth = wid;
+    g.beginPath(); g.moveTo(q1[0], q1[1]); g.lineTo(q2[0], q2[1]); g.stroke();
+  }
+
+  /* 墙根潮：下深上淡，上沿起伏不平 */
+  var ny = 0.48 + 0.40 * h2(i, 151);
+  var pA = alProj(x, 0, z0), pB = alProj(x, 0, z1);
+  var pT = alProj(x, ny, (z0 + z1) * 0.5);
+  if (pA && pB && pT) {
+    var cg = g.createLinearGradient(0, pA[1], 0, pT[1]);
+    cg.addColorStop(0, 'rgba(42,32,20,' + (0.14 + 0.09 * h2(i, 152)) + ')');
+    cg.addColorStop(1, 'rgba(42,32,20,0)');
+    g.fillStyle = cg;
+    g.beginPath();
+    g.moveTo(pA[0], pA[1]);
+    var steps = 8;
+    for (var si = 0; si <= steps; si++) {
+      var zz = lp(z0, z1, si / steps);
+      var hh = ny * (0.55 + 0.45 * h2(i * 17 + si, 153));
+      var pt = alProj(x, hh, zz);
+      if (pt) g.lineTo(pt[0], pt[1]);
+    }
+    g.lineTo(pB[0], pB[1]);
+    g.closePath();
+    g.fill();
+  }
+
+  g.restore();
 }
 
 /* 门：石门框 + 门槛 + 门墩 + 残红 */
@@ -3726,15 +3819,29 @@ function alEndWall(pp, t) {
 
   AL.gateSX = gc[0]; AL.gateSY = gc[1]; AL.gateR = pr;
 
+  /* 开了门，光只从门洞里出来：贴着门框一圈发亮，墙不跟着白 */
   if (opn > 0.01) {
     g.save();
     g.globalCompositeOperation = 'lighter';
-    var og = g.createRadialGradient(gc[0], gc[1], pr * 0.2, gc[0], gc[1], pr * (3.4 + opn * 6));
-    og.addColorStop(0, 'rgba(255,234,186,' + (0.34 * opn) + ')');
-    og.addColorStop(0.5, 'rgba(255,220,160,' + (0.10 * opn) + ')');
-    og.addColorStop(1, 'rgba(255,220,160,0)');
+
+    /* 门框石头的受光：一圈环，峰值正好落在石圈上 */
+    var og = g.createRadialGradient(gc[0], gc[1], pr * 0.12, gc[0], gc[1], pr * 1.60);
+    og.addColorStop(0.00, 'rgba(255,234,186,' + (0.070 * opn) + ')');
+    og.addColorStop(0.50, 'rgba(255,228,174,' + (0.040 * opn) + ')');
+    og.addColorStop(0.645, 'rgba(255,224,168,' + (0.150 * opn) + ')');
+    og.addColorStop(0.78, 'rgba(255,214,152,' + (0.050 * opn) + ')');
+    og.addColorStop(1.00, 'rgba(255,206,140,0)');
     g.fillStyle = og;
-    g.fillRect(0, 0, W, H);
+    g.beginPath(); g.arc(gc[0], gc[1], pr * 1.60, 0, TAU); g.fill();
+
+    /* 门洞里那层被照亮的空气 */
+    var ig = g.createRadialGradient(gc[0], gc[1] - pr * 0.12, 0, gc[0], gc[1], pr * 0.97);
+    ig.addColorStop(0, 'rgba(255,242,204,' + (0.115 * opn) + ')');
+    ig.addColorStop(0.6, 'rgba(255,232,180,' + (0.045 * opn) + ')');
+    ig.addColorStop(1, 'rgba(255,226,170,0)');
+    g.fillStyle = ig;
+    g.beginPath(); g.arc(gc[0], gc[1], pr * 0.97, 0, TAU); g.fill();
+
     g.restore();
   }
 }
@@ -4186,6 +4293,16 @@ window.__ALLEY = {
   get say() { return AL.say ? AL.say.text : null; },
   get linkRect() { return AL.link; }
 };
+
+
+
+
+
+
+
+
+
+
 
 /* ============================ 主循环 ============================ */
 var lastT = 0;
