@@ -40,7 +40,7 @@
          opacity:0; transition:opacity 1.2s ease; pointer-events:none; }
   #tip.on { opacity:0.72; }
 
-  #veil { position:fixed; inset:0; background:#000; z-index:20;
+  #veil { position:fixed; inset:0; background:#000; z-index:20; pointer-events:none;
           display:flex; flex-direction:column; align-items:center; justify-content:center;
           transition:opacity 1.7s ease; }
   #veil.off { opacity:0; pointer-events:none; }
@@ -60,6 +60,9 @@
   #end .e1 { font-size:17px; letter-spacing:7px; color:#4a4032; text-indent:7px; }
   #end .e2 { margin-top:24px; font-size:17px; letter-spacing:5px; color:#2c2519; text-indent:5px; }
   #end .e3 { margin-top:118px; font-size:42px; letter-spacing:24px; color:#241d12; text-indent:24px; }
+  #end .e5 { margin-top:26px; font-size:13.5px; letter-spacing:5px;
+              color:#8c7a5c; opacity:0; transition:opacity 1.6s ease; text-indent:5px; }
+  #end .e5.on { opacity:0.9; }
   #end .e4 { margin-top:34px; font-size:12px; letter-spacing:5px; color:#8a7a60; text-indent:5px; }
   #end .e6 { margin-top:104px; font-size:12px; letter-spacing:3px; color:#6f6250; text-indent:3px; }
   #end .seal { position:absolute; width:46px; height:46px; border:2px solid #a63a2a; border-radius:3px;
@@ -98,12 +101,12 @@
   <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 </div>
 
-<div id="tip">按住 往前走　·　松开 就停</div>
+<div id="tip">按住 往前走　·　走到门边，轻点 推门</div>
 
 <div id="veil">
   <div class="v1">心房</div>
   <div class="v2">一条走廊　七扇门</div>
-  <div class="v3">按住，往前走</div>
+  <div class="v3">按住，往前走　·　门边轻点，推</div>
 </div>
 
 <div id="end">
@@ -111,6 +114,7 @@
   <div class="e2">那道光，一直是你自己带着的</div>
   <div class="e3">心房</div>
   <div class="e4">三境 · 之三</div>
+  <div class="e5" id="seedline"></div>
   <div class="e6">© 永远的兰兰　·　Lanlan Eternal</div>
   <div class="e7">轻触　再看一次</div>
   <div class="seal"><span>兰</span></div>
@@ -168,6 +172,54 @@
     { z: 25.20, side: -1, txt: null,       cx: [136, 136, 136], gap: 0.010 }
   ];
 
+
+/* ================= 推门：门里那句话，可以拿走 ================= */
+var DOORS_SEEDED = 0;
+
+function nearDoor() {
+  var best = -1, bd = 1e9;
+  for (var i = 0; i < DOORS.length; i++) {
+    var d = DOORS[i];
+    var dd = Math.abs(d.z + DOOR_W / 2 - CAM.z);
+    if (dd < 1.35 && dd < bd) { bd = dd; best = i; }
+  }
+  return best;
+}
+
+function pushDoor(i) {
+  if (i < 0 || SEEDS.indexOf(i) >= 0) return false;
+  SEEDS.push(i);
+  DOORS_SEEDED = SEEDS.length;
+  return true;
+}
+
+function tickDoors(dt) {
+  for (var i = 0; i < DOORS.length; i++) {
+    var tgt = (SEEDS.indexOf(i) >= 0) ? 1 : 0;
+    OPEN[i] += (tgt - OPEN[i]) * Math.min(1, dt * 2.4);
+  }
+}
+
+function drawSeedMotes(t) {
+  if (!SEEDS.length) return;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (var k = 0; k < SEEDS.length; k++) {
+    var d = DOORS[SEEDS[k]];
+    var zc = d.z + DOOR_W / 2;
+    var dz = zc - CAM.z;
+    if (dz < 0.25) continue;
+    var ph = (t * 0.20 + k * 0.31) % 1;
+    if (pj(d.side * DOOR_X * 0.6, FY + 0.5 + ph * 1.55, zc)) {
+      var sx = P[0], sy = P[1], zr = P[2];
+      var rr = Math.max(2, 26 * FOC / zr * 0.02);
+      ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.34;
+      ctx.drawImage(glow(d.cx), sx - rr * 3, sy - rr * 3, rr * 6, rr * 6);
+    }
+  }
+  ctx.restore();
+}
+
   /* ================= 顶灯 ================= */
   /* 有的还亮着，有的早就坏了。走一段亮一下，走一段黑一下。 */
   var LAMPS = [
@@ -183,6 +235,9 @@
   var CAM = { z: 0.55, tz: 0.55, yaw: 0, tyaw: 0 };
   var COS = 1, SIN = 0;
   var VPX = 0, VPY = 0, FOC = 800;
+
+  var OPEN = [0, 0, 0, 0, 0, 0, 0];
+  var SEEDS = [];
 
   var STOP = ENDZ - 1.55;
   var SPEED = 2.55;
@@ -656,7 +711,8 @@
     if (z1 - CAM.z < 0.14) return;
 
     var passed = CAM.z > z1 + 0.04;
-    var dimF = passed ? 0.34 : 1;                    /* 走过的门，光会暗下去 */
+    var dimF = passed ? 0.34 : 1;
+    if (SEEDS.indexOf(i) >= 0) dimF *= (0.62 + 0.38 * (1 - Math.min(1, OPEN[i])));                    /* 走过的门，光会暗下去 */
     var near = 1 - clamp(Math.abs((z0 + DOOR_W / 2) - CAM.z - 0.85) / 3.1, 0, 1);
     var pulse = 1 + near * 0.26 * Math.sin(tNow * 1.75 + i * 1.3);
     var A = dimF * pulse;
@@ -665,12 +721,14 @@
 
     /* 1) 门缝本身 */
     var segs = 5;
+    var gapW = d.gap * (1 + OPEN[i] * 5.2);
     for (var q = 0; q < segs; q++) {
       var ya = FY + DOOR_H * (q / segs);
       var yb = FY + DOOR_H * ((q + 1) / segs);
       var fl = 0.70 + 0.30 * Math.sin(q * 1.9 + i * 1.1);
-      ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (0.94 * A * fl).toFixed(3) + ')';
-      if (quad(x, ya, cz - d.gap, x, yb, cz - d.gap, x, yb, cz + d.gap, x, ya, cz + d.gap)) ctx.fill();
+      var aa = clamp(0.94 * A * fl * (1 + OPEN[i] * 0.55), 0, 1);
+      ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + aa.toFixed(3) + ')';
+      if (quad(x, ya, cz - gapW, x, yb, cz - gapW, x, yb, cz + gapW, x, ya, cz + gapW)) ctx.fill();
     }
 
     /* 2) 墙上的一团柔光（贴图，不建渐变） */
@@ -947,6 +1005,7 @@
     COS = Math.cos(CAM.yaw);
     SIN = Math.sin(CAM.yaw);
 
+    tickDoors(0.016);
     drawStatic();
 
     /* 门缝光从远到近，叠上去 */
@@ -954,6 +1013,7 @@
     for (var i = DOORS.length - 1; i >= 0; i--) drawDoorGlow(DOORS[i], i);
     drawEndGlow();
 
+    drawSeedMotes(t);
     drawDust(t);
 
     /* 空气：画面正中一点说不清的光 */
@@ -1003,6 +1063,11 @@
     holding = false;
     tip.classList.remove('on');
     endEl.classList.add('on');
+    var _sl = document.getElementById('seedline');
+    if (_sl) {
+      _sl.textContent = SEEDS.length > 0 ? ('你带走了 ' + SEEDS.length + ' 枚种子　·　它们会记得你来过') : '门都还开着　·　你什么也没有带走';
+      setTimeout(function () { _sl.classList.add('on'); }, 3000);
+    }
     var tk = endEl.querySelector('.e3');
     if (tk) {
       var rr = tk.getBoundingClientRect();
@@ -1039,7 +1104,12 @@
     setTimeout(function () { if (!arrived) tip.classList.remove('on'); }, 6400);
   }
 
+  /* 开场遮幕盖在画布上，鼠标点只会落在它身上 —— 所以第一下手势要挂在 window 上 */
+  window.addEventListener('pointerdown', function () { startWalk(); }, true);
+
+  var tapX = 0, tapY = 0, tapT = 0, tapMoved = 0;
   cv.addEventListener('pointerdown', function (e) {
+    tapX = e.clientX; tapY = e.clientY; tapT = performance.now(); tapMoved = 0;
     try { cv.setPointerCapture(e.pointerId); } catch (err) { }
     startWalk();
     if (ended) return;
@@ -1051,6 +1121,7 @@
   });
 
   cv.addEventListener('pointermove', function (e) {
+    if (dragging) tapMoved = Math.max(tapMoved, Math.abs(e.clientX - tapX) + Math.abs(e.clientY - tapY));
     if (!dragging) return;
     CAM.tyaw = clamp(-(e.clientX - dragX0) * 0.0020, -0.26, 0.26);
   });
@@ -1060,7 +1131,14 @@
     dragging = false;
     CAM.tyaw = 0;
   }
-  window.addEventListener('pointerup', release);
+  window.addEventListener('pointerup', function (e) {
+    var isTap = tapMoved < 12 && (performance.now() - tapT) < 460;
+    release();
+    if (isTap && !ended && !arrived) {
+      var i = nearDoor();
+      if (i >= 0) pushDoor(i);
+    }
+  });
   window.addEventListener('pointercancel', release);
   window.addEventListener('blur', release);
 
@@ -1124,6 +1202,10 @@
     get fps() { return fps; },
     get ended() { return ended; },
     get arrived() { return arrived; },
+    doorsSeeded: function () { return SEEDS.length; },
+    openAmount: function (i) { return OPEN[i]; },
+    pushDoor: pushDoor,
+    nearDoor: nearDoor,
     geom: function () {
       return { W: W, H: H, FOC: FOC, VPX: VPX, VPY: VPY, HW: HW, FY: FY, CEIL0: ceilAt(0), CEILEND: ceilAt(ENDZ), STOP: STOP, ENDZ: ENDZ };
     },
