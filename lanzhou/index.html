@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>兰舟 · 月洞窗外 —— 三境之一</title>
-<meta name="description" content="一艘东方的星舰。木作月洞门外是两万两千颗星。拖动回望星河，空格熄灯。纯 Canvas 手写，单文件，零依赖。">
+<title>兰舟 · 一间舱 —— 三境之一</title>
+<meta name="description" content="一艘东方的星舰。你从舱内走到舷窗，再走出舱外，看见整艘兰舟悬在无边的星海里。时间可以加速，星可以取名。纯 Canvas 手写，单文件，零依赖。">
 <meta name="theme-color" content="#04060c">
 <meta property="og:type" content="website">
 <meta property="og:title" content="兰舟 · 月洞窗外">
-<meta property="og:description" content="一艘东方的星舰。木作月洞门外是两万两千颗星。拖动回望星河，空格熄灯。">
+<meta property="og:description" content="一间木舱，一扇舷窗，一整片星海。走到窗前，再往前一步，就出了舱。">
 <meta property="og:image" content="https://podcatcher962.github.io/lanzhou/og.jpg">
 <meta property="og:url" content="https://podcatcher962.github.io/lanzhou/">
 <meta name="twitter:card" content="summary_large_image">
@@ -50,8 +50,25 @@
   #tip b { color:#c0ab84; font-weight:normal; margin-right:6px; }
   #tip i { color:#5c5038; font-style:normal; margin:0 4px; }
 
-  #veil { position:fixed; inset:0; background:#04060c; pointer-events:none;
+  #tbar { position:fixed; left:30px; top:28px; z-index:12; pointer-events:none;
+          color:#8d7d5f; font-size:11px; letter-spacing:3px; line-height:1.9;
+          text-shadow:0 0 14px rgba(0,0,0,.95); opacity:0; transition:opacity 1.2s ease; }
+  #tbar.on { opacity:0.75; }
+  #tbar .tl { display:block; font-size:9.5px; color:#5d5138; letter-spacing:4px; }
+  #tbar #tspd { color:#c8b187; font-size:13px; letter-spacing:2px; }
+  @media (max-width:640px){ #tbar { left:18px; top:18px; } }
+
+  #veil { position:fixed; inset:0; background:#04060c; pointer-events:none; z-index:30;
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
           transition:opacity 2.4s ease; }
+  #veil .v1 { font-size:40px; letter-spacing:26px; text-indent:26px; color:#cbb188;
+              font-family:"Songti SC","STSong","SimSun",serif; }
+  #veil .v2 { margin-top:30px; font-size:12px; letter-spacing:8px; text-indent:8px; color:#6f6046; }
+  #veil .v3 { margin-top:22px; font-size:11.5px; letter-spacing:3px; color:#4a3f2d; }
+  @media (max-width:640px){
+    #veil .v1 { font-size:28px; letter-spacing:16px; text-indent:16px; }
+    #veil .v3 { font-size:10.5px; letter-spacing:2px; }
+  }
   #veil.gone { opacity:0; }
 
   @media (max-width:640px){
@@ -80,12 +97,13 @@
   <div class="dim">里程 · 三千二百光年</div>
 </div>
 <div id="sign">永远的兰兰 · 二〇二六</div>
-<div id="tip">
-  <span><b>拖动</b>回望星河</span><i>·</i>
-  <span><b>空格</b>熄灯</span><i>·</i>
-  <span><b>滚轮</b>远近</span>
+<div id="tip"></div>
+<div id="tbar"><span id="tspd">一时</span><span class="tl">时　间</span></div>
+<div id="veil">
+  <div class="v1">兰　舟</div>
+  <div class="v2">三境 · 之一</div>
+  <div class="v3">按住往里走　·　走到窗前　·　再往前，出舱</div>
 </div>
-<div id="veil"></div>
 
 <script>
 (function () {
@@ -934,7 +952,22 @@
     }
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#04060b';
+    ctx.fillRect(0, 0, W, H);
+    /* 天球旋转：转缓存图（只多一次 drawImage），不重画星空 */
+    var sp = ST.spin || 0;
+    if (sp) {
+      ctx.save();
+      ctx.translate(CX, CY);
+      ctx.rotate(sp);
+      ctx.translate(-CX, -CY);
+      var sc = 1.16;      /* 放大一点，转起来四角不露底 */
+      ctx.translate(CX, CY);
+      ctx.scale(sc, sc);
+      ctx.translate(-CX, -CY);
+    }
     ctx.drawImage(SKY, 0, 0, W, H);
+    if (sp) ctx.restore();
   }
 
   function renderSky(g) {
@@ -1278,10 +1311,1102 @@
     }
   }
 
-  // ---------- 主循环 ----------
-  var last = 0, meteorTimer = 3.5;
 
-  var PAUSED = false;
+/* ============================================================
+   舱室 · 三境之一 重制
+   一间木舱 → 走到窗前 → 出舱看整艘兰舟
+   时间可以加速，星可以命名
+   ============================================================ */
+(function () {
+
+  /* ---------- 尺寸（米，y 相对眼高） ---------- */
+  var EYE = 1.42;
+  var HW = 2.58;            /* 半宽 */
+  var ZW = 6.60;            /* 后墙 */
+  var CEIL = 1.28;          /* 天花（相对眼高，净高 2.70） */
+  var FLO = -EYE;
+  var PORT_Y = 0.06;        /* 舷窗中心高度 */
+  var PORT_R = 0.655;       /* 舷窗半径 */
+  var ZMAX = 4.96;          /* 走到这里，舷窗正好铺满视野 */
+  var ZMIN = 0.10;
+
+  /* ---------- 相机 ---------- */
+  var CAM = {
+    z: ZMIN, tz: ZMIN,
+    yaw: 0, tyaw: 0,
+    pitch: 0.055, tpitch: 0.055,
+    walk: false, holdT: 0
+  };
+  var MODE = 'cabin';       /* cabin | outside */
+  var FADE = 0, FADE_T = 0; /* 转场黑场 */
+  var VX = 0, VY = 0, FOC = 900;
+
+  /* ---------- 时间 ---------- */
+  var TSTEPS = [0.20, 1, 4, 16, 60, 300, 1500];
+  var TIDX = 1;
+  var TSPIN = 0;            /* 天球转角 */
+  var TS = 1;
+
+  /* ---------- 恒星命名 ---------- */
+  var NAMED = [];
+  var STARNAMES = [
+    '牵牛', '织女', '河鼓', '天狼', '老人', '南门', '角宿', '心宿',
+    '尾宿', '箕宿', '斗宿', '牛宿', '女宿', '虚宿', '危宿', '室宿',
+    '壁宿', '奎宿', '娄宿', '胃宿', '昴宿', '毕宿', '觜宿', '参宿',
+    '井宿', '鬼宿', '柳宿', '星宿', '张宿', '翼宿', '轸宿', '天枢',
+    '天璇', '天玑', '天权', '玉衡', '开阳', '摇光', '紫微', '太微'
+  ];
+  var nameCursor = 0;
+
+  /* ---------- 颜色 ---------- */
+  var C_FLOOR = [112, 82, 54];
+  var C_FLOOR2 = [88, 63, 41];
+  var C_WALL = [122, 95, 64];
+  var C_WAIN = [74, 55, 37];
+  var C_CEIL = [84, 65, 45];
+  var C_BEAM = [64, 49, 33];
+  var C_RING = [104, 78, 48];
+  var C_RING_D = [62, 45, 27];
+  var C_BRASS = [186, 146, 84];
+  var C_TABLE = [70, 50, 34];
+  var C_SILK = [128, 92, 58];
+
+  function sh(rgb, k) {
+    k = k === undefined ? 1 : k;
+    return 'rgb(' + ((rgb[0] * k) | 0) + ',' + ((rgb[1] * k) | 0) + ',' + ((rgb[2] * k) | 0) + ')';
+  }
+  function rgba(rgb, a) {
+    return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + a + ')';
+  }
+
+  /* ---------- 投影 ---------- */
+  var CYaw = 1, SYaw = 0, CPit = 1, SPit = 0;
+  var P = [0, 0, 0];
+
+  function updBasis() {
+    CYaw = Math.cos(CAM.yaw); SYaw = Math.sin(CAM.yaw);
+    CPit = Math.cos(CAM.pitch); SPit = Math.sin(CAM.pitch);
+  }
+
+  /* ★ 必须每次返回新数组：调用处常同时持有 4 个投影点，
+     若共用同一个临时对象，四个角会塌成一个点（整间屋子就看不见了） */
+  function pj(x, y, z) {
+    var zr = z - CAM.z;
+    var X = x * CYaw - zr * SYaw;
+    var Z = x * SYaw + zr * CYaw;
+    var y1 = y * CPit - Z * SPit;
+    var z2 = y * SPit + Z * CPit;
+    if (z2 < 0.10) return null;
+    var f = FOC / z2;
+    return [VX + X * f, VY - y1 * f, z2];
+  }
+
+  function quad(p1, p2, p3, p4, fill) {
+    if (!p1 || !p2 || !p3 || !p4) return;
+    ctx.beginPath();
+    ctx.moveTo(p1[0], p1[1]);
+    ctx.lineTo(p2[0], p2[1]);
+    ctx.lineTo(p3[0], p3[1]);
+    ctx.lineTo(p4[0], p4[1]);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+
+  /* ---------- 舱内亮度 ---------- */
+  function lampK(base) {
+    return base * (0.30 + 0.70 * ST.lamp);
+  }
+
+  /* ================= 房间 ================= */
+  var FAR = 0;
+
+  function drawRoom() {
+    FAR = 0;
+
+    /* 地板 */
+    var kF = lampK(1.0);
+    var a = pj(-HW, FLO, CAM.z + 0.85);
+    var b = pj(HW, FLO, CAM.z + 0.85);
+    var c = pj(HW, FLO, ZW);
+    var d = pj(-HW, FLO, ZW);
+    if (a && b && c && d) {
+      var grd = ctx.createLinearGradient(0, a[1], 0, d[1]);
+      grd.addColorStop(0, sh(C_FLOOR2, kF * 0.95));
+      grd.addColorStop(1, sh(C_FLOOR, kF * 0.62));
+      quad(a, b, c, d, grd);
+
+      /* 地板缝 */
+      ctx.strokeStyle = rgba([18, 12, 8], 0.45);
+      ctx.lineWidth = 1;
+      for (var i = 1; i < 8; i++) {
+        var xx = -HW + i * (HW * 2 / 8);
+        var p1 = pj(xx, FLO, CAM.z + 0.85), p2 = pj(xx, FLO, ZW);
+        if (p1 && p2) {
+          ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+        }
+      }
+      /* 横缝 */
+      for (var z = Math.ceil(CAM.z / 1.15) * 1.15; z < ZW; z += 1.15) {
+        var q1 = pj(-HW, FLO, z), q2 = pj(HW, FLO, z);
+        if (q1 && q2) {
+          ctx.globalAlpha = clamp(1 - (z - CAM.z) / 9, 0.05, 0.4);
+          ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+
+    /* 天花 */
+    var kC = lampK(0.82);
+    var e = pj(-HW, CEIL, CAM.z + 0.85);
+    var f = pj(HW, CEIL, CAM.z + 0.85);
+    var g = pj(HW, CEIL, ZW);
+    var h = pj(-HW, CEIL, ZW);
+    if (e && f && g && h) {
+      var gr2 = ctx.createLinearGradient(0, e[1], 0, h[1]);
+      gr2.addColorStop(0, sh(C_CEIL, kC * 0.62));
+      gr2.addColorStop(1, sh(C_CEIL, kC * 1.0));
+      quad(e, f, g, h, gr2);
+    }
+
+    /* 天花板横梁 */
+    for (var bz = Math.ceil((CAM.z + 0.4) / 1.05) * 1.05; bz < ZW - 0.2; bz += 1.05) {
+      var bh = 0.13;
+      var t1 = pj(-HW, CEIL, bz), t2 = pj(HW, CEIL, bz);
+      var t3 = pj(HW, CEIL - bh, bz), t4 = pj(-HW, CEIL - bh, bz);
+      if (t1 && t2 && t3 && t4) quad(t1, t2, t3, t4, sh(C_BEAM, kC * 0.72));
+      var s1 = pj(-HW, CEIL - bh, bz), s2 = pj(HW, CEIL - bh, bz);
+      var s3 = pj(HW, CEIL - bh, bz + 0.09), s4 = pj(-HW, CEIL - bh, bz + 0.09);
+      if (s1 && s2 && s3 && s4) quad(s1, s2, s3, s4, sh(C_BEAM, kC * 1.05));
+    }
+
+    /* 侧墙 */
+    drawSide(-1, kC);
+    drawSide(1, kC);
+
+    /* 后墙 */
+    var kF2 = lampK(1.0);
+    var w1 = pj(-HW, FLO, ZW), w2 = pj(HW, FLO, ZW);
+    var w3 = pj(HW, CEIL, ZW), w4 = pj(-HW, CEIL, ZW);
+    if (w1 && w2 && w3 && w4) {
+      quad(w1, w2, w3, w4, sh(C_WALL, kF2 * 0.66));
+      /* 护墙板 */
+      var p1b = pj(-HW, FLO + 0.92, ZW), p2b = pj(HW, FLO + 0.92, ZW);
+      var p3b = pj(HW, FLO, ZW), p4b = pj(-HW, FLO, ZW);
+      if (p1b && p2b) quad(p1b, p2b, p3b, p4b, sh(C_WAIN, kF2 * 0.86));
+      /* 木板缝 */
+      ctx.strokeStyle = rgba([26, 17, 10], 0.26);
+      ctx.lineWidth = 1;
+      for (var px2 = -HW + 0.30; px2 < HW; px2 += 0.30) {
+        var u1 = pj(px2, FLO, ZW), u2 = pj(px2, CEIL, ZW);
+        if (u1 && u2) { ctx.beginPath(); ctx.moveTo(u1[0], u1[1]); ctx.lineTo(u2[0], u2[1]); ctx.stroke(); }
+      }
+      ctx.strokeStyle = rgba([150, 116, 66], 0.20 * (0.4 + 0.6 * ST.lamp));
+      ctx.lineWidth = 1.2;
+      if (p1b && p2b) { ctx.beginPath(); ctx.moveTo(p1b[0], p1b[1]); ctx.lineTo(p2b[0], p2b[1]); ctx.stroke(); }
+    }
+  }
+
+  function drawSide(side, kC) {
+    var x = side * HW;
+    var a = pj(x, FLO, CAM.z + 0.85), b = pj(x, FLO, ZW);
+    var c = pj(x, CEIL, ZW), d = pj(x, CEIL, CAM.z + 0.85);
+    if (!a || !b || !c || !d) return;
+    quad(a, b, c, d, sh(C_WALL, kC * 0.74));
+    /* 护墙板 */
+    var a2 = pj(x, FLO, CAM.z + 0.85), b2 = pj(x, FLO + 0.92, CAM.z + 0.85);
+    var c2 = pj(x, FLO + 0.92, ZW), d2 = pj(x, FLO, ZW);
+    if (a2 && b2 && c2 && d2) quad(a2, b2, c2, d2, sh(C_WAIN, kC * 0.90));
+    /* 侧墙板缝 */
+    ctx.strokeStyle = rgba([24, 16, 10], 0.22);
+    ctx.lineWidth = 1;
+    for (var zz2 = Math.ceil((CAM.z + 0.4) / 0.30) * 0.30; zz2 < ZW; zz2 += 0.30) {
+      var v1 = pj(x, FLO, zz2), v2 = pj(x, CEIL, zz2);
+      if (v1 && v2) { ctx.beginPath(); ctx.moveTo(v1[0], v1[1]); ctx.lineTo(v2[0], v2[1]); ctx.stroke(); }
+    }
+
+    /* 立柱 */
+    for (var z = Math.ceil((CAM.z + 0.5) / 2.05) * 2.05; z < ZW - 0.1; z += 2.05) {
+      var cw = 0.075;
+      var q1 = pj(x, FLO, z), q2 = pj(x, FLO, z + cw);
+      var q3 = pj(x, CEIL, z + cw), q4 = pj(x, CEIL, z);
+      if (q1 && q2 && q3 && q4) quad(q1, q2, q3, q4, sh(C_BEAM, kC * 0.82));
+    }
+  }
+
+  /* ================= 陈设 ================= */
+  function drawLamp(x, z, t) {
+    var hangY = CEIL - 0.02;
+    var top = pj(x, hangY, z);
+    var bot = pj(x, hangY - 0.62, z);
+    if (!top || !bot) return;
+    var f = FOC / top[2];
+    var w = 0.20 * f;
+
+    /* 吊绳 */
+    ctx.strokeStyle = rgba([24, 18, 12], 0.85);
+    ctx.lineWidth = Math.max(1, 0.012 * f);
+    ctx.beginPath(); ctx.moveTo(top[0], top[1]); ctx.lineTo(bot[0], bot[1] - 0.30 * f); ctx.stroke();
+
+    /* 灯罩 */
+    var cy = bot[1] - 0.28 * f;
+    var lit = ST.lamp;
+    var g1 = ctx.createLinearGradient(top[0] - w, cy, top[0] + w, cy);
+    g1.addColorStop(0, sh([92, 66, 40], 0.7 + 0.3 * lit));
+    g1.addColorStop(0.5, sh([150, 108, 62], 0.75 + 0.5 * lit));
+    g1.addColorStop(1, sh([86, 60, 36], 0.7 + 0.3 * lit));
+    ctx.fillStyle = g1;
+    ctx.beginPath();
+    ctx.moveTo(top[0] - w * 0.62, cy - 0.26 * f);
+    ctx.lineTo(top[0] + w * 0.62, cy - 0.26 * f);
+    ctx.lineTo(top[0] + w, cy + 0.16 * f);
+    ctx.lineTo(top[0] - w, cy + 0.16 * f);
+    ctx.closePath();
+    ctx.fill();
+
+    /* 灯下暖光 */
+    if (lit > 0.05) {
+      var gs = (1.6 + 0.6 * lit) * f * 0.9;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.34 * lit;
+      ctx.drawImage(SOFT_GOLD, top[0] - gs / 2, cy + 0.1 * f - gs / 2, gs, gs);
+      ctx.restore();
+    }
+
+    /* 流苏 */
+    ctx.strokeStyle = rgba([120, 40, 32], 0.55);
+    ctx.lineWidth = Math.max(1, 0.008 * f);
+    for (var i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(top[0] + i * w * 0.6, cy + 0.16 * f);
+      ctx.lineTo(top[0] + i * w * 0.72, cy + 0.40 * f);
+      ctx.stroke();
+    }
+  }
+
+  function drawTable(t) {
+    var tx = 0.86, tz = ZW - 2.55, ty = FLO + 0.36;
+    var hw = 0.62, hd = 0.30;
+    var a = pj(tx - hw, ty, tz - hd), b = pj(tx + hw, ty, tz - hd);
+    var c = pj(tx + hw, ty, tz + hd), d = pj(tx - hw, ty, tz + hd);
+    if (!a || !b || !c || !d) return;
+    var k = lampK(1);
+    quad(a, b, c, d, sh(C_TABLE, k * 0.95));
+    /* 桌面高光 */
+    ctx.strokeStyle = rgba([190, 150, 96], 0.10 + 0.10 * ST.lamp);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    /* 桌腿 */
+    var legs = [[tx - hw + 0.06, tz - hd + 0.06], [tx + hw - 0.06, tz - hd + 0.06],
+                [tx + hw - 0.06, tz + hd - 0.06], [tx - hw + 0.06, tz + hd - 0.06]];
+    for (var i = 0; i < 4; i++) {
+      var p1 = pj(legs[i][0], ty, legs[i][1]);
+      var p2 = pj(legs[i][0], FLO, legs[i][1]);
+      if (p1 && p2) {
+        ctx.strokeStyle = sh(C_TABLE, k * 0.7);
+        ctx.lineWidth = Math.max(1, 0.05 * (FOC / p1[2]));
+        ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+      }
+    }
+
+    /* 香炉 */
+    var cx = tx - 0.02, cz = tz + 0.02, cyy = ty + 0.13;
+    var pc = pj(cx, cyy, cz);
+    if (pc) {
+      var f = FOC / pc[2];
+      var rw = 0.135 * f;
+      var grd = ctx.createRadialGradient(pc[0] - rw * 0.3, pc[1] - rw * 0.3, 0, pc[0], pc[1], rw);
+      grd.addColorStop(0, sh([132, 116, 94], k));
+      grd.addColorStop(1, sh([58, 48, 38], k));
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.ellipse(pc[0], pc[1], rw, rw * 0.72, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = sh([96, 80, 62], k * 0.9);
+      ctx.beginPath(); ctx.ellipse(pc[0], pc[1] - rw * 0.44, rw * 0.34, rw * 0.20, 0, 0, TAU); ctx.fill();
+
+      /* 青烟 */
+      if (ST.lamp > 0.05) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (var s = 0; s < 26; s++) {
+          var pr = ((t * 0.11 + s / 21) % 1);
+          var yy = pc[1] - rw * 0.5 - pr * 0.95 * f;
+          var amp = (0.03 + pr * 0.16) * f;
+          var xx = pc[0] + Math.sin(pr * 5.0 + s * 1.6 + t * 0.5) * amp;
+          var al = Math.pow(1 - pr, 2.1) * 0.16 * ST.lamp;
+          var rr = (0.012 + pr * 0.062) * f;
+          ctx.globalAlpha = al;
+          ctx.drawImage(SOFT_WARM, xx - rr, yy - rr, rr * 2, rr * 2);
+        }
+        ctx.restore();
+      }
+    }
+  }
+
+  /* ================= 舷窗 ================= */
+  function portPoly(r, seg) {
+    var pts = [], ok = true;
+    for (var i = 0; i < seg; i++) {
+      var a = i / seg * TAU;
+      var q = pj(Math.cos(a) * r, PORT_Y + Math.sin(a) * r, ZW);
+      if (!q) { ok = false; break; }
+      pts.push([q[0], q[1]]);
+    }
+    return ok ? pts : null;
+  }
+
+  function pathPoly(pts) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.closePath();
+  }
+
+  /* 舱内不跑 drawSky，得自己把星图刷新好 */
+  function syncSky() {
+    ensureSky();
+    if (Math.abs(ST.yaw - SKYKEY.yaw) > 0.0012 ||
+        Math.abs(ST.pitch - SKYKEY.pitch) > 0.0012 ||
+        Math.abs(ST.fov - SKYKEY.fov) > 0.003) {
+      renderSky(SKY.getContext('2d'));
+      SKYKEY.yaw = ST.yaw; SKYKEY.pitch = ST.pitch; SKYKEY.fov = ST.fov;
+    }
+  }
+
+  function drawPort(t) {
+    syncSky();
+    var inner = portPoly(PORT_R, 84);
+    if (!inner) return;
+    var ctr = pj(0, PORT_Y, ZW);
+    if (!ctr) return;
+    var edge = pj(PORT_R, PORT_Y, ZW);
+    if (!edge) return;
+    var pr = Math.hypot(edge[0] - ctr[0], edge[1] - ctr[1]);
+    var pcx = ctr[0], pcy = ctr[1];
+    PORTMAP = { pcx: pcx, pcy: pcy, k: pr / RAD, pr: pr };
+
+    /* 外面的星空：把缓存星图按圆对圆贴进来 */
+    ctx.save();
+    pathPoly(inner);
+    ctx.clip();
+    ctx.globalCompositeOperation = 'source-over';
+    var k = pr / RAD;                      /* 放大倍率 */
+    var SW = RAD * 2;                      /* 源区域固定 = 取满整幅星星 */
+    if (ST.spin) {
+      ctx.translate(pcx, pcy);
+      ctx.rotate(ST.spin);
+      ctx.translate(-pcx, -pcy);
+    }
+    ctx.drawImage(SKY, CX - SW / 2, CY - SW / 2, SW, SW,
+                  pcx - pr, pcy - pr, pr * 2, pr * 2);
+    ctx.restore();
+
+    /* 窗洞内壁的阴影 */
+    ctx.save();
+    pathPoly(inner);
+    ctx.clip();
+    var shd = ctx.createRadialGradient(pcx, pcy, pr * 0.70, pcx, pcy, pr * 1.02);
+    shd.addColorStop(0, 'rgba(0,0,0,0)');
+    shd.addColorStop(1, 'rgba(0,0,0,0.62)');
+    ctx.fillStyle = shd;
+    ctx.fillRect(pcx - pr, pcy - pr, pr * 2, pr * 2);
+    ctx.restore();
+
+    /* 木框（annulus：外圈 + 内圈，evenodd 挖洞） */
+    var outer = portPoly(PORT_R + 0.085, 84);
+    if (outer) {
+      var ring = ctx.createLinearGradient(pcx - pr, pcy - pr, pcx + pr, pcy + pr);
+      var kk = 0.28 + 0.72 * ST.lamp;
+      ring.addColorStop(0, sh(C_RING_D, kk));
+      ring.addColorStop(0.34, sh(C_RING, kk));
+      ring.addColorStop(0.62, sh(C_RING, kk * 1.12));
+      ring.addColorStop(1, sh(C_RING_D, kk * 0.9));
+      ctx.fillStyle = ring;
+      ctx.beginPath();
+      ctx.moveTo(outer[0][0], outer[0][1]);
+      for (var oi = 1; oi < outer.length; oi++) ctx.lineTo(outer[oi][0], outer[oi][1]);
+      ctx.closePath();
+      ctx.moveTo(inner[0][0], inner[0][1]);
+      for (var ii2 = 1; ii2 < inner.length; ii2++) ctx.lineTo(inner[ii2][0], inner[ii2][1]);
+      ctx.closePath();
+      ctx.fill('evenodd');
+
+      /* 外缘倒角：迎光的一侧提亮，背光的一侧压暗 */
+      var bevel = portPoly(PORT_R + 0.085, 84);
+      var bev2 = portPoly(PORT_R + 0.062, 84);
+      if (bevel && bev2) {
+        var bg = ctx.createLinearGradient(pcx - pr, pcy - pr, pcx + pr, pcy + pr);
+        bg.addColorStop(0, 'rgba(198,160,104,' + (0.16 + 0.16 * ST.lamp) + ')');
+        bg.addColorStop(0.5, 'rgba(0,0,0,0)');
+        bg.addColorStop(1, 'rgba(0,0,0,0.42)');
+        ctx.fillStyle = bg;
+        ctx.beginPath();
+        ctx.moveTo(bevel[0][0], bevel[0][1]);
+        for (var bi = 1; bi < bevel.length; bi++) ctx.lineTo(bevel[bi][0], bevel[bi][1]);
+        ctx.closePath();
+        ctx.moveTo(bev2[0][0], bev2[0][1]);
+        for (var bi2 = 1; bi2 < bev2.length; bi2++) ctx.lineTo(bev2[bi2][0], bev2[bi2][1]);
+        ctx.closePath();
+        ctx.fill('evenodd');
+      }
+
+      /* 木纹：几道不闭合的弧，只在框上 */
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(outer[0][0], outer[0][1]);
+      for (var oi2 = 1; oi2 < outer.length; oi2++) ctx.lineTo(outer[oi2][0], outer[oi2][1]);
+      ctx.closePath();
+      ctx.moveTo(inner[0][0], inner[0][1]);
+      for (var ii3 = 1; ii3 < inner.length; ii3++) ctx.lineTo(inner[ii3][0], inner[ii3][1]);
+      ctx.closePath();
+      ctx.clip('evenodd');
+      ctx.strokeStyle = 'rgba(30,20,10,0.20)';
+      ctx.lineWidth = Math.max(1, pr * 0.006);
+      for (var gi = 0; gi < 5; gi++) {
+        var rr2 = PORT_R + 0.012 + gi * 0.017;
+        var gp = portPoly(rr2, 60);
+        if (!gp) continue;
+        ctx.beginPath();
+        ctx.moveTo(gp[0][0], gp[0][1]);
+        for (var gj = 1; gj < gp.length; gj++) ctx.lineTo(gp[gj][0], gp[gj][1]);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      /* 内壁的一线高光（迎窗光） */
+      ctx.strokeStyle = rgba([208, 172, 118], 0.14 + 0.16 * ST.lamp);
+      ctx.lineWidth = Math.max(1, pr * 0.009);
+      pathPoly(inner);
+      ctx.stroke();
+    }
+    /* 内圈暗边 */
+    ctx.strokeStyle = rgba([16, 11, 7], 0.85);
+    ctx.lineWidth = Math.max(1, pr * 0.012);
+    pathPoly(inner);
+    ctx.stroke();
+
+    /* 铜钉：二十八宿 */
+    var mid = portPoly(PORT_R + 0.043, 28);
+    if (mid) {
+      for (var i = 0; i < 28; i++) {
+        var p = mid[i];
+        var glow = 0.30 + 0.55 * Math.max(0, Math.sin(t * 1.05 + i * 0.92));
+        var rr = Math.max(1.2, pr * (0.010 + 0.006 * glow));
+        ctx.fillStyle = 'rgba(' + C_BRASS[0] + ',' + C_BRASS[1] + ',' + C_BRASS[2] + ',' + (0.30 + 0.55 * ST.lamp) + ')';
+        ctx.beginPath(); ctx.arc(p[0], p[1], rr, 0, TAU); ctx.fill();
+        if (ST.lamp > 0.05) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.globalAlpha = 0.16 * glow * ST.lamp;
+          var gs = rr * 7;
+          ctx.drawImage(SOFT_GOLD, p[0] - gs, p[1] - gs, gs * 2, gs * 2);
+          ctx.restore();
+        }
+      }
+    }
+  }
+
+  /* ================= 星光落在地上 ================= */
+  function drawBeam(t) {
+    var ctr = pj(0, PORT_Y, ZW);
+    if (!ctr) return;
+    var edge = pj(PORT_R, PORT_Y, ZW);
+    if (!edge) return;
+    var pr = Math.hypot(edge[0] - ctr[0], edge[1] - ctr[1]);
+
+    /* 地上的光斑 */
+    var fz = ZW - 1.05;
+    var fp = pj(0, FLO, fz);
+    if (fp) {
+      var f = FOC / fp[2];
+      var rx = 0.95 * f, ry = 0.30 * f;
+      var g = ctx.createRadialGradient(fp[0], fp[1], 0, fp[0], fp[1], rx);
+      g.addColorStop(0, 'rgba(206,216,255,' + (0.15 + 0.16 * (1 - ST.lamp)) + ')');
+      g.addColorStop(0.45, 'rgba(176,196,255,' + (0.05 + 0.08 * (1 - ST.lamp)) + ')');
+      g.addColorStop(1, 'rgba(150,176,255,0)');
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.translate(fp[0], fp[1]);
+      ctx.scale(1, ry / rx);
+      ctx.translate(-fp[0], -fp[1]);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(fp[0], fp[1], rx, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+
+    /* 光柱：三层叠加，越往外越淡，边不硬 */
+    var layers = [
+      { w: 0.62, a: 0.10, y: 0.0 },
+      { w: 0.86, a: 0.055, y: 0.02 },
+      { w: 1.08, a: 0.030, y: 0.04 }
+    ];
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (var li = 0; li < layers.length; li++) {
+      var L = layers[li];
+      var lp = pj(-PORT_R * L.w, PORT_Y - PORT_R * L.w, ZW);
+      var rp = pj(PORT_R * L.w, PORT_Y - PORT_R * L.w, ZW);
+      var lb = pj(-1.45 * L.w, FLO, ZW - 1.05);
+      var rb = pj(1.45 * L.w, FLO, ZW - 1.05);
+      if (!lp || !rp || !lb || !rb) continue;
+      var g2 = ctx.createLinearGradient(0, lp[1], 0, lb[1]);
+      g2.addColorStop(0, 'rgba(186,202,255,' + L.a * (1.0 + 0.9 * (1 - ST.lamp)) + ')');
+      g2.addColorStop(0.55, 'rgba(172,192,255,' + L.a * 0.42 * (1.0 + (1 - ST.lamp)) + ')');
+      g2.addColorStop(1, 'rgba(158,180,255,0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.moveTo(lp[0], lp[1]); ctx.lineTo(rp[0], rp[1]);
+      ctx.lineTo(rb[0], rb[1]); ctx.lineTo(lb[0], lb[1]);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /* ================= 舱内浮尘 ================= */
+  var MOTE = [];
+  for (var mi = 0; mi < 46; mi++) {
+    MOTE.push({
+      x: R(-HW * 0.9, HW * 0.9), y: R(FLO + 0.1, CEIL - 0.1), z: R(ZW - 3.2, ZW),
+      ph: R(0, TAU), sp: R(0.15, 0.5), sz: R(0.004, 0.012)
+    });
+  }
+  function drawMotes(t) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < MOTE.length; i++) {
+      var m = MOTE[i];
+      var yy = m.y + Math.sin(t * m.sp + m.ph) * 0.06;
+      var xx = m.x + Math.cos(t * m.sp * 0.7 + m.ph) * 0.05;
+      var p = pj(xx, yy, m.z);
+      if (!p) continue;
+      var f = FOC / p[2];
+      var rr = m.sz * f;
+      if (rr < 0.3) continue;
+      ctx.globalAlpha = 0.10 + 0.22 * (0.4 + 0.6 * Math.sin(t * 1.4 + m.ph));
+      ctx.drawImage(SOFT_WARM, p[0] - rr, p[1] - rr, rr * 2, rr * 2);
+    }
+    ctx.restore();
+  }
+
+  /* ================= 舱内一帧 ================= */
+  function drawCabin(t) {
+    ctx.fillStyle = '#05060b';
+    ctx.fillRect(0, 0, W, H);
+
+    drawRoom();
+    drawBeam(t);
+    drawPort(t);
+    drawTable(t);
+    drawLamp(-1.42, 2.05, t);
+    drawLamp(1.42, 4.15, t);
+    drawMotes(t);
+
+    /* 暗角 */
+    var vg = ctx.createRadialGradient(VX, VY, Math.min(W, H) * 0.28, VX, VY, Math.max(W, H) * 0.78);
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, 'rgba(0,0,0,0.55)');
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ================= 出舱：整艘兰舟 ================= */
+  var OUT = { zoom: 1, tzoom: 1, drift: 0 };
+  var OUTSHIP = { x: 0, y: 0, r: 0 };
+
+  function drawShip(cx, cy, s, t) {
+    /* 楼船：侧面。船身长而浅，两层翘檐楼，三桅，窗里点着灯。 */
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(s, s);
+    ctx.translate(0, Math.sin(t * 0.42) * 1.8);
+
+    var DARK = '#070a11';
+    var WARM = '#0d1018';
+    var EDGE = 'rgba(170,136,80,0.30)';
+    var RIM = 'rgba(186,206,236,0.16)';   /* 星球照过来的一线冷光 */
+
+    function shape(build, fill) {
+      ctx.beginPath();
+      build();
+      ctx.closePath();
+      ctx.fillStyle = fill || WARM;
+      ctx.fill();
+      ctx.strokeStyle = EDGE;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+
+    /* --- 船身 --- */
+    shape(function () {
+      ctx.moveTo(-252, -16);
+      ctx.quadraticCurveTo(-150, 6, -96, 26);
+      ctx.quadraticCurveTo(0, 38, 96, 26);
+      ctx.quadraticCurveTo(150, 6, 252, -16);
+      ctx.lineTo(238, -38);
+      ctx.quadraticCurveTo(0, -14, -238, -38);
+    });
+
+    /* 船身侧面的冷光 */
+    ctx.beginPath();
+    ctx.moveTo(120, 20);
+    ctx.quadraticCurveTo(196, 4, 250, -16);
+    ctx.strokeStyle = RIM;
+    ctx.lineWidth = 2.2;
+    ctx.stroke();
+
+    /* --- 一层 --- */
+    shape(function () {
+      ctx.moveTo(-166, -38);
+      ctx.lineTo(-142, -104);
+      ctx.lineTo(142, -104);
+      ctx.lineTo(166, -38);
+    });
+
+    /* --- 一层屋顶 --- */
+    shape(function () {
+      ctx.moveTo(-202, -104);
+      ctx.quadraticCurveTo(-110, -126, 0, -128);
+      ctx.quadraticCurveTo(110, -126, 202, -104);
+      ctx.lineTo(176, -96);
+      ctx.quadraticCurveTo(0, -112, -176, -96);
+    });
+
+    /* --- 二层 --- */
+    shape(function () {
+      ctx.moveTo(-118, -128);
+      ctx.lineTo(-98, -184);
+      ctx.lineTo(98, -184);
+      ctx.lineTo(118, -128);
+    });
+
+    /* --- 二层屋顶 --- */
+    shape(function () {
+      ctx.moveTo(-152, -184);
+      ctx.quadraticCurveTo(-82, -204, 0, -206);
+      ctx.quadraticCurveTo(82, -204, 152, -184);
+      ctx.lineTo(128, -177);
+      ctx.quadraticCurveTo(0, -192, -128, -177);
+    });
+
+    /* 檐口的一线冷光 */
+    [-104, -184].forEach(function (yy) {
+      ctx.beginPath();
+      ctx.moveTo(16, yy - 20);
+      ctx.quadraticCurveTo(70, yy - 16, 150, yy - 2);
+      ctx.strokeStyle = 'rgba(186,206,236,0.13)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    });
+
+    /* 檐下一线暖光：窗里的灯照到檐底 */
+    ctx.strokeStyle = 'rgba(255,186,116,0.16)';
+    ctx.lineWidth = 2;
+    [-104, -184].forEach(function (yy) {
+      ctx.beginPath();
+      ctx.moveTo(-150, yy + 1);
+      ctx.quadraticCurveTo(0, yy + 8, 150, yy + 1);
+      ctx.stroke();
+    });
+
+    /* --- 栏杆：竖向小柱，破掉"飞碟"感 --- */
+    ctx.strokeStyle = 'rgba(150,120,72,0.22)';
+    ctx.lineWidth = 1;
+    for (var rx = -140; rx <= 140; rx += 14) {
+      ctx.beginPath();
+      ctx.moveTo(rx, -104);
+      ctx.lineTo(rx, -112);
+      ctx.stroke();
+    }
+
+    /* --- 三桅 --- */
+    [[-64, 86], [4, 116], [72, 84]].forEach(function (m) {
+      var mx = m[0], hh = m[1];
+      ctx.strokeStyle = 'rgba(160,128,76,0.34)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(mx, -206); ctx.lineTo(mx, -206 - hh); ctx.stroke();
+      /* 收起的帆：横杆 + 一卷布 */
+      ctx.beginPath();
+      ctx.moveTo(mx - 30, -206 - hh + 16);
+      ctx.lineTo(mx + 30, -206 - hh + 16);
+      ctx.strokeStyle = 'rgba(150,120,72,0.30)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(mx - 26, -206 - hh + 16);
+      ctx.quadraticCurveTo(mx, -206 - hh + 30, mx + 26, -206 - hh + 16);
+      ctx.strokeStyle = 'rgba(112,96,70,0.50)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    });
+
+    /* --- 窗火 --- */
+    for (var r = 0; r < 2; r++) {
+      var n = r === 0 ? 5 : 4;
+      var span = r === 0 ? 104 : 74;
+      var yy2 = r === 0 ? -88 : -170;
+      for (var c = 0; c < n; c++) {
+        var lx = -span + c * (span * 2 / (n - 1)) * (r === 0 ? 1 : 1);
+        var fl = 0.55 + 0.45 * Math.sin(t * 2.1 + c * 1.7 + r * 2.3);
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = 0.40 * fl;
+        ctx.drawImage(SOFT_GOLD, lx - 15, yy2 - 15, 30, 30);
+        ctx.restore();
+        ctx.fillStyle = 'rgba(255,206,136,' + (0.45 + 0.40 * fl) + ')';
+        ctx.fillRect(lx - 2.4, yy2 - 3.4, 4.8, 6.8);
+      }
+    }
+
+    /* --- 首尾灯 --- */
+    [-214, 214].forEach(function (lx) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.40 + 0.22 * Math.sin(t * 1.9 + lx);
+      ctx.drawImage(SOFT_GOLD, lx - 14, -60, 28, 28);
+      ctx.restore();
+      ctx.fillStyle = 'rgba(255,192,116,0.72)';
+      ctx.beginPath(); ctx.arc(lx, -56, 2.2, 0, TAU); ctx.fill();
+    });
+
+    ctx.restore();
+  }
+
+  function drawOutside(t) {
+    PORTMAP = null;
+    syncSky();
+    ctx.fillStyle = '#04060b';
+    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    if (ST.spin) {
+      ctx.translate(CX, CY); ctx.rotate(ST.spin); ctx.translate(-CX, -CY);
+      ctx.translate(CX, CY); ctx.scale(1.16, 1.16); ctx.translate(-CX, -CY);
+    }
+    ctx.drawImage(SKY, 0, 0, W, H);
+    ctx.restore();
+
+    /* 拉远：船会一直小下去，小到只剩一粒光 */
+    var zz = Math.pow(clamp(OUT.zoom, 0.02, 1), 1.35);
+    var sc = 0.072 + 0.928 * zz;
+    var cx = W * 0.35 + Math.sin(t * 0.055) * W * 0.035;
+    var cy = H * 0.56 + Math.cos(t * 0.042) * H * 0.026;
+
+    /* 船周围一点极淡的辉 */
+    var gs = 760 * sc;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.13 * zz;
+    ctx.drawImage(SOFT_GOLD, cx - gs / 2, cy - gs / 2, gs, gs);
+    ctx.restore();
+
+    drawShip(cx, cy, sc * 0.92, t);
+    OUTSHIP.x = cx; OUTSHIP.y = cy; OUTSHIP.r = Math.max(46, 200 * sc);
+
+    /* 读数 */
+    var ly = 1 / Math.max(0.02, OUT.zoom);
+    var d = Math.pow(ly, 1.55) * 0.55;
+    var txt = d < 1 ? (d * 100).toFixed(0) + ' 光秒'
+            : d < 800 ? d.toFixed(1) + ' 光年'
+            : (d / 1000).toFixed(1) + ' 千光年';
+    ctx.save();
+    ctx.globalAlpha = 0.62;
+    ctx.fillStyle = '#b9a37c';
+    ctx.font = '12px "KaiTi","STKaiti",serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('兰舟　' + txt + ' 外', W * 0.12, H * 0.88);
+    ctx.globalAlpha = 0.34;
+    ctx.font = '10.5px "KaiTi","STKaiti",serif';
+    ctx.fillText('船　长一百二十丈　载人三千', W * 0.12, H * 0.88 + 22);
+    ctx.restore();
+
+    var vg = ctx.createRadialGradient(VX, VY, Math.min(W, H) * 0.30, VX, VY, Math.max(W, H) * 0.82);
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, 'rgba(0,0,0,0.58)');
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ================= 命名星 ================= */
+  /* 舱内时，星图被贴进舷窗，坐标要跟着同一个变换走 */
+  var PORTMAP = null;   /* {pcx, pcy, k} */
+  var STARSHIFT = { yaw: 0 };
+
+  function starScreen(s) {
+    var y1 = s.y * CPit - s.z * SPit;
+    var z2 = s.y * SPit + s.z * CPit;
+    if (z2 < 0.12) return null;
+    var focal = Math.min(W, H) * 0.92 * ST.fov;
+    var sx = CX + s.x * focal / z2;
+    var sy = CY - y1 * focal / z2;
+    if (PORTMAP) {
+      sx = PORTMAP.pcx + (sx - CX) * PORTMAP.k;
+      sy = PORTMAP.pcy + (sy - CY) * PORTMAP.k;
+    }
+    return [sx, sy, z2];
+  }
+  function nameStarAt(mx, my) {
+    var best = null, bd = 1e9;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      if (s.m < 0.14) continue;
+      var p = starScreen(s);
+      if (!p) continue;
+      var d = Math.hypot(p[0] - mx, p[1] - my);
+      if (d < bd) { bd = d; best = s; }
+    }
+    if (!best || bd > 46) return null;
+    for (var j = 0; j < NAMED.length; j++) if (NAMED[j].s === best) return NAMED[j];
+    var nm = STARNAMES[nameCursor % STARNAMES.length] + '·' + '一二三四五六七八九'[Math.floor(nameCursor / STARNAMES.length) % 9];
+    nameCursor++;
+    var rec = { s: best, name: nm, at: performance.now() };
+    NAMED.push(rec);
+    return rec;
+  }
+  function drawNamed() {
+    if (MODE === 'cabin' && CAM.z < 4.15) return;
+    for (var i = 0; i < NAMED.length; i++) {
+      var r = NAMED[i];
+      var p = starScreen(r.s);
+      if (!p) continue;
+      if (MODE === 'cabin' && PORTMAP) {
+        var dd = Math.hypot(p[0] - PORTMAP.pcx, p[1] - PORTMAP.pcy);
+        if (dd > PORTMAP.pr * 0.86) continue;
+      }
+      var life = Math.min(1, (performance.now() - r.at) / 900);
+      ctx.save();
+      ctx.globalAlpha = 0.72 * life;
+      ctx.strokeStyle = 'rgba(214,186,128,0.55)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(p[0] + 7, p[1] - 7);
+      ctx.lineTo(p[0] + 26, p[1] - 26);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(238,220,182,0.92)';
+      ctx.font = '11px "KaiTi","STKaiti",serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(r.name, p[0] + 30, p[1] - 26);
+      ctx.restore();
+    }
+  }
+
+  /* ================= 对外接口 ================= */
+  window.__CAB = {
+    CAM: CAM, OUT: OUT, OUTSHIP: OUTSHIP,
+    get mode() { return MODE; },
+    get tscale() { return TS; },
+    setZ: function (v) { CAM.z = CAM.tz = v; },
+    setYaw: function (v) { CAM.yaw = CAM.tyaw = v; },
+    walk: function (v) { CAM.walk = v; },
+    toOutside: function () { enterOutside(); },
+    toCabin: function () { enterCabin(); },
+    timeStep: function (d) { TIDX = clamp(TIDX + d, 0, TSTEPS.length - 1); TS = TSTEPS[TIDX]; },
+    named: NAMED,
+    nameStarAt: nameStarAt,
+    layout: function () { VX = W * 0.5; VY = H * 0.5; FOC = Math.min(W, H) * 0.95; },
+    geom: function () { return { VX: VX, VY: VY, FOC: FOC, ZMAX: ZMAX, ZW: ZW, HW: HW }; }
+  };
+
+  window.__CAB.layout();
+
+  /* ================= 主绘制 ================= */
+  window.__DRAW_CABIN = function (t, dt) {
+    VX = W * 0.5; VY = H * 0.5;
+    FOC = Math.min(W, H) * 0.95 * clamp(ST.fov, 0.8, 1.3);
+    updBasis();
+
+    /* 时间：天球缓慢转 */
+    TSPIN += dt * TS * 0.0045;
+    ST.spin = TSPIN;
+
+    if (MODE === 'cabin') {
+      drawCabin(t);
+      drawNamed();
+    } else {
+      drawOutside(t);
+      drawNamed();
+    }
+    if (FADE > 0.001) {
+      ctx.fillStyle = 'rgba(0,0,0,' + FADE + ')';
+      ctx.fillRect(0, 0, W, H);
+    }
+  };
+
+  window.__CAB.enterOutside = enterOutside;
+  window.__CAB.enterCabin = enterCabin;
+
+  function enterOutside() {
+    if (MODE === 'outside' || FADE_T) return;
+    FADE_T = 1;
+  }
+  function enterCabin() {
+    if (MODE === 'cabin' || FADE_T) return;
+    FADE_T = 2;
+  }
+  window.__CAB.tickFade = function (dt) {
+    if (FADE_T === 1) {
+      FADE = Math.min(1, FADE + dt * 1.9);
+      if (FADE >= 1) { MODE = 'outside'; FADE_T = 0; OUT.tzoom = OUT.zoom = 1; }
+    } else if (FADE_T === 2) {
+      FADE = Math.min(1, FADE + dt * 1.9);
+      if (FADE >= 1) { MODE = 'cabin'; FADE_T = 0; CAM.z = CAM.tz = ZMAX; }
+    } else if (FADE > 0) {
+      FADE = Math.max(0, FADE - dt * 1.6);
+    }
+  };
+
+  /* ================= 相机 / 提示 / 输入 ================= */
+  var TNAMES = ['一瞬', '一时', '一日', '一月', '一年', '一纪', '千载'];
+  var tipEl = document.getElementById('tip');
+  var tspd = document.getElementById('tspd');
+  var lastTipKey = '\u0000';
+
+  function setTip(html) {
+    if (!tipEl || html === lastTipKey) return;
+    lastTipKey = html;
+    tipEl.innerHTML = html;
+    tipEl.style.opacity = html ? '0.9' : '0';
+  }
+
+  function updateCam(dt) {
+    if (CAM.walk && MODE === 'cabin') {
+      CAM.tz = clamp(CAM.tz + dt * 1.72, 0.10, ZMAX);
+    }
+    CAM.z += (CAM.tz - CAM.z) * Math.min(1, dt * 9);
+
+    if (!dragging) CAM.tyaw *= (1 - Math.min(1, dt * 2.2));
+
+    CAM.yaw += (CAM.tyaw - CAM.yaw) * Math.min(1, dt * 8);
+    CAM.pitch += (CAM.tpitch - CAM.pitch) * Math.min(1, dt * 8);
+
+    if (MODE === 'cabin' && CAM.tz >= ZMAX - 0.02) {
+      if (CAM.walk) {
+        CAM.holdT += dt;
+        if (CAM.holdT > 1.15) { CAM.holdT = 0; CAM.walk = false; enterOutside(); }
+      } else CAM.holdT = 0;
+    } else CAM.holdT = 0;
+
+    if (MODE === 'outside' && CAM.walk) {
+      OUT.tzoom = clamp(OUT.tzoom * (1 - dt * 0.42), 0.043, 1);
+    }
+    OUT.zoom += (OUT.tzoom - OUT.zoom) * Math.min(1, dt * 3.2);
+  }
+
+  function updateTip() {
+    if (FADE_T) { setTip(''); return; }
+    if (MODE === 'cabin') {
+      if (CAM.z < 1.2) {
+        setTip('<span><b>按住</b>往舱里走</span><i>·</i><span><b>拖动</b>环顾</span><i>·</i><span><b>空格</b>熄灯</span>');
+      } else if (CAM.z < ZMAX - 0.5) {
+        setTip('<span><b>按住</b>走近舷窗</span><i>·</i><span><b>滚轮</b>加速时间</span><i>·</i><span><b>点星</b>取名</span>');
+      } else {
+        setTip('<span>到窗前了</span><i>·</i><span><b>再按住</b>　出舱</span><i>·</i><span><b>点星</b>取名</span>');
+      }
+    } else {
+      if (OUT.zoom > 0.5) {
+        setTip('<span><b>按住</b>拉远</span><i>·</i><span><b>拖动</b>环顾</span><i>·</i><span><b>轻点船</b>回舱</span>');
+      } else {
+        setTip('<span>它只有这么小</span><i>·</i><span><b>轻点船</b>回舱</span>');
+      }
+    }
+  }
+
+  window.__CAB.tick = function (dt, t) {
+    updateCam(dt);
+    var k = Math.min(1, dt * 9);
+    if (MODE === 'outside') {
+      ST.yaw += (CAM.yaw - ST.yaw) * k;
+      ST.pitch += (-CAM.pitch - ST.pitch) * k;
+    } else {
+      ST.yaw += (0 - ST.yaw) * Math.min(1, dt * 4);
+      ST.pitch += (0 - ST.pitch) * Math.min(1, dt * 4);
+    }
+    __DRAW_CABIN(t, dt);
+    updateTip();
+    if (tspd) tspd.textContent = TNAMES[TIDX];
+  };
+
+  /* ---------- 输入 ---------- */
+  var dragging = false, px0 = 0, py0 = 0, yaw0 = 0, pitch0 = 0;
+  var downT = 0, moved = 0, holdArmed = false;
+  var el = document.getElementById('sky');
+
+  el.addEventListener('pointerdown', function (e) {
+    dragging = true; holdArmed = false;
+    downT = performance.now(); moved = 0;
+    px0 = e.clientX; py0 = e.clientY;
+    yaw0 = CAM.tyaw; pitch0 = CAM.tpitch;
+    try { el.setPointerCapture(e.pointerId); } catch (err) { }
+  });
+
+  el.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var dx = e.clientX - px0;
+    var dy = e.clientY - py0;
+    moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
+    if (moved > 7) { CAM.walk = false; holdArmed = false; }
+    if (moved > 6) {
+      if (MODE === 'cabin') {
+        CAM.tyaw = clamp(yaw0 - dx / (W * 0.85) * 1.15, -0.62, 0.62);
+        CAM.tpitch = clamp(pitch0 - dy / (H * 0.85) * 0.55, -0.16, 0.34);
+      } else {
+        CAM.tyaw = yaw0 - dx / (W * 0.85) * 1.9;
+        CAM.tpitch = clamp(pitch0 - dy / (H * 0.85) * 1.2, -0.9, 0.9);
+      }
+    }
+  });
+
+  function release(e) {
+    if (!dragging) return;
+    dragging = false;
+    CAM.walk = false;
+    var dur = performance.now() - downT;
+    if (moved < 9 && dur < 380) {
+      if (MODE === 'outside') {
+        var cx = (e && e.clientX) || 0, cy = (e && e.clientY) || 0;
+        if (OUTSHIP.r > 0 && Math.hypot(cx - OUTSHIP.x, cy - OUTSHIP.y) < OUTSHIP.r) {
+          enterCabin(); return;
+        }
+      }
+      var hit = nameStarAt((e && e.clientX) || -99, (e && e.clientY) || -99);
+      if (hit) setTip('<span>这颗星，从此叫「' + hit.name + '」</span>');
+    }
+  }
+  el.addEventListener('pointerup', release);
+  el.addEventListener('pointercancel', release);
+
+  (function holdLoop() {
+    if (dragging && moved <= 7) {
+      if (!holdArmed && performance.now() - downT > 150) holdArmed = true;
+      if (holdArmed) CAM.walk = true;
+    }
+    requestAnimationFrame(holdLoop);
+  })();
+
+  el.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    TIDX = clamp(TIDX + (e.deltaY > 0 ? -1 : 1), 0, TSTEPS.length - 1);
+    TS = TSTEPS[TIDX];
+  }, { passive: false });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Space') { e.preventDefault(); ST.tLamp = ST.tLamp > 0.5 ? 0.06 : 1; }
+    if (e.code === 'ArrowUp' || e.code === 'KeyW') { e.preventDefault(); CAM.walk = true; }
+    if (e.code === 'KeyR') { CAM.tyaw = 0; CAM.tpitch = 0.055; ST.tFov = 1; }
+    if (e.code === 'Escape' && MODE === 'outside') enterCabin();
+  });
+  window.addEventListener('keyup', function (e) {
+    if (e.code === 'ArrowUp' || e.code === 'KeyW') CAM.walk = false;
+  });
+  el.addEventListener('dblclick', function () {
+    CAM.tyaw = 0; CAM.tpitch = 0.055; ST.tFov = 1;
+  });
+
+})();
+
+
+  // ---------- 主循环 ----------
+  var last = 0, PAUSED = false;
 
   function frame(ts) {
     if (PAUSED) { last = ts; requestAnimationFrame(frame); return; }
@@ -1289,90 +2414,14 @@
     last = ts;
     var t = (ts - ST.t0) / 1000;
 
-    // 缓动
-    ST.yaw += (ST.tYaw - ST.yaw) * 0.075;
-    ST.pitch += (ST.tPitch - ST.pitch) * 0.075;
-    ST.fov += (ST.tFov - ST.fov) * 0.08;
     ST.lamp += (ST.tLamp - ST.lamp) * 0.05;
+    ST.fov += (ST.tFov - ST.fov) * 0.08;
 
-    // 飞船缓慢前行：视角极缓漂移
-    if (!dragging) ST.tYaw += dt * 0.006;
+    __CAB.tickFade(dt);
+    __CAB.tick(dt, t);
 
-    drawSky(t);
-
-    // 窗玻璃的微光 + 微尘
-    drawDust(t);
-    drawGlass();
-    drawMeteors(dt);
-    drawBoat(t);
-
-    // 舱内层
-    if (FRAME && !DBG_OFF.frame) ctx.drawImage(FRAME, 0, 0, W, H);
-    drawShaft();
-
-    if (!DBG_OFF.cabin) drawCabinLight(t);
-
-    // 流星
-    meteorTimer -= dt;
-    if (meteorTimer <= 0) {
-      spawnMeteor();
-      meteorTimer = R(4.5, 11);
-    }
-
-    // 轻微呼吸（船身在动）
     requestAnimationFrame(frame);
   }
-
-  // ---------- 交互 ----------
-  var dragging = false, px0 = 0, py0 = 0, yaw0 = 0, pitch0 = 0;
-
-  function onDown(e) {
-    dragging = true;
-    cv.classList.add('drag');
-    var p = e.touches ? e.touches[0] : e;
-    px0 = p.clientX; py0 = p.clientY;
-    yaw0 = ST.tYaw; pitch0 = ST.tPitch;
-  }
-  function onMove(e) {
-    if (!dragging) return;
-    var p = e.touches ? e.touches[0] : e;
-    var dx = (p.clientX - px0) / (W * 0.9);
-    var dy = (p.clientY - py0) / (H * 0.9);
-    ST.tYaw = yaw0 - dx * 1.6;
-    ST.tPitch = clamp(pitch0 - dy * 0.9, -0.62, 0.62);
-    if (e.cancelable) e.preventDefault();
-  }
-  function onUp() {
-    dragging = false;
-    cv.classList.remove('drag');
-  }
-
-  cv.addEventListener('pointerdown', onDown);
-  window.addEventListener('pointermove', onMove);
-  window.addEventListener('pointerup', onUp);
-  window.addEventListener('pointercancel', onUp);
-
-  cv.addEventListener('wheel', function (e) {
-    e.preventDefault();
-    ST.tFov = clamp(ST.tFov * (1 - e.deltaY * 0.0012), 0.62, 1.9);
-  }, { passive: false });
-
-  window.addEventListener('keydown', function (e) {
-    if (e.code === 'Space') {
-      e.preventDefault();
-      ST.tLamp = ST.tLamp > 0.5 ? 0.06 : 1;
-      var hud = document.getElementById('hud');
-      hud.classList.toggle('on');
-    }
-    if (e.code === 'KeyR') {
-      ST.tYaw = 0; ST.tPitch = 0; ST.tFov = 1;
-    }
-  });
-
-  // 双击回正
-  cv.addEventListener('dblclick', function () {
-    ST.tYaw = 0; ST.tPitch = 0; ST.tFov = 1;
-  });
 
   // ---------- 启动 ----------
   function boot() {
@@ -1394,11 +2443,12 @@
     ST.t0 = performance.now();
 
     document.getElementById('hud').classList.add('on');
+    document.getElementById('tbar').classList.add('on');
     var tip = document.getElementById('tip');
     setTimeout(function () { tip.classList.add('on'); }, 2600);
     setTimeout(function () { tip.classList.remove('on'); }, 11000);
     setTimeout(function () { document.getElementById('sign').classList.add('on'); }, 4000);
-    setTimeout(function () { document.getElementById('veil').classList.add('gone'); }, 120);
+    setTimeout(function () { document.getElementById('veil').classList.add('gone'); }, 3600);
 
     requestAnimationFrame(frame);
   }
