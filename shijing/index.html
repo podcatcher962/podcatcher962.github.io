@@ -78,7 +78,7 @@
   <div class="t3" id="hAlias">日中</div>
   <div class="t4" id="hSpot">虹桥</div>
 </div>
-<div id="tip">拖动 <b>行街</b> · 空格 <b>驻足观时</b> · ← → <b>移步</b> · R <b>回城门</b></div>
+<div id="tip">拖动 <b>行街</b> · 点人 <b>听一句</b> · 空格 <b>驻足观时</b> · R <b>回城门</b></div>
 <div id="veil"><div class="vt">市井</div></div>
 
 <script>
@@ -167,6 +167,135 @@ function pal(clock) {
   };
   PALCACHE.key = k; PALCACHE.val = o;
   return o;
+}
+
+
+/* ================= 街上的人：点一下，他说一句 ================= */
+var ROLE = {
+  walk: '行人', carrier: '挑夫', child: '孩儿',
+  old: '老人', donkey: '驴', scholar: '书生'
+};
+var LINES = {
+  walk: [
+    '借过，借过。',
+    '今日米价又涨了三文。',
+    '听说北边要落雨。',
+    '新桥修好了，走那边快些。',
+    '官府贴了榜，我不识字。',
+    '这街上，一天到晚都这么吵。'
+  ],
+  carrier: [
+    '让一让，担子沉。',
+    '汴河边卸货，一日四十文。',
+    '这担柴，从城外挑进来的。',
+    '脚力钱又压了。',
+    '再走两趟，就够买米了。'
+  ],
+  child: [
+    '娘，我要吃糖人儿！',
+    '你看那个灯笼，红的！',
+    '我跑得比你快——',
+    '（孩子追着一只鸡跑过去了）'
+  ],
+  old: [
+    '我在这条街上，看了六十年。',
+    '从前这桥，没这么宽。',
+    '年轻时我也在这摆摊。',
+    '人多了，热闹，也就不认识了。',
+    '慢些走，地上滑。'
+  ],
+  donkey: [
+    '（驴叫了一声）',
+    '（驴子低头啃了一口草）',
+    '（它不肯走，主人在后面推）'
+  ],
+  scholar: [
+    '清明时节，最宜上河。',
+    '此去东京，还有几日？',
+    '你看那桥上的人，像不像在画里？',
+    '市井之中，亦有文章。'
+  ]
+};
+
+var SAY = null;   /* {q, text, role, at} */
+
+function sayTo(q) {
+  var pool = LINES[q.kind] || LINES.walk;
+  /* 同一个人每次说同一句：用他的相位取稳定索引 */
+  var idx = Math.floor((q.ph * 7.31) % pool.length);
+  SAY = { q: q, text: pool[idx], role: ROLE[q.kind] || '行人', at: performance.now() };
+}
+
+function personAt(mx, my) {
+  var best = null, bd = 1e9;
+  for (var i = 0; i < PEOPLE.length; i++) {
+    var q = PEOPLE[i];
+    if (!q._vis) continue;
+    var hx = 11 * q._s + 8;
+    if (mx < q._x - hx || mx > q._x + hx) continue;
+    var top = q._y - 34 * q._s, bot = q._y + 4 * q._s;
+    if (my < top - 6 || my > bot) continue;
+    var d = Math.abs(mx - q._x) + Math.abs(my - (top + bot) / 2);
+    if (d < bd) { bd = d; best = q; }
+  }
+  return best;
+}
+
+function drawSay(p, t) {
+  if (!SAY) return;
+  var q = SAY.q;
+  var age = (performance.now() - SAY.at) / 1000;
+  if (age > 6.5) { SAY = null; return; }
+  var a = age < 0.35 ? age / 0.35 : (age > 5.4 ? Math.max(0, (6.5 - age) / 1.1) : 1);
+  if (!q._vis) return;
+
+  var g = ctx;
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);   /* 前面的图层可能留下了变换，这里复位 */
+  g.globalAlpha = 1;
+  g.globalCompositeOperation = 'source-over';
+  var bx = clamp(q._x, 96, W - 96);
+  var by = q._y - 40 * q._s - 18;
+  if (by < 70) by = Math.min(H - 90, q._y + 26);
+
+  g.save();
+  g.globalAlpha = a;
+  var txt = SAY.text;
+  var fs = Math.max(13, Math.min(17, H * 0.021));
+  g.font = fs + 'px "KaiTi","STKaiti",serif';
+  var tw = g.measureText(txt).width;
+  var pw = tw + 34, ph2 = fs + 26;
+  var rx = bx - pw / 2, ry = by - ph2;
+
+  /* 气泡 */
+  g.fillStyle = 'rgba(24,19,13,0.86)';
+  g.strokeStyle = 'rgba(198,164,104,' + (0.30 + 0.35 * a) + ')';
+  g.lineWidth = 1;
+  var rr = 7;
+  g.beginPath();
+  g.moveTo(rx + rr, ry);
+  g.lineTo(rx + pw - rr, ry); g.quadraticCurveTo(rx + pw, ry, rx + pw, ry + rr);
+  g.lineTo(rx + pw, ry + ph2 - rr); g.quadraticCurveTo(rx + pw, ry + ph2, rx + pw - rr, ry + ph2);
+  g.lineTo(rx + 13, ry + ph2);
+  g.lineTo(rx + 8, ry + ph2 + 7);
+  g.lineTo(rx + 7, ry + ph2);
+  g.lineTo(rx + rr, ry + ph2); g.quadraticCurveTo(rx, ry + ph2, rx, ry + ph2 - rr);
+  g.lineTo(rx, ry + rr); g.quadraticCurveTo(rx, ry, rx + rr, ry);
+  g.closePath();
+  g.fill(); g.stroke();
+
+  /* 身份 */
+  g.fillStyle = 'rgba(150,124,80,0.85)';
+  g.font = (fs - 3) + 'px "KaiTi","STKaiti",serif';
+  g.textAlign = 'left';
+  g.fillText(SAY.role, rx + 15, ry + ph2 - 9);
+
+  /* 话 */
+  g.fillStyle = 'rgba(236,222,196,0.95)';
+  g.font = fs + 'px "KaiTi","STKaiti",serif';
+  g.textAlign = 'center';
+  g.fillText(txt, bx, ry + ph2 - 9);
+
+  g.restore();
 }
 
 /* ============================ 世界 ============================ */
@@ -1375,15 +1504,16 @@ function drawPeople(p, t, dt) {
     }
 
     var sx = q.x - cam;
-    if (sx < -80 || sx > W + 80) continue;
+    if (sx < -80 || sx > W + 80) { q._vis = 0; continue; }
 
     var out = q.th < dens;
-    if (!out) { q.act = 0; continue; }
+    if (!out) { q.act = 0; q._vis = 0; continue; }
     q.act = 1;
     if (night > 0.72 && q.th > 0.045) continue;   // 宵禁：只剩更夫与醉汉
 
     var baseY = surfY(q.x) + depOff(q.x, q.dep) + H * 0.004;
     var sc = (0.62 + q.dep * 0.78) * HS;
+    q._x = sx; q._y = baseY; q._s = sc; q._vis = 1;
 
     // 影子
     g.fillStyle = 'rgba(46,34,20,' + (0.20 - q.dep * 0.06) + ')';
@@ -2059,6 +2189,7 @@ function frame(now) {
   if (!DBG_OFF.fore) drawFore(p, t);
   if (!DBG_OFF.atmos) drawAtmos(p, t);
   drawTex();
+  drawSay(p, t);
 
   updateHud(p);
 }
@@ -2066,18 +2197,29 @@ function frame(now) {
 /* ============================ 交互 ============================ */
 var dragging = false, dragX = 0, dragCam = 0, lastMove = 0;
 
+var downX = 0, downY = 0, downT = 0, movedPx = 0;
 cv.addEventListener('pointerdown', function (e) {
   dragging = true; dragX = e.clientX; dragCam = tCam;
+  downX = e.clientX; downY = e.clientY; downT = performance.now(); movedPx = 0;
   cv.classList.add('drag'); lastMove = performance.now();
   try { cv.setPointerCapture(e.pointerId); } catch (err) { }
 });
 cv.addEventListener('pointermove', function (e) {
   if (!dragging) return;
+  movedPx = Math.max(movedPx, Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY));
   tCam = clamp(dragCam - (e.clientX - dragX) * 1.25, 0, Math.max(0, WW - W));
   lastMove = performance.now();
 });
-function endDrag() { dragging = false; cv.classList.remove('drag'); lastMove = performance.now(); }
-cv.addEventListener('pointerup', endDrag);
+function endDrag(e) { dragging = false; cv.classList.remove('drag'); lastMove = performance.now(); }
+cv.addEventListener('pointerup', function (e) {
+  var wasDrag = movedPx > 9 || (performance.now() - downT > 420);
+  endDrag(e);
+  if (wasDrag) return;
+  /* 轻点：找最近的人 */
+  var q = personAt(e.clientX, e.clientY);
+  if (q) { sayTo(q); }
+  else { if (SAY) SAY = null; }
+});
 cv.addEventListener('pointercancel', endDrag);
 
 cv.addEventListener('wheel', function (e) {
@@ -2143,7 +2285,14 @@ window.__SJ = {
   },
   get fps() { return FPS; },
   off: DBG_OFF,
-  version: '1.0'
+  get people() { return PEOPLE; },
+  get say() { return SAY; },
+  clearSay: function () { SAY = null; },
+  personAt: personAt,
+  seek: function (r) { tCam = cam = clamp(r * (WW - W), 0, WW - W); },
+  get cam() { return cam; },
+  sayTo: sayTo,
+  version: '1.1',
 };
 })();
 </script>
