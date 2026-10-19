@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>心房 · 走廊尽头 —— 三境之三</title>
+<meta name="description" content="一条走廊，越往里走越暗。七扇门，每推开一扇才有一小片光。走到尽头，光是你自己给的。纯 Canvas 手写，单文件，零依赖。">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:title" content="心房 · 走廊尽头">
+<meta property="og:description" content="一条走廊，越往里走越暗。七扇门，每推开一扇才有一小片光。走到尽头，光是你自己给的。">
+<meta property="og:image" content="https://podcatcher962.github.io/xinfang/og.jpg">
+<meta property="og:url" content="https://podcatcher962.github.io/xinfang/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Crect x='14' y='12' width='36' height='44' fill='none' stroke='%236b5030' stroke-width='3'/%3E%3Crect x='30' y='14' width='2' height='40' fill='%23ffd79a'/%3E%3C/svg%3E">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#04060b; }
+  body { font-family:"Songti SC","STSong","SimSun","Noto Serif SC",serif;
+         -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
+         -webkit-font-smoothing:antialiased; }
+  #cv { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:default; }
+
+  .vig { position:fixed; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse 68% 62% at 50% 50%, rgba(0,0,0,0) 26%, rgba(0,0,0,0.34) 68%, rgba(0,0,0,0.86) 100%); }
+
+  #hud { position:fixed; top:0; right:0; padding:30px 34px; text-align:right;
+         color:#6b5b44; letter-spacing:2px; font-size:12px; line-height:1.9;
+         opacity:0; transition:opacity 1.6s ease 0.6s; }
+  #hud.on { opacity:0.60; }
+  #hud .t1 { font-size:12px; letter-spacing:6px; color:#7d6a4e; text-indent:6px; }
+  #hud .dots { margin-top:13px; }
+  #hud .dots i { display:block; width:4px; height:4px; margin:0 0 7px auto; border-radius:50%;
+                 background:rgba(150,124,80,0.26); transition:background 0.7s ease, box-shadow 0.7s ease; }
+  #hud .dots i.on { background:rgba(226,196,138,0.88); box-shadow:0 0 6px rgba(226,196,138,0.50); }
+  #hud .dots i.here { background:rgba(255,232,190,1); box-shadow:0 0 11px rgba(255,220,160,0.85); }
+
+  #tip { position:fixed; left:0; right:0; bottom:0; padding:0 0 38px; text-align:center;
+         color:#8a785c; font-size:13px; letter-spacing:5px; text-indent:5px;
+         opacity:0; transition:opacity 1.2s ease; pointer-events:none; }
+  #tip.on { opacity:0.72; }
+
+  #veil { position:fixed; inset:0; background:#000; z-index:20;
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
+          transition:opacity 1.7s ease; }
+  #veil.off { opacity:0; pointer-events:none; }
+  #veil .v1 { font-size:34px; letter-spacing:22px; color:#c8b088; text-indent:22px;
+              animation:breathe 4.4s ease-in-out infinite; }
+  #veil .v2 { margin-top:46px; font-size:13px; letter-spacing:7px; color:#6d5c44; text-indent:7px; }
+  #veil .v3 { margin-top:15px; font-size:11px; letter-spacing:3px; color:#463c2e; text-indent:3px; }
+  @keyframes breathe { 0%,100% { opacity:0.52; } 50% { opacity:1; } }
+
+  #end { position:fixed; inset:0; z-index:30; background:#f7f3e9;
+         opacity:0; pointer-events:none; transition:opacity 2.0s ease;
+         display:flex; flex-direction:column; align-items:center; justify-content:center;
+         padding:0 30px; text-align:center; }
+  #end.on { opacity:1; pointer-events:auto; }
+  #end div { opacity:0; transform:translateY(9px); transition:opacity 1.8s ease, transform 1.8s ease; }
+  #end div.on { opacity:1; transform:none; }
+  #end .e1 { font-size:17px; letter-spacing:7px; color:#4a4032; text-indent:7px; }
+  #end .e2 { margin-top:24px; font-size:17px; letter-spacing:5px; color:#2c2519; text-indent:5px; }
+  #end .e3 { margin-top:118px; font-size:42px; letter-spacing:24px; color:#241d12; text-indent:24px; }
+  #end .e4 { margin-top:34px; font-size:12px; letter-spacing:5px; color:#8a7a60; text-indent:5px; }
+  #end .e6 { margin-top:104px; font-size:12px; letter-spacing:3px; color:#6f6250; text-indent:3px; }
+  #end .seal { position:absolute; width:46px; height:46px; border:2px solid #a63a2a; border-radius:3px;
+               display:flex; align-items:center; justify-content:center; opacity:0;
+               transition:opacity 1.8s ease; }
+  #end .seal.on { opacity:0.86; }
+  #end .seal span { font-size:26px; color:#a63a2a; line-height:1; transform:translateY(-1px); }
+  #end .e7 { margin-top:56px; font-size:12px; letter-spacing:4px; color:#a2937a; text-indent:4px;
+             cursor:pointer; }
+
+  @media (max-width:560px) {
+    #veil .v1 { font-size:26px; letter-spacing:16px; text-indent:16px; }
+    #veil .v2 { font-size:12px; letter-spacing:5px; text-indent:5px; }
+    #hud { padding:22px 20px; }
+    #tip { font-size:12px; letter-spacing:4px; padding-bottom:30px; }
+    #end .e1, #end .e2 { font-size:15px; letter-spacing:3px; }
+    #end .e3 { font-size:32px; letter-spacing:14px; text-indent:14px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div class="vig"></div>
+
+<div id="hud">
+  <div class="t1">三境 · 之三</div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</div>
+
+<div id="tip">按住 往前走　·　松开 就停</div>
+
+<div id="veil">
+  <div class="v1">心房</div>
+  <div class="v2">一条走廊　七扇门</div>
+  <div class="v3">按住，往前走</div>
+</div>
+
+<div id="end">
+  <div class="e1">走廊尽头没有别人</div>
+  <div class="e2">那道光，一直是你自己带着的</div>
+  <div class="e3">心房</div>
+  <div class="e4">三境 · 之三</div>
+  <div class="e6">© 永远的兰兰　·　Lanlan Eternal</div>
+  <div class="e7">轻触　再看一次</div>
+  <div class="seal"><span>兰</span></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var cv = document.getElementById('cv');
+  var CTX = cv.getContext('2d', { alpha: false });
+  var ctx = CTX;
+  var hud = document.getElementById('hud');
+  var tip = document.getElementById('tip');
+  var veil = document.getElementById('veil');
+  var endEl = document.getElementById('end');
+  var dots = hud.querySelectorAll('.dots i');
+
+  var TAU = Math.PI * 2;
+  var W = 0, H = 0, DPR = 1;
+
+  /* ================= 走廊尺度（米） ================= */
+  var HW = 1.18;            // 半宽
+  var EYE = 1.52;           // 眼高
+  var CEILH = 2.98;         // 入口处净高
+  var FY = -EYE;            // 地板（相对眼高）
+  var CEIL_END = 2.34;      // 尽头处的净高——越往里，天花板压得越低
+  var ENDZ = 28.90;         // 尽头墙
+  var ZMIN = 0.26;
+
+  var DOOR_W = 0.90;
+  var DOOR_H = 2.00;
+
+  /* 墙上的分层高度 */
+  var Y_BASE = FY + 0.11;   // 踢脚线上沿
+  var Y_RAIL = FY + 0.94;   // 腰线（护墙板上沿）
+  var DOOR_X = HW - 0.012;  // 门板所在平面
+  var FRAME_X = HW - 0.048; // 门框凸出的平面
+
+  /* 天花板随深度压下来：这是走廊，也是越收越紧的心 */
+  function ceilAt(z) {
+    var t = clamp((z - 2.0) / 24.0, 0, 1);
+    return (CEILH - (CEILH - CEIL_END) * (t * t * (3 - 2 * t))) - EYE;
+  }
+
+  /* ================= 七扇门 ================= */
+  /* 门里透出来的不是景，是一句话。光色就是那句话的温度。 */
+  var DOORS = [
+    { z: 3.60,  side: -1, txt: '我没事',   cx: [255, 198, 122], gap: 0.050 },
+    { z: 7.30,  side:  1, txt: '再等等',   cx: [190, 212, 240], gap: 0.036 },
+    { z: 11.00, side: -1, txt: '不怪你',   cx: [178, 218, 208], gap: 0.062 },
+    { z: 14.70, side:  1, txt: '都过去了', cx: [208, 208, 210], gap: 0.026 },
+    { z: 18.30, side: -1, txt: '我不怕',   cx: [246, 158, 100], gap: 0.044 },
+    { z: 21.90, side:  1, txt: '还来得及', cx: [232, 192, 112], gap: 0.032 },
+    { z: 25.20, side: -1, txt: null,       cx: [136, 136, 136], gap: 0.010 }
+  ];
+
+  /* ================= 顶灯 ================= */
+  /* 有的还亮着，有的早就坏了。走一段亮一下，走一段黑一下。 */
+  var LAMPS = [
+    { z: 5.15,  on: 0.90 },
+    { z: 9.55,  on: 0.34 },
+    { z: 13.60, on: 0.00 },
+    { z: 17.55, on: 0.62 },
+    { z: 21.30, on: 0.18 },
+    { z: 24.60, on: 0.00 }
+  ];
+
+  /* ================= 相机 ================= */
+  var CAM = { z: 0.55, tz: 0.55, yaw: 0, tyaw: 0 };
+  var COS = 1, SIN = 0;
+  var VPX = 0, VPY = 0, FOC = 800;
+
+  var STOP = ENDZ - 1.55;
+  var SPEED = 2.55;
+
+  var holding = false, started = false, arrived = false, ended = false;
+  var dragX0 = 0, dragging = false;
+  var tNow = 0, touched = -1;
+
+  /* ================= 材质色 =================
+     走廊整体偏冷、偏灰——所有的暖，只留给门缝里那点光。 */
+  var C_PLASTER = [112, 103, 88];   // 上墙：旧灰泥
+  var C_WAINSC  = [58, 54, 48];     // 护墙板
+  var C_WAINSC2 = [72, 66, 58];     // 护墙板分格亮条
+  var C_FLOOR   = [94, 81, 66];     // 木地板
+  var C_CEIL    = [70, 66, 60];     // 天花
+  var C_BEAM    = [52, 46, 40];     // 梁
+  var C_DFRAME  = [78, 66, 52];     // 门框
+  var C_DOOR    = [48, 40, 32];     // 门板
+  var C_BRASS   = [186, 148, 88];   // 铜活
+
+  /* ================= 工具 ================= */
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  var _seed = 20261019;
+  function srnd() {
+    _seed ^= _seed << 13; _seed ^= _seed >>> 17; _seed ^= _seed << 5;
+    return (_seed >>> 0) / 4294967296;
+  }
+  function SR(a, b) { return a + srnd() * (b - a); }
+
+  /* ================= 投影 ================= */
+  var P = [0, 0, 0];
+  function pj(x, y, z) {
+    var zr = z - CAM.z;              /* 相对相机的深度 */
+    var X = x * COS - zr * SIN;
+    var Z = x * SIN + zr * COS;
+    if (Z < 0.075) return null;
+    var f = FOC / Z;
+    P[0] = VPX + X * f;
+    P[1] = VPY - y * f;
+    P[2] = Z;
+    return P;
+  }
+
+  function quad(x0, y0, z0, x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+    if (!pj(x0, y0, z0)) return false;
+    var ax = P[0], ay = P[1];
+    if (!pj(x1, y1, z1)) return false;
+    var bx = P[0], by = P[1];
+    if (!pj(x2, y2, z2)) return false;
+    var cx = P[0], cy2 = P[1];
+    if (!pj(x3, y3, z3)) return false;
+    var dx = P[0], dy = P[1];
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(bx, by);
+    ctx.lineTo(cx, cy2);
+    ctx.lineTo(dx, dy);
+    ctx.closePath();
+    return true;
+  }
+
+  /* ================= 暗度 =================
+     光就在你身上。所以近处亮，越走越暗。
+     而快到尽头时又亮起来——那一段不是走廊给的。 */
+  function litAt(z) {
+    return clamp(1.62 / (1 + Math.pow(z / 2.35, 1.92)), 0, 1);
+  }
+  function darkAmt(zw) {
+    var z = zw - CAM.z;
+    if (z < 0) return 0;
+    return (1 - litAt(z)) * 0.986;
+  }
+  function sh(rgb, z, k) {
+    var f = (1 - darkAmt(z)) * (k === undefined ? 1 : k);
+    if (f < 0.006) f = 0;
+    return 'rgb(' + ((rgb[0] * f) | 0) + ',' + ((rgb[1] * f) | 0) + ',' + ((rgb[2] * f) | 0) + ')';
+  }
+  function shs(rgb, z, k, a) {
+    var f = (1 - darkAmt(z)) * (k === undefined ? 1 : k);
+    return 'rgba(' + ((rgb[0] * f) | 0) + ',' + ((rgb[1] * f) | 0) + ',' + ((rgb[2] * f) | 0) + ',' + a + ')';
+  }
+
+  /* ================= 布局 ================= */
+  function layout() {
+    DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = cv.clientWidth || window.innerWidth;
+    H = cv.clientHeight || window.innerHeight;
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    CTX.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    var portrait = W < H * 0.92;
+    FOC = portrait ? Math.min(W * 1.02, H * 0.62) : Math.min(W * 0.94, H * 1.50);
+    VPX = W * 0.5;
+    VPY = H * 0.492;
+
+    SKEY.z = -99;
+  }
+
+  /* ================= 地面 ================= */
+  function drawFloor() {
+    var g = ctx;
+    var SEG = 0.82;
+
+    for (var z1 = ENDZ; z1 > CAM.z + ZMIN; z1 -= SEG) {
+      var z0 = Math.max(CAM.z + ZMIN, z1 - SEG);
+      var zm = (z0 + z1) / 2;
+      var dk = darkAmt(zm);
+      if (dk > 0.997) { if (z1 < 14) continue; }
+      var k = 0.988 + 0.022 * Math.sin(zm * 1.3 + 0.6);
+
+      g.fillStyle = sh([C_FLOOR[0] * k, C_FLOOR[1] * k, C_FLOOR[2] * k], zm);
+      if (quad(-HW, FY, z0, HW, FY, z0, HW, FY, z1, -HW, FY, z1)) g.fill();
+
+      /* 横向板缝 */
+      if (dk < 0.96) {
+        g.strokeStyle = 'rgba(24,14,6,' + (0.30 * (1 - dk)).toFixed(3) + ')';
+        g.lineWidth = 1;
+        if (quad(-HW, FY, z1, HW, FY, z1, HW, FY, z1, -HW, FY, z1)) g.stroke();
+      }
+    }
+
+    /* 顺走廊方向的木条缝：从近到远收敛，是"走向深处"的关键 */
+    var lanes = 5;
+    for (var i = -lanes; i <= lanes; i++) {
+      var lx = (i / lanes) * HW;
+      g.beginPath();
+      var started = false;
+      for (var z = CAM.z + ZMIN; z < ENDZ; z += 0.8) {
+        var dkz = darkAmt(z);
+        if (dkz > 0.96) continue;
+        if (!pj(lx, FY, z)) continue;
+        if (!started) { g.moveTo(P[0], P[1]); started = true; }
+        else g.lineTo(P[0], P[1]);
+      }
+      if (started) {
+        g.strokeStyle = 'rgba(22,12,4,0.17)';
+        g.lineWidth = 1;
+        g.stroke();
+      }
+    }
+
+    /* 地板反光：一道贴地的暖光，从脚下往前淌 */
+    g.save();
+    g.globalCompositeOperation = 'lighter';
+    var rg = ctx.createLinearGradient(0, VPY + H * 0.02, 0, H);
+    rg.addColorStop(0, 'rgba(255,214,150,0)');
+    rg.addColorStop(0.42, 'rgba(255,206,140,0.030)');
+    rg.addColorStop(1, 'rgba(255,196,126,0.085)');
+    g.fillStyle = rg;
+    g.beginPath();
+    g.moveTo(0, H);
+    g.lineTo(0, VPY + H * 0.10);
+    g.lineTo(W, VPY + H * 0.10);
+    g.lineTo(W, H);
+    g.closePath();
+    g.fill();
+    g.restore();
+  }
+
+  /* ================= 天花 ================= */
+  function drawCeil() {
+    var g = ctx;
+    var SEG = 0.9;
+    for (var z1 = ENDZ; z1 > CAM.z + ZMIN; z1 -= SEG) {
+      var z0 = Math.max(CAM.z + ZMIN, z1 - SEG);
+      var zm = (z0 + z1) / 2;
+      var c0 = ceilAt(z0), c1 = ceilAt(z1);
+      g.fillStyle = sh(C_CEIL, zm, 0.72);
+      if (quad(-HW, c0, z0, HW, c0, z0, HW, c1, z1, -HW, c1, z1)) g.fill();
+    }
+  }
+
+  /* ================= 侧墙 ================= */
+  function drawWalls() {
+    var g = ctx;
+    var SEG = 0.55;
+
+    for (var z1 = ENDZ; z1 > CAM.z + ZMIN; z1 -= SEG) {
+      var z0 = Math.max(CAM.z + ZMIN, z1 - SEG);
+      var zm = (z0 + z1) / 2;
+      var dk = darkAmt(zm);
+      if (dk > 0.985) continue;
+      var c0 = ceilAt(z0), c1 = ceilAt(z1);
+
+      /* 上墙：灰泥 */
+      g.fillStyle = sh(C_PLASTER, zm);
+      if (quad(-HW, Y_RAIL, z0, -HW, c0, z0, -HW, c1, z1, -HW, Y_RAIL, z1)) g.fill();
+      if (quad(HW, Y_RAIL, z0, HW, c0, z0, HW, c1, z1, HW, Y_RAIL, z1)) g.fill();
+
+      /* 护墙板 */
+      g.fillStyle = sh(C_WAINSC, zm);
+      if (quad(-HW, Y_BASE, z0, -HW, Y_RAIL, z0, -HW, Y_RAIL, z1, -HW, Y_BASE, z1)) g.fill();
+      if (quad(HW, Y_BASE, z0, HW, Y_RAIL, z0, HW, Y_RAIL, z1, HW, Y_BASE, z1)) g.fill();
+
+      /* 护墙板的竖分格：每 0.55m 一条暗槽 + 一条高光 */
+      if (dk < 0.90) {
+        var step = 0.55;
+        var zz = Math.ceil(z0 / step) * step;
+        for (; zz < z1; zz += step) {
+          g.strokeStyle = 'rgba(18,10,4,' + (0.60 * (1 - dk)).toFixed(3) + ')';
+          g.lineWidth = Math.max(1, 2.0 * (1 - zm / ENDZ));
+          if (quad(-HW, Y_BASE, zz, -HW, Y_RAIL, zz, -HW, Y_RAIL, zz, -HW, Y_BASE, zz)) g.stroke();
+          if (quad(HW, Y_BASE, zz, HW, Y_RAIL, zz, HW, Y_RAIL, zz, HW, Y_BASE, zz)) g.stroke();
+
+          g.strokeStyle = 'rgba(210,170,110,' + (0.26 * (1 - dk)).toFixed(3) + ')';
+          g.lineWidth = 1;
+          if (quad(-HW, Y_BASE, zz + 0.028, -HW, Y_RAIL, zz + 0.028, -HW, Y_RAIL, zz + 0.028, -HW, Y_BASE, zz + 0.028)) g.stroke();
+          if (quad(HW, Y_BASE, zz + 0.028, HW, Y_RAIL, zz + 0.028, HW, Y_RAIL, zz + 0.028, HW, Y_BASE, zz + 0.028)) g.stroke();
+        }
+      }
+
+      /* 腰线（护墙板上沿的一道铜条） */
+      if (dk < 0.93) {
+        g.strokeStyle = 'rgba(196,152,86,' + (0.58 * (1 - dk)).toFixed(3) + ')';
+        g.lineWidth = Math.max(1, 3.0 * (1 - zm / ENDZ));
+        if (quad(-HW, Y_RAIL, z0, -HW, Y_RAIL, z1, -HW, Y_RAIL, z1, -HW, Y_RAIL, z0)) g.stroke();
+        if (quad(HW, Y_RAIL, z0, HW, Y_RAIL, z1, HW, Y_RAIL, z1, HW, Y_RAIL, z0)) g.stroke();
+
+        g.strokeStyle = 'rgba(255,232,186,' + (0.20 * (1 - dk)).toFixed(3) + ')';
+        g.lineWidth = 1;
+        if (quad(-HW, Y_RAIL + 0.012, z0, -HW, Y_RAIL + 0.012, z1, -HW, Y_RAIL + 0.012, z1, -HW, Y_RAIL + 0.012, z0)) g.stroke();
+        if (quad(HW, Y_RAIL + 0.012, z0, HW, Y_RAIL + 0.012, z1, HW, Y_RAIL + 0.012, z1, HW, Y_RAIL + 0.012, z0)) g.stroke();
+      }
+
+      /* 踢脚线 */
+      if (dk < 0.93) {
+        g.fillStyle = sh([40, 28, 16], zm);
+        if (quad(-HW, FY, z0, -HW, Y_BASE, z0, -HW, Y_BASE, z1, -HW, FY, z1)) g.fill();
+        if (quad(HW, FY, z0, HW, Y_BASE, z0, HW, Y_BASE, z1, HW, FY, z1)) g.fill();
+      }
+
+      /* 墙与天花交界的一道暗，把顶压住 */
+      if (dk < 0.90) {
+        g.fillStyle = 'rgba(8,6,4,' + (0.42 * (1 - dk)).toFixed(3) + ')';
+        if (quad(-HW, c0, z0, -HW, c0 - 0.14, z0, -HW, c1 - 0.14, z1, -HW, c1, z1)) g.fill();
+        if (quad(HW, c0, z0, HW, c0 - 0.14, z0, HW, c1 - 0.14, z1, HW, c1, z1)) g.fill();
+      }
+    }
+
+    /* 灰泥上的水渍与剥落：墙不能是一块干净的板 */
+    for (var b = 0; b < BLOTCH.length; b++) {
+      var bl = BLOTCH[b];
+      var bz = bl.z;
+      if (bz < CAM.z + ZMIN || bz > ENDZ) continue;
+      var bdk = darkAmt(bz);
+      if (bdk > 0.88) continue;
+      var bx = bl.side * HW;
+      var by = bl.y;
+      var cTop = ceilAt(bz);
+      if (by + bl.h * 0.5 > cTop - 0.05) by = cTop - 0.05 - bl.h * 0.5;
+      var al = (bl.dark ? 0.105 : 0.062) * (1 - bdk);
+      g.fillStyle = bl.dark
+        ? 'rgba(34,30,24,' + al.toFixed(3) + ')'
+        : 'rgba(214,198,168,' + (al * 0.72).toFixed(3) + ')';
+      if (quad(bx, by - bl.h / 2, bz, bx, by + bl.h / 2, bz,
+               bx, by + bl.h / 2, bz + bl.w, bx, by - bl.h / 2, bz + bl.w)) g.fill();
+    }
+  }
+
+  /* ================= 横梁 ================= */
+  function drawBeams() {
+    var g = ctx;
+    var step = 1.32;
+    var start = Math.ceil((CAM.z + ZMIN) / step) * step;
+    var n = 0;
+    for (var z = start; z < ENDZ - 0.5; z += step, n++) {
+      /* 后段有断的梁 */
+      if (z > 17 && (n % 4 === 2)) continue;
+      var dk = darkAmt(z);
+      if (dk > 0.945) continue;
+      var c = ceilAt(z);
+      var bh = 0.17;
+      if (bh * FOC / Math.max(0.5, z - CAM.z + 0.001) < 2.4) continue;
+      g.fillStyle = sh(C_BEAM, z, 0.70);
+      if (quad(-HW, c, z, HW, c, z, HW, c - bh, z, -HW, c - bh, z)) g.fill();
+      g.fillStyle = 'rgba(255,224,172,' + (0.13 * (1 - dk)).toFixed(3) + ')';
+      if (quad(-HW, c - bh, z, HW, c - bh, z, HW, c - bh - 0.014, z, -HW, c - bh - 0.014, z)) g.fill();
+    }
+  }
+
+  /* ================= 顶灯（灯罩本体） ================= */
+  function drawLamps() {
+    var g = ctx;
+    for (var i = 0; i < LAMPS.length; i++) {
+      var L = LAMPS[i];
+      var zr = L.z - CAM.z;
+      if (zr < 0.5 || zr > 22) continue;
+      var c = ceilAt(L.z);
+      var unit = FOC / zr;
+      if (!pj(0, c - 0.02, L.z)) continue;
+      var cx = P[0], cy = P[1];
+      var w = 0.135 * unit, h = 0.088 * unit;
+      if (w < 1.2) continue;
+
+      /* 杆 */
+      g.strokeStyle = 'rgba(60,52,42,0.85)';
+      g.lineWidth = Math.max(1, 0.012 * unit);
+      g.beginPath();
+      g.moveTo(cx, cy);
+      g.lineTo(cx, cy + 0.10 * unit);
+      g.stroke();
+
+      /* 灯罩：倒扣的碗 */
+      var lit = L.on;
+      g.beginPath();
+      g.ellipse(cx, cy + 0.16 * unit, w, h, 0, Math.PI, TAU, false);
+      g.closePath();
+      g.fillStyle = lit > 0.05
+        ? 'rgb(' + ((104 + 62 * lit) | 0) + ',' + ((92 + 52 * lit) | 0) + ',' + ((74 + 38 * lit) | 0) + ')'
+        : 'rgb(40,38,34)';
+      g.fill();
+      g.strokeStyle = 'rgba(28,24,18,0.55)';
+      g.lineWidth = 1;
+      g.stroke();
+
+      /* 罩下的一线亮 */
+      if (lit > 0.05) {
+        g.beginPath();
+        g.ellipse(cx, cy + 0.16 * unit, w * 0.92, h * 0.30, 0, 0, TAU);
+        g.fillStyle = 'rgba(255,236,190,' + (0.62 * lit).toFixed(2) + ')';
+        g.fill();
+      }
+    }
+  }
+
+  /* ================= 尽头墙 ================= */
+  function drawEnd() {
+    var g = ctx;
+    var zE = ENDZ;
+    var cE = ceilAt(zE);
+
+    /* 墙本身也吃暗度：远看只剩一道光，走近才看得见门 */
+    g.fillStyle = sh([84, 72, 56], zE);
+    if (quad(-HW, FY, zE, HW, FY, zE, HW, cE, zE, -HW, cE, zE)) g.fill();
+
+    var dw = 0.86, dh = 1.94;
+    var x0 = -dw / 2, x1 = dw / 2;
+    var y0 = FY, y1 = FY + dh;
+
+    /* 门框 */
+    g.fillStyle = sh([96, 76, 52], zE, 0.86);
+    if (quad(x0 - 0.10, y0, zE - 0.012, x1 + 0.10, y0, zE - 0.012,
+             x1 + 0.10, y1 + 0.11, zE - 0.012, x0 - 0.10, y1 + 0.11, zE - 0.012)) g.fill();
+    g.strokeStyle = 'rgba(186,146,88,0.13)';
+    g.lineWidth = 1.2;
+    if (quad(x0 - 0.10, y1 + 0.11, zE - 0.02, x1 + 0.10, y1 + 0.11, zE - 0.02,
+             x1 + 0.10, y1 + 0.11, zE - 0.02, x0 - 0.10, y1 + 0.11, zE - 0.02)) g.stroke();
+
+    /* 门板 */
+    g.fillStyle = sh([44, 34, 24], zE, 0.72);
+    if (quad(x0, y0, zE - 0.02, x1, y0, zE - 0.02, x1, y1, zE - 0.02, x0, y1, zE - 0.02)) g.fill();
+
+    /* 门缝：整条走廊最亮的一道 */
+    /* 门缝两侧门扇的厚度：一条暗边，门才不是一块板 */
+    g.fillStyle = 'rgba(0,0,0,0.55)';
+    if (quad(x0, y0, zE - 0.026, -0.012, y0, zE - 0.026,
+             -0.012, y1, zE - 0.026, x0, y1, zE - 0.026)) g.fill();
+    if (quad(0.012, y0, zE - 0.026, x1, y0, zE - 0.026,
+             x1, y1, zE - 0.026, 0.012, y1, zE - 0.026)) g.fill();
+
+    var gw = 0.008;
+    var nearF = clamp(1 - (ENDZ - CAM.z - 1.4) / 16, 0.32, 1);
+    g.fillStyle = 'rgb(' + ((238 + 17 * nearF) | 0) + ',' + ((230 + 20 * nearF) | 0) + ',' + ((208 + 26 * nearF) | 0) + ')';
+    if (quad(-gw, y0 + 0.03, zE - 0.032, gw, y0 + 0.03, zE - 0.032,
+             gw, y1 - 0.02, zE - 0.032, -gw, y1 - 0.02, zE - 0.032)) g.fill();
+  }
+
+  /* ================= 门（静态：框 + 板） ================= */
+  function drawDoorPanel(d, i) {
+    var g = ctx;
+    var s = d.side;
+    var xf = s * FRAME_X;
+    var xd = s * DOOR_X;
+    var z0 = d.z, z1 = d.z + DOOR_W;
+
+    if (z1 - CAM.z < 0.14) return;
+    var dk = darkAmt(z0 + DOOR_W * 0.5);
+
+    /* 门框：凸出墙面一圈 */
+    var m = 0.085, mT = 0.11;
+    g.fillStyle = sh(C_DFRAME, z0, 0.80);
+    if (quad(xf, FY, z0 - m, xf, FY + DOOR_H + mT, z0 - m,
+             xf, FY + DOOR_H + mT, z1 + m, xf, FY, z1 + m)) g.fill();
+
+    /* 门框的内圈线脚（凹进去一道） */
+    if (dk < 0.90) {
+      g.strokeStyle = 'rgba(20,12,4,' + (0.55 * (1 - dk)).toFixed(3) + ')';
+      g.lineWidth = 1.2;
+      var mm = 0.028;
+      if (quad(xf, FY + mm, z0 - m + mm, xf, FY + DOOR_H + mT - mm, z0 - m + mm,
+               xf, FY + DOOR_H + mT - mm, z1 + m - mm, xf, FY + mm, z1 + m - mm)) g.stroke();
+      g.strokeStyle = 'rgba(214,174,112,' + (0.22 * (1 - dk)).toFixed(3) + ')';
+      if (quad(xf, FY + mm * 2, z0 - m + mm * 2, xf, FY + DOOR_H + mT - mm * 2, z0 - m + mm * 2,
+               xf, FY + DOOR_H + mT - mm * 2, z1 + m - mm * 2, xf, FY + mm * 2, z1 + m - mm * 2)) g.stroke();
+    }
+
+    /* 门板 */
+    g.fillStyle = sh(C_DOOR, z0 + DOOR_W * 0.5, 0.82);
+    if (quad(xd, FY, z0, xd, FY + DOOR_H, z0, xd, FY + DOOR_H, z1, xd, FY, z1)) g.fill();
+
+    /* 门板分格：竖三条 + 横两条 */
+    if (dk < 0.86) {
+      g.strokeStyle = 'rgba(16,8,2,' + (0.46 * (1 - dk)).toFixed(3) + ')';
+      g.lineWidth = 1;
+      for (var k = 1; k <= 3; k++) {
+        var zz = z0 + DOOR_W * k / 4;
+        if (quad(xd, FY + 0.06, zz, xd, FY + DOOR_H - 0.06, zz, xd, FY + DOOR_H - 0.06, zz, xd, FY + 0.06, zz)) g.stroke();
+      }
+      for (var r = 1; r <= 2; r++) {
+        var yy = FY + DOOR_H * (r / 3);
+        if (quad(xd, yy, z0 + 0.05, xd, yy, z1 - 0.05, xd, yy, z1 - 0.05, xd, yy, z0 + 0.05)) g.stroke();
+      }
+    }
+
+    /* 铜拉手：在靠近门缝那一侧 */
+    if (d.txt !== null && dk < 0.80) {
+      var hz = z1 - 0.12;
+      var hy = FY + 1.02;
+      g.fillStyle = sh(C_BRASS, z0, 0.95);
+      if (pj(xd, hy, hz)) {
+        var rr = clamp(FOC * 0.017 / P[2], 1.0, 6.5);
+        g.beginPath();
+        g.arc(P[0], P[1], rr, 0, TAU);
+        g.fill();
+        g.fillStyle = 'rgba(255,244,214,0.55)';
+        g.beginPath();
+        g.arc(P[0] - rr * 0.28, P[1] - rr * 0.30, rr * 0.34, 0, TAU);
+        g.fill();
+      }
+    }
+
+    /* 第七扇：门是空的，只有一道被磨掉的刻痕 */
+    if (d.txt === null) {
+      g.strokeStyle = 'rgba(154,136,104,' + (0.42 * (1 - dk)).toFixed(3) + ')';
+      g.lineWidth = Math.max(1, 2.2 * (1 - dk));
+      var zc = z0 + DOOR_W * 0.50;
+      if (quad(xd, FY + 1.24, zc, xd, FY + 1.60, zc, xd, FY + 1.60, zc, xd, FY + 1.24, zc)) g.stroke();
+    }
+  }
+
+  /* ================= 光斑贴图（预渲染，避免每帧建渐变） ================= */
+  var GLOW = {};
+  function glow(col) {
+    var key = col.join(',');
+    if (GLOW[key]) return GLOW[key];
+    var S = 160;
+    var c = document.createElement('canvas');
+    c.width = S; c.height = S;
+    var g = c.getContext('2d');
+    var rg = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+    rg.addColorStop(0, 'rgba(' + key + ',1)');
+    rg.addColorStop(0.11, 'rgba(' + key + ',0.52)');
+    rg.addColorStop(0.30, 'rgba(' + key + ',0.16)');
+    rg.addColorStop(0.60, 'rgba(' + key + ',0.036)');
+    rg.addColorStop(1, 'rgba(' + key + ',0)');
+    g.fillStyle = rg;
+    g.fillRect(0, 0, S, S);
+    GLOW[key] = c;
+    return c;
+  }
+
+  /* ================= 门缝的光（动态） ================= */
+  function drawDoorGlow(d, i) {
+    if (d.txt === null) return;
+    var s = d.side;
+    var x = s * DOOR_X;
+    var z0 = d.z, z1 = d.z + DOOR_W;
+    if (z1 - CAM.z < 0.14) return;
+
+    var passed = CAM.z > z1 + 0.04;
+    var dimF = passed ? 0.34 : 1;                    /* 走过的门，光会暗下去 */
+    var near = 1 - clamp(Math.abs((z0 + DOOR_W / 2) - CAM.z - 0.85) / 3.1, 0, 1);
+    var pulse = 1 + near * 0.26 * Math.sin(tNow * 1.75 + i * 1.3);
+    var A = dimF * pulse;
+    var col = d.cx;
+    var cz = z1 - d.gap * 0.5;
+
+    /* 1) 门缝本身 */
+    var segs = 5;
+    for (var q = 0; q < segs; q++) {
+      var ya = FY + DOOR_H * (q / segs);
+      var yb = FY + DOOR_H * ((q + 1) / segs);
+      var fl = 0.70 + 0.30 * Math.sin(q * 1.9 + i * 1.1);
+      ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (0.94 * A * fl).toFixed(3) + ')';
+      if (quad(x, ya, cz - d.gap, x, yb, cz - d.gap, x, yb, cz + d.gap, x, ya, cz + d.gap)) ctx.fill();
+    }
+
+    /* 2) 墙上的一团柔光（贴图，不建渐变） */
+    var spr = glow(col);
+    if (pj(x, FY + DOOR_H * 0.50, cz)) {
+      var sx = P[0], sy = P[1], zr = P[2];
+      var unit = FOC / zr;                         /* 每米多少像素 */
+      var gw = 1.75 * unit, gh = 2.35 * unit;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.30 * A * clamp(1.25 - zr / 15, 0.35, 1);
+      /* 光往走廊中间淌，不往门板上摊 */
+      ctx.drawImage(spr, sx - gw * 0.34, sy - gh * 0.50, gw, gh);
+      ctx.restore();
+    }
+
+    /* 3) 光落在地上：门前一片躺倒的柔光。
+       不做硬边梯形——光是没有边的。 */
+    if (pj(x * 0.62, FY + 0.004, z1 + 0.62)) {
+      var fx = P[0], fy = P[1], fzr = P[2];
+      var fu = FOC / fzr;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.30 * A * clamp(1.25 - fzr / 15, 0.35, 1);
+      ctx.drawImage(spr, fx - 0.95 * fu, fy - 0.30 * fu, 1.9 * fu, 0.60 * fu);
+      ctx.restore();
+    }
+
+    /* 3.5) 光穿过走廊，落在对面墙上的一道竖光带 */
+    (function () {
+      var ox = -s * HW;
+      var za3 = z1 + 0.28, zb3 = z1 + 1.30;
+      var ya = FY + 0.10, yb = FY + DOOR_H * 0.94;
+      if (!pj(ox, ya, za3)) return;
+      var A0 = P[0], A1 = P[1];
+      if (!pj(ox, yb, za3)) return;
+      var B0 = P[0], B1 = P[1];
+      if (!pj(ox, yb, zb3)) return;
+      var C0 = P[0], C1 = P[1];
+      if (!pj(ox, ya, zb3)) return;
+      var D0 = P[0], D1 = P[1];
+      var cstr = col[0] + ',' + col[1] + ',' + col[2];
+      var grd = ctx.createLinearGradient(A0, A1, C0, C1);
+      grd.addColorStop(0, 'rgba(' + cstr + ',' + (0.16 * A).toFixed(3) + ')');
+      grd.addColorStop(0.45, 'rgba(' + cstr + ',' + (0.07 * A).toFixed(3) + ')');
+      grd.addColorStop(1, 'rgba(' + cstr + ',0)');
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.beginPath();
+      ctx.moveTo(A0, A1); ctx.lineTo(B0, B1);
+      ctx.lineTo(C0, C1); ctx.lineTo(D0, D1);
+      ctx.closePath();
+      ctx.fillStyle = grd;
+      ctx.fill();
+      ctx.restore();
+    })();
+
+    /* 4) 天花板被打亮的一小片（光往上走） */
+    var zt = z1 - 0.2;
+    if (pj(x * 0.5, ceilAt(zt) - 0.02, zt)) {
+      var ux = P[0], uy = P[1], uzr = P[2];
+      var ur = clamp(0.55 * FOC / uzr, 4, H * 0.22);
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.13 * A;
+      ctx.drawImage(spr, ux - ur, uy - ur * 0.6, ur * 2, ur * 1.2);
+      ctx.restore();
+    }
+  }
+
+  /* ================= 灯的光（动态层） ================= */
+  function drawLampGlow() {
+    var g = ctx;
+    var spr = glow([255, 216, 154]);
+    for (var i = 0; i < LAMPS.length; i++) {
+      var L = LAMPS[i];
+      if (L.on < 0.03) continue;
+      var flick = 0.94 + 0.06 * Math.sin(tNow * 2.3 + i * 2.1);
+      var a = L.on * flick;
+
+      /* 灯下的空气 */
+      if (!pj(0, ceilAt(L.z) - 0.30, L.z)) continue;
+      var hx = P[0], hy = P[1], zr = P[2];
+      var unit = FOC / zr;
+
+      g.save();
+      g.globalCompositeOperation = 'lighter';
+      g.globalAlpha = 0.46 * a;
+      var gw = 1.5 * unit, gh = 1.9 * unit;
+      g.drawImage(spr, hx - gw / 2, hy - gh * 0.42, gw, gh);
+      g.restore();
+
+      /* 落在地上的一摊 */
+      if (!pj(0, FY + 0.004, L.z + 0.12)) continue;
+      var fx = P[0], fy = P[1], fzr = P[2];
+      var fu = FOC / fzr;
+      g.save();
+      g.globalCompositeOperation = 'lighter';
+      g.globalAlpha = 0.20 * a;
+      g.drawImage(spr, fx - 1.15 * fu, fy - 0.36 * fu, 2.3 * fu, 0.72 * fu);
+      g.restore();
+    }
+  }
+
+  /* ================= 尽头的光 ================= */
+  function drawEndGlow() {
+    var zE = ENDZ;
+    var near = clamp(1 - (zE - CAM.z) / 7.0, 0, 1);
+    var A = 0.34 + near * 0.72;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    if (pj(0, FY + 1.03, zE - 0.05)) {
+      var sx = P[0], sy = P[1];
+      var spr = glow([255, 238, 200]);
+      var rad = Math.min(W, H) * (0.030 + near * 0.135);
+      ctx.globalAlpha = A * 0.60;
+      ctx.drawImage(spr, sx - rad, sy - rad, rad * 2, rad * 2);
+    }
+    ctx.restore();
+  }
+
+  /* ================= 门上的字 ================= */
+  /* 话不写在墙上——墙是斜的，写了也读不出来。
+     它浮在空气里，像你走近时才听见的那一句。 */
+  function drawDoorText(d, i) {
+    if (d.txt === null) return;
+    var dist = (d.z + DOOR_W / 2) - CAM.z;
+    if (dist < 1.00 || dist > 8.2) return;
+
+    var a = 1;
+    if (dist < 2.0) a = clamp((dist - 1.00) / 1.00, 0, 1);
+    if (dist > 5.2) a = clamp(1 - (dist - 5.2) / 3.0, 0, 1);
+    if (a <= 0.02) return;
+
+    var s = d.side;
+    var x = s * DOOR_X;
+    var zc = d.z + DOOR_W * 0.52;
+    var yc = FY + DOOR_H * 0.72;
+
+    if (!pj(x, yc, zc)) return;
+    var sx = P[0], sy = P[1], zr = P[2];
+
+    /* 门在画面外就不画 */
+    if (sx < 26 || sx > W - 26) return;
+
+    /* 字号跟着门的屏幕高度走，不超过门高 */
+    var size = clamp(H * 0.048 * (2.9 / zr), H * 0.016, H * 0.050);
+    var n = d.txt.length;
+    var step = size * 1.30;
+    var top = sy - step * (n - 1) * 0.5;
+
+    var g = ctx;
+    g.save();
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+
+    /* 柔光层 */
+    g.globalAlpha = a * 0.34;
+    g.fillStyle = 'rgba(' + d.cx[0] + ',' + d.cx[1] + ',' + d.cx[2] + ',0.30)';
+    for (var b = 0; b < n; b++) {
+      g.font = (size * 1.30).toFixed(1) + 'px "Songti SC","STSong","SimSun",serif';
+      g.fillText(d.txt.charAt(b), sx, top + step * b);
+    }
+    /* 实体层 */
+    g.globalAlpha = a * 0.62;
+    g.fillStyle = 'rgba(246,238,220,0.78)';
+    for (var k = 0; k < n; k++) {
+      g.font = size.toFixed(1) + 'px "Songti SC","STSong","SimSun",serif';
+      g.fillText(d.txt.charAt(k), sx, top + step * k);
+    }
+    g.restore();
+  }
+
+  /* ================= 墙上斑驳 ================= */
+  var BLOTCH = [];
+  function buildBlotch() {
+    _seed = 505123;
+    BLOTCH = [];
+    for (var i = 0; i < 78; i++) {
+      BLOTCH.push({
+        side: srnd() < 0.5 ? -1 : 1,
+        z: SR(0.6, 24),
+        y: SR(FY + 0.30, CEILH - EYE - 0.22),
+        w: SR(0.035, 0.11),
+        h: SR(0.34, 1.15),
+        dark: srnd() < 0.62
+      });
+    }
+  }
+
+  /* ================= 尘埃 ================= */
+  var DUST = [];
+  function buildDust() {
+    _seed = 771103;
+    DUST = [];
+    for (var i = 0; i < 120; i++) {
+      DUST.push({
+        x: SR(-HW + 0.12, HW - 0.12),
+        y: SR(FY + 0.12, CEILH - EYE - 0.22),
+        z: SR(0.6, 21),
+        ph: SR(0, TAU),
+        sp: SR(0.5, 1.5)
+      });
+    }
+  }
+
+  function drawDust(t) {
+    var g = ctx;
+    g.save();
+    g.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < DUST.length; i++) {
+      var q = DUST[i];
+      var z = q.z;
+      if (z - CAM.z < 0.6 || z - CAM.z > 12) continue;
+
+      var lit = 0;
+      for (var k = 0; k < DOORS.length; k++) {
+        var dd = Math.abs((DOORS[k].z + DOOR_W / 2) - z);
+        if (dd < 1.35) lit = Math.max(lit, 1 - dd / 1.35);
+      }
+      if (lit < 0.05) continue;
+
+      var dx = q.x + Math.sin(t * 0.19 * q.sp + q.ph) * 0.05;
+      var dy = q.y + Math.cos(t * 0.14 * q.sp + q.ph * 1.7) * 0.04;
+
+      if (!pj(dx, dy, z)) continue;
+      var sx = P[0], sy = P[1], zr = P[2];
+      if (sx < -5 || sx > W + 5 || sy < -5 || sy > H + 5) continue;
+
+      var r = clamp(1.0 * (2.0 / zr), 0.35, 1.25);
+      g.fillStyle = 'rgba(255,234,196,' + (0.13 * lit * clamp(1.25 - zr / 8, 0, 1)).toFixed(3) + ')';
+      g.beginPath();
+      g.arc(sx, sy, r, 0, TAU);
+      g.fill();
+    }
+    g.restore();
+  }
+
+  /* ================= 静态层缓存 ================= */
+  var STATIC = null, SKEY = { z: -99, yaw: -99, w: 0, h: 0 };
+
+  function drawStatic() {
+    if (!STATIC) {
+      STATIC = document.createElement('canvas');
+    }
+    if (STATIC.width !== cv.width || STATIC.height !== cv.height) {
+      STATIC.width = cv.width;
+      STATIC.height = cv.height;
+      SKEY.z = -99;
+    }
+    if (Math.abs(CAM.z - SKEY.z) > 0.005 || Math.abs(CAM.yaw - SKEY.yaw) > 0.0012) {
+      var g = STATIC.getContext('2d');
+      g.setTransform(DPR, 0, 0, DPR, 0, 0);
+      g.fillStyle = '#04060b';
+      g.fillRect(0, 0, W, H);
+      ctx = g;
+      drawEnd();
+      drawFloor();
+      drawCeil();
+      drawWalls();
+      drawBeams();
+      drawLamps();
+      for (var i = DOORS.length - 1; i >= 0; i--) drawDoorPanel(DOORS[i], i);
+      ctx = CTX;
+      SKEY.z = CAM.z;
+      SKEY.yaw = CAM.yaw;
+    }
+    CTX.drawImage(STATIC, 0, 0, W, H);
+  }
+
+  /* ================= 主绘制 ================= */
+  function draw(t) {
+    COS = Math.cos(CAM.yaw);
+    SIN = Math.sin(CAM.yaw);
+
+    drawStatic();
+
+    /* 门缝光从远到近，叠上去 */
+    drawLampGlow();
+    for (var i = DOORS.length - 1; i >= 0; i--) drawDoorGlow(DOORS[i], i);
+    drawEndGlow();
+
+    drawDust(t);
+
+    /* 空气：画面正中一点说不清的光 */
+    var vg = CTX.createRadialGradient(VPX, VPY, 0, VPX, VPY, Math.max(W, H) * 0.60);
+    vg.addColorStop(0, 'rgba(126,100,66,0.048)');
+    vg.addColorStop(0.36, 'rgba(84,64,42,0.014)');
+    vg.addColorStop(1, 'rgba(0,0,0,0)');
+    CTX.fillStyle = vg;
+    CTX.fillRect(0, 0, W, H);
+
+    /* 字浮在所有东西上面 */
+    for (var j = 0; j < DOORS.length; j++) drawDoorText(DOORS[j], j);
+  }
+
+  /* ================= 状态推进 ================= */
+  function update(dt) {
+    if (holding && !ended) {
+      CAM.tz = Math.min(STOP, CAM.tz + SPEED * dt);
+    }
+    CAM.z += (CAM.tz - CAM.z) * Math.min(1, dt * 6.5);
+
+    if (!dragging) CAM.tyaw *= Math.pow(0.10, dt);
+    CAM.yaw += (CAM.tyaw - CAM.yaw) * Math.min(1, dt * 7.5);
+
+    var n = 0;
+    for (var i = 0; i < DOORS.length; i++) {
+      if (CAM.z > DOORS[i].z - 0.15) n = i + 1;
+    }
+    if (n !== touched) {
+      touched = n;
+      for (var k = 0; k < dots.length; k++) {
+        dots[k].className = k < n ? (k === n - 1 ? 'on here' : 'on') : '';
+      }
+    }
+
+    if (!arrived && CAM.z > STOP - 0.22) {
+      arrived = true;
+      tip.innerHTML = '推　开';
+      tip.classList.add('on');
+    }
+  }
+
+  /* ================= 结尾 ================= */
+  function openEnd() {
+    if (ended) return;
+    ended = true;
+    holding = false;
+    tip.classList.remove('on');
+    endEl.classList.add('on');
+    var tk = endEl.querySelector('.e3');
+    if (tk) {
+      var rr = tk.getBoundingClientRect();
+      var sl = endEl.querySelector('.seal');
+      if (sl) {
+        sl.style.left = (rr.right + 26) + 'px';
+        sl.style.top = (rr.top - 4) + 'px';
+        setTimeout(function () { sl.classList.add('on'); }, 4200);
+      }
+    }
+    var steps = ['e1', 'e2', 'e3', 'e4', 'e6', 'e7'];
+    var delays = [1000, 1900, 3400, 4300, 4800, 5600];
+    for (var i = 0; i < steps.length; i++) {
+      (function (cls, d) {
+        setTimeout(function () {
+          var el = endEl.querySelector('.' + cls);
+          if (el) el.classList.add('on');
+        }, d);
+      })(steps[i], delays[i]);
+    }
+  }
+
+  endEl.addEventListener('click', function () {
+    if (ended) setTimeout(function () { location.reload(); }, 220);
+  });
+
+  /* ================= 输入 ================= */
+  function startWalk() {
+    if (started) return;
+    started = true;
+    veil.classList.add('off');
+    hud.classList.add('on');
+    setTimeout(function () { tip.classList.add('on'); }, 1000);
+    setTimeout(function () { if (!arrived) tip.classList.remove('on'); }, 6400);
+  }
+
+  cv.addEventListener('pointerdown', function (e) {
+    try { cv.setPointerCapture(e.pointerId); } catch (err) { }
+    startWalk();
+    if (ended) return;
+    if (arrived) { openEnd(); return; }
+    holding = true;
+    dragging = true;
+    dragX0 = e.clientX;
+    tip.classList.remove('on');
+  });
+
+  cv.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    CAM.tyaw = clamp(-(e.clientX - dragX0) * 0.0020, -0.26, 0.26);
+  });
+
+  function release() {
+    holding = false;
+    dragging = false;
+    CAM.tyaw = 0;
+  }
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', release);
+  window.addEventListener('blur', release);
+
+  cv.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    startWalk();
+    if (ended) return;
+    if (arrived) { openEnd(); return; }
+    CAM.tz = clamp(CAM.tz + (e.deltaY > 0 ? 0.34 : -0.34), 0.55, STOP);
+  }, { passive: false });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+      e.preventDefault();
+      startWalk();
+      if (arrived && !ended) { openEnd(); return; }
+      holding = true;
+    } else if (e.code === 'ArrowDown') {
+      holding = false;
+      CAM.tz = Math.max(0.55, CAM.tz - 0.5);
+    } else if (e.code === 'KeyR') {
+      CAM.tz = 0.55; CAM.tyaw = 0;
+    }
+  });
+  window.addEventListener('keyup', function (e) {
+    if (e.code === 'Space' || e.code === 'ArrowUp') holding = false;
+  });
+
+  /* ================= 主循环 ================= */
+  var last = 0, fps = 0, fAcc = 0, fCnt = 0;
+
+  function frame(ts) {
+    var dt = last ? Math.min((ts - last) / 1000, 0.05) : 0.016;
+    last = ts;
+    tNow += dt;
+
+    update(dt);
+    draw(tNow);
+
+    fAcc += dt; fCnt++;
+    if (fAcc > 0.5) { fps = fCnt / fAcc; fAcc = 0; fCnt = 0; }
+
+    requestAnimationFrame(frame);
+  }
+
+  function boot() {
+    layout();
+    buildDust();
+    buildBlotch();
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', function () { layout(); });
+
+  boot();
+
+  /* ================= 测试接口 ================= */
+  window.__HX = {
+    get state() { return CAM; },
+    get doors() { return DOORS; },
+    get fps() { return fps; },
+    get ended() { return ended; },
+    get arrived() { return arrived; },
+    geom: function () {
+      return { W: W, H: H, FOC: FOC, VPX: VPX, VPY: VPY, HW: HW, FY: FY, CEIL0: ceilAt(0), CEILEND: ceilAt(ENDZ), STOP: STOP, ENDZ: ENDZ };
+    },
+    hold: function (v) { startWalk(); holding = !!v; },
+    setZ: function (v) { startWalk(); CAM.tz = clamp(v, 0.55, STOP); CAM.z = CAM.tz; SKEY.z = -99; },
+    setYaw: function (v) { CAM.tyaw = v; CAM.yaw = v; SKEY.yaw = -99; },
+    open: function () { openEnd(); },
+    darkAt: function (z) { return darkAmt(z); },
+    px: function (x, y) {
+      var d = CTX.getImageData(Math.round(x * DPR), Math.round(y * DPR), 1, 1).data;
+      return [d[0], d[1], d[2]];
+    },
+    doorScreen: function (i) {
+      var d = DOORS[i];
+      COS = Math.cos(CAM.yaw); SIN = Math.sin(CAM.yaw);
+      var p = pj(d.side * DOOR_X, FY + DOOR_H * 0.5, d.z + DOOR_W * 0.5);
+      return p ? [Math.round(p[0]), Math.round(p[1]), +p[2].toFixed(2)] : null;
+    }
+  };
+})();
+</script>
+</body>
+</html>
