@@ -1065,7 +1065,14 @@ function drawSeedMotes(t) {
     endEl.classList.add('on');
     var _sl = document.getElementById('seedline');
     if (_sl) {
-      _sl.textContent = SEEDS.length > 0 ? ('你带走了 ' + SEEDS.length + ' 枚种子　·　它们会记得你来过') : '门都还开着　·　你什么也没有带走';
+      var _txt = SEEDS.length > 0 ? ('你带走了 ' + SEEDS.length + ' 枚种子　·　它们会记得你来过') : '门都还开着　·　你什么也没有带走';
+      /* 巷子深处带出来的那一粒，也算数 */
+      try {
+        if (localStorage.getItem('sanjing.seed.shijing') === '1') {
+          _txt += '　·　巷子里的那一粒，也在';
+        }
+      } catch (e) { }
+      _sl.textContent = _txt;
       setTimeout(function () { _sl.classList.add('on'); }, 3000);
     }
     var tk = endEl.querySelector('.e3');
