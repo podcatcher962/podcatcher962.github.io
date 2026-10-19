@@ -73,7 +73,10 @@
 
   @media (max-width:640px){
     #hud { font-size:12px; padding:22px 20px; letter-spacing:3px; }
-    #tip { font-size:11px; letter-spacing:2px; }
+    /* 窄屏：三句提示若按 20px 外边距排会挤成两行，最后那半句掉到下一行去 */
+    #tip { font-size:10.5px; letter-spacing:1.2px; white-space:nowrap; }
+    #tip span { margin:0 6px; }
+    #tip i { margin:0 1px; }
     #sign { display:none; }
   }
 </style>
@@ -82,7 +85,7 @@
   .tri-link { position:fixed; left:0; bottom:0; z-index:60; padding:20px 24px;
     font-family:"Songti SC","STSong","SimSun",serif; font-size:11px; letter-spacing:4px;
     color:rgba(160,132,86,0.50); text-decoration:none; transition:color .45s ease;
-    -webkit-tap-highlight-color:transparent; }
+    white-space:nowrap; -webkit-tap-highlight-color:transparent; }
   .tri-link:hover { color:rgba(226,198,146,0.95); }
   @media (max-width:560px) { .tri-link { padding:14px 16px; font-size:10px; letter-spacing:3px; } }
 </style>
