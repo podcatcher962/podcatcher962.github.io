@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>三境 · 兰舟 / 市井 / 心房</title>
+<meta name="description" content="三件手写的空间作品：一扇窗外的星海，一条走完就是一天的街，一条越走越暗的走廊。纯 Canvas，零依赖，单文件。">
+<meta name="theme-color" content="#07080b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="三境">
+<meta property="og:description" content="一为窗外，一为街上，一为心里。三件手写的空间作品。">
+<meta property="og:image" content="https://podcatcher962.github.io/sanjing/og.jpg">
+<meta property="og:url" content="https://podcatcher962.github.io/sanjing/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23070a10'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%23a8843f' stroke-width='4'/%3E%3Cpath d='M15 32 h34' stroke='%23a8843f' stroke-width='2'/%3E%3C/svg%3E">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { min-height:100%; background:#07080b; }
+  body { font-family:"Songti SC","STSong","SimSun","Noto Serif SC",serif;
+         color:#a08c6a; -webkit-font-smoothing:antialiased;
+         padding:clamp(38px,7vh,84px) 26px clamp(44px,6.5vh,76px); }
+  .wrap { max-width:760px; margin:0 auto; }
+
+  .mark { text-align:center; }
+  .mark .t { font-size:clamp(26px,5.2vw,40px); letter-spacing:clamp(14px,3.4vw,26px);
+             text-indent:clamp(14px,3.4vw,26px); color:#c8b088; }
+  .mark .sub { margin-top:22px; font-size:12px; letter-spacing:5px; text-indent:5px; color:#7a6a52; }
+  .mark .rule { width:64px; height:1px; margin:28px auto 0;
+                background:linear-gradient(to right, rgba(168,132,64,0), rgba(168,132,64,0.55), rgba(168,132,64,0)); }
+
+  .list { margin-top:clamp(28px,4.6vh,48px); }
+
+  a.item { display:flex; align-items:center; gap:clamp(18px,3.4vw,34px);
+           padding:clamp(22px,3.4vh,30px) clamp(6px,2vw,18px);
+           text-decoration:none; color:inherit; position:relative;
+           border-top:1px solid rgba(140,112,66,0.22);
+           transition:background 0.55s ease, transform 0.55s cubic-bezier(.22,.8,.3,1); }
+  a.item:last-child { border-bottom:1px solid rgba(140,112,66,0.22); }
+  a.item:hover { background:rgba(150,118,62,0.045); transform:translateX(4px); }
+
+  .sym { flex:0 0 auto; width:clamp(44px,8vw,62px); height:clamp(44px,8vw,62px);
+         display:flex; align-items:center; justify-content:center; }
+  .sym svg { width:100%; height:100%; overflow:visible; }
+  .sym .st { stroke:rgba(172,140,84,0.72); fill:none; transition:stroke 0.55s ease, filter 0.55s ease; }
+  a.item:hover .sym .st { stroke:#e0c894; filter:drop-shadow(0 0 5px rgba(224,200,148,0.5)); }
+  .sym .sf { fill:rgba(172,140,84,0.42); transition:fill 0.55s ease; }
+  a.item:hover .sym .sf { fill:rgba(240,210,150,0.85); }
+
+  .txt { flex:1 1 auto; min-width:0; }
+  .num { font-size:11px; letter-spacing:4px; color:#7c6b50; }
+  .nm { margin-top:8px; font-size:clamp(18px,3.1vw,24px); letter-spacing:5px; color:#cbb894;
+        transition:color 0.55s ease; }
+  a.item:hover .nm { color:#eddcb4; }
+  .ds { margin-top:11px; font-size:clamp(12px,1.9vw,13.5px); line-height:1.95; letter-spacing:1.6px;
+        color:#8a7960; }
+  .go { flex:0 0 auto; font-size:12px; letter-spacing:3px; color:#7c6b50;
+        transition:color 0.55s ease, transform 0.55s ease; }
+  a.item:hover .go { color:#e0c894; transform:translateX(3px); }
+
+  .foot { margin-top:clamp(40px,6.5vh,68px); text-align:center;
+          font-size:11.5px; line-height:2.4; letter-spacing:2px; color:#6a5c46; }
+  .foot b { font-weight:normal; color:#8a7960; }
+
+  @media (max-width:520px) {
+    .go { display:none; }
+    a.item { gap:16px; }
+    .ds { letter-spacing:1px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mark">
+    <div class="t">三境</div>
+    <div class="sub">一个窗外　一条街上　一处心里</div>
+    <div class="rule"></div>
+  </div>
+
+  <div class="list">
+
+    <a class="item" href="../lanzhou/">
+      <div class="sym">
+        <svg viewBox="0 0 60 60">
+          <circle class="st" cx="30" cy="30" r="21" stroke-width="3.4"/>
+          <circle class="st" cx="30" cy="30" r="15.5" stroke-width="0.9" opacity="0.55"/>
+          <circle class="sf" cx="23" cy="23" r="1.5"/>
+          <circle class="sf" cx="37" cy="26" r="1.1"/>
+          <circle class="sf" cx="30" cy="38" r="1.3"/>
+          <circle class="sf" cx="34" cy="34" r="0.8"/>
+        </svg>
+      </div>
+      <div class="txt">
+        <div class="num">一 ／ 向 外 的 静</div>
+        <div class="nm">兰舟 · 月洞窗外</div>
+        <div class="ds">一扇木作月洞门，门外是两万两千颗星。<br>拖动回望星河，空格熄灯。</div>
+      </div>
+      <div class="go">进 去 →</div>
+    </a>
+
+    <a class="item" href="../shijing/">
+      <div class="sym">
+        <svg viewBox="0 0 60 60">
+          <path class="st" d="M3 44 h54" stroke-width="1.1" opacity="0.7"/>
+          <path class="st" d="M5 34 l7 -7 l7 7" stroke-width="1.9"/>
+          <path class="st" d="M18 30 l7 -8 l7 8" stroke-width="1.9"/>
+          <path class="st" d="M31 34 l7 -7 l7 7" stroke-width="1.9"/>
+          <path class="st" d="M44 31 l7 -7 l7 7" stroke-width="1.9"/>
+          <path class="st" d="M5 34 v10 M19 30 v14 M32 34 v10 M45 31 v13" stroke-width="1" opacity="0.6"/>
+          <circle class="sf" cx="14" cy="40" r="1.4"/>
+          <circle class="sf" cx="28" cy="41" r="1.2"/>
+          <circle class="sf" cx="39" cy="40" r="1.3"/>
+        </svg>
+      </div>
+      <div class="txt">
+        <div class="num">二 ／ 向 内 的 动</div>
+        <div class="nm">市井 · 一条街的一天</div>
+        <div class="ds">拖到街这头是卯时的城门，拖到那头是子时的城墙根。<br>走完一条街，就是一天。</div>
+      </div>
+      <div class="go">进 去 →</div>
+    </a>
+
+    <a class="item" href="../xinfang/">
+      <div class="sym">
+        <svg viewBox="0 0 60 60">
+          <path class="st" d="M8 52 V13 H52 V52" stroke-width="2"/>
+          <path class="st" d="M20 52 V19 h20 v33" stroke-width="1.4" opacity="0.6"/>
+          <path class="sf" d="M30 15 h1.6 v40 h-1.6 z"/>
+          <path class="st" d="M8 52 H52" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="txt">
+        <div class="num">三 ／ 向 深 处 的 暗</div>
+        <div class="nm">心房 · 走廊尽头</div>
+        <div class="ds">一条走廊越走越暗，七扇门，每扇门后只有一道光。<br>走到尽头，光是你自己给的。</div>
+      </div>
+      <div class="go">进 去 →</div>
+    </a>
+
+  </div>
+
+  <div class="foot">
+    <b>纯 Canvas 手写　·　零依赖　·　单文件　·　不联网</b><br>
+    没有一张图片素材，里面所有东西都是代码画的。<br><br>
+    © 永远的兰兰　·　Lanlan Eternal
+  </div>
+
+</div>
+</body>
+</html>
