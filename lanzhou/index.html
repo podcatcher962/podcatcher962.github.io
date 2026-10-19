@@ -1923,9 +1923,9 @@
     ctx.translate(0, Math.sin(t * 0.42) * 1.8);
 
     var DARK = '#070a11';
-    var WARM = '#0d1018';
-    var EDGE = 'rgba(170,136,80,0.30)';
-    var RIM = 'rgba(186,206,236,0.16)';   /* 星球照过来的一线冷光 */
+    var WARM = '#111726';
+    var EDGE = 'rgba(186,150,92,0.55)';
+    var RIM = 'rgba(198,216,246,0.34)';   /* 星球照过来的一线冷光 */
 
     function shape(build, fill) {
       ctx.beginPath();
@@ -1934,7 +1934,7 @@
       ctx.fillStyle = fill || WARM;
       ctx.fill();
       ctx.strokeStyle = EDGE;
-      ctx.lineWidth = 1.4;
+      ctx.lineWidth = 1.8;
       ctx.stroke();
     }
 
