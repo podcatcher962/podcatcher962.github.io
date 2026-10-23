@@ -60,7 +60,7 @@
 | 全文检索 | TxtSeeker | v1.4.0 | TXT 全文搜索定位 · 关键词高亮 · 定位文件夹 · 批量另存 · 搜索历史 / 检索方案 / CSV / 深浅主题 · 中英双语 · 纯本地 |
 | 批量重命名 | BatchRename | v1.0 | 文件批量重命名 |
 | 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
-| USB串口一键修复 | UsbComFix | v3.2.0 | USB 设备认不出 · 一键取证诊断 · 修 Windows 软件层 · 纯脚本免安装（**需管理员**） |
+| USB/串口一键修复 | UsbComFix | v3.2.0 | USB 设备认不出、串口 COM 号被占 · 一键取证诊断 · 修 Windows 软件层 · 纯脚本免安装（**需管理员**） |
 
 #### 📻 播客工具（2）
 
@@ -172,7 +172,7 @@
 | TxtSeeker | 全文检索 | v1.4.0 | TXT full-text search & locate — keyword highlight, reveal folder, batch save, search history, schemes, CSV, themes, bilingual, fully local |
 | BatchRename | 批量重命名 | v1.0 | Batch file renamer |
 | SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
-| UsbComFix | USB串口一键修复 | v3.2.0 | USB device not detected — diagnose & repair the Windows software layer (admin required) |
+| UsbComFix | USB/串口一键修复 | v3.2.0 | USB device not detected, or COM port number taken — diagnose & repair the Windows software layer (admin required) |
 
 #### 📻 Podcast Tools (2)
 
