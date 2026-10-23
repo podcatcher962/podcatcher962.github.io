@@ -386,6 +386,9 @@ const APPS = [
   {icon:"🗜️", cn:"瘦音", en:"SlimTone", ver:"v1.0", cat:"tool",
    use_cn:"MP3 / M4A 批量转 64kbps MP3 · 整文件夹或单文件 · 可拖拽 · 保留标签与封面 · 纯离线", use_en:"Batch-convert MP3 & M4A to 64 kbps MP3 — folder or file, drag-and-drop, keeps tags & cover art, fully offline",
    web:null, exe:{name:"SlimTone.exe", size:"39.6 MB", url:"https://github.com/podcatcher962/SlimTone/releases/latest/download/SlimTone.exe"}},
+  {icon:"🔌", cn:"USB串口一键修复", en:"UsbComFix", ver:"v3.2.0", cat:"tool",
+   use_cn:"USB 设备插上认不出 · 一键取证判因 · 修 Windows 软件层（策略 / 注册表 / 过滤器 / 驱动残留 / COM 号池）· 纯脚本免安装 · 需管理员", use_en:"USB device not detected — one-click diagnosis, repairs the Windows software layer; script-only, no install, admin required",
+   web:null, exe:{name:"usb-com-fix.zip", size:"142 KB", url:"https://github.com/podcatcher962/usb-com-fix/releases/latest/download/usb-com-fix.zip"}},
   // 播客工具
   {icon:"🎙️", cn:"播客批量下载器", en:"PodcastBatch-Downloader", ver:"v1.0", cat:"podcast",
    use_cn:"播客节目批量下载 · 增量更新", use_en:"Podcast batch downloader",
@@ -414,14 +417,14 @@ const CATS = {
 let lang = 'zh';
 const I18N = {
   zh:{total:"软件总数", web:"在线版", exe:"EXE 版", android:"安卓版", sub:"兰兰软件汇总集", slogan:"藏兰兰全部软件于兰斋 · 收藏此页，实时获取更新",
-      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", apkBtn:"🤖 安卓版", ver:"版本",
+      tagline:"单文件 HTML · 无追踪 · 无广告 · 免费开源", webBtn:"🖥 在线版", exeBtn:"⬇ EXE", zipBtn:"⬇ 下载 ZIP", apkBtn:"🤖 安卓版", ver:"版本",
       sound:"音乐", about:"关于", disclaim:"免责声明", copy:"复制链接", share:"分享", copied:"链接已复制", shareFallback:"当前环境不支持系统分享，已复制链接",
       searchPh:"搜索软件名 / 功能 / 英文名…", sortCat:"分类顺序", sortName:"名称 A-Z", sortVer:"版本（新→旧）",
       allCat:"全部", noRes:"没有匹配的软件", noResTip:"换个关键词试试，或点「全部」清空筛选",
       foundN:"找到 <b>{n}</b> 个", ofAll:"共 <b>{n}</b> 个软件 · 收藏本页，实时获取更新", results:"筛选结果",
       film:"宣传片", ctaFilm:"看宣传片", ctaFilmSub:"33 秒，看完兰斋丛编", filmSide:"兰斋丛编 · 33 秒 · ESC 关闭", filmGet:"⬇ 下载原片"},
   en:{total:"Total Apps", web:"Web Apps", exe:"EXE Apps", android:"Android", sub:"Lanlan's Software Collection", slogan:"All of Lanlan's apps in one page · Bookmark for live updates",
-      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", apkBtn:"🤖 Android", ver:"Ver",
+      tagline:"Single-file HTML · No tracking · No ads · Free & open-source", webBtn:"🖥 Open", exeBtn:"⬇ EXE", zipBtn:"⬇ ZIP", apkBtn:"🤖 Android", ver:"Ver",
       sound:"Music", about:"About", disclaim:"Disclaimer", copy:"Copy Link", share:"Share", copied:"Link copied", shareFallback:"System share unavailable, link copied",
       searchPh:"Search by name / feature / English…", sortCat:"Category", sortName:"Name A-Z", sortVer:"Version (new first)",
       allCat:"All", noRes:"No matching apps", noResTip:"Try another keyword, or click \"All\" to clear the filter",
@@ -581,7 +584,8 @@ function cardHtml(a){
   if(a.web){ const wu = a.web.startsWith('http') ? a.web : `https://podcatcher962.github.io/${a.web}/`; btns += `<a href="${wu}" target="_blank" rel="noopener">${t('webBtn')}</a>`; }
   // 按钮上不写体积（会把按键撑出卡片），放 title 里悬停可见
   if(a.apk){ btns += `<a class="apk" href="${a.apk.url}" target="_blank" rel="noopener" title="${a.apk.name} · ${a.apk.size}">${t('apkBtn')}</a>`; }
-  if(a.exe){ btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener" title="${a.exe.name} · ${a.exe.size}">${t('exeBtn')}</a>`; }
+  if(a.exe){ const elab = /\.zip$/i.test(a.exe.name) ? (t('zipBtn')) : t('exeBtn');
+    btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener" title="${a.exe.name} · ${a.exe.size}">${elab}</a>`; }
   const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.web ? (a.web.includes('http') ? '🌐 在线站' : `${a.web}.html`) : '—'));
   return `
       <div class="card">
