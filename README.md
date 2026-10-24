@@ -15,7 +15,7 @@
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（34 个 · 5 类）
+### 🗂 收录软件（35 个 · 5 类）
 
 #### 🏮 传统文化（13）
 
@@ -41,7 +41,7 @@
 |---|---|---|---|
 | 拾闲 | XianIdle | v0.7 | 下班后的解压盒 · 25 个没有计时器也没有失败的小玩法 · 371 题细说 · 真电台直播猜台 · 故事秘境十种结局 · 中英双语（在线版另有 `/xianidle/?lang=en` 英文入口） |
 
-#### 🧰 效率工具（16）
+#### 🧰 效率工具（17）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
@@ -60,6 +60,7 @@
 | 全文检索 | TxtSeeker | v1.4.0 | TXT 全文搜索定位 · 关键词高亮 · 定位文件夹 · 批量另存 · 搜索历史 / 检索方案 / CSV / 深浅主题 · 中英双语 · 纯本地 |
 | 批量重命名 | BatchRename | v1.0 | 文件批量重命名 |
 | 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
+| 设备诊断修复 | DeviceLens | v0.2.2 | 接在电脑上的任何设备 · 设备 / 磁盘 / 卷 / 盘符四层逐层判因 · CPU / 内存 / 显卡 / 温度读数 · 两件安全修复先留底、可撤销 · 中英双语 · 纯本地 |
 | USB/串口一键修复 | UsbComFix | v3.2.0 | USB 设备认不出、串口 COM 号被占 · 一键取证诊断 · 修 Windows 软件层 · 纯脚本免安装（**需管理员**） |
 
 #### 📻 播客工具（2）
@@ -121,13 +122,13 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **34 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **35 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (34 · 5 categories)
+### 🗂 Apps Indexed (35 · 5 categories)
 
 #### 🏮 Traditional Culture (13)
 
@@ -153,7 +154,7 @@
 |---|---|---|---|
 | XianIdle | 拾闲 | v0.7 | A decompression box — 25 little games with no timer and no way to lose, 371 three-paragraph Deep Reads, live radio guessing, a 34-node story with 10 endings, bilingual (English entry: `/xianidle/?lang=en`) |
 
-#### 🧰 Productivity Tools (16)
+#### 🧰 Productivity Tools (17)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
@@ -172,6 +173,7 @@
 | TxtSeeker | 全文检索 | v1.4.0 | TXT full-text search & locate — keyword highlight, reveal folder, batch save, search history, schemes, CSV, themes, bilingual, fully local |
 | BatchRename | 批量重命名 | v1.0 | Batch file renamer |
 | SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
+| DeviceLens | 设备诊断修复 | v0.2.2 | Any device on the PC — traces device → disk → volume → drive letter to name the broken layer, plus hardware readouts; two safe repairs, logged and reversible; bilingual, fully local |
 | UsbComFix | USB/串口一键修复 | v3.2.0 | USB device not detected, or COM port number taken — diagnose & repair the Windows software layer (admin required) |
 
 #### 📻 Podcast Tools (2)
