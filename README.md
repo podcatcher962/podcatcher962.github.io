@@ -9,13 +9,13 @@
 
 > 藏兰兰全部软件于兰斋 · 捡拾软件世界里的微光，写给愿意慢下来的人
 
-「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **34 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
+「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **36 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
 
 ### 📖 在线链接
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（35 个 · 5 类）
+### 🗂 收录软件（36 个 · 5 类）
 
 #### 🏮 传统文化（13）
 
@@ -41,7 +41,7 @@
 |---|---|---|---|
 | 拾闲 | XianIdle | v0.7 | 下班后的解压盒 · 25 个没有计时器也没有失败的小玩法 · 371 题细说 · 真电台直播猜台 · 故事秘境十种结局 · 中英双语（在线版另有 `/xianidle/?lang=en` 英文入口） |
 
-#### 🧰 效率工具（17）
+#### 🧰 效率工具（18）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
@@ -62,6 +62,7 @@
 | 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
 | 设备诊断修复 | DeviceLens | v0.2.2 | 接在电脑上的任何设备 · 设备 / 磁盘 / 卷 / 盘符四层逐层判因 · CPU / 内存 / 显卡 / 温度读数 · 两件安全修复先留底、可撤销 · 中英双语 · 纯本地 |
 | USB/串口一键修复 | UsbComFix | v3.2.0 | USB 设备认不出、串口 COM 号被占 · 一键取证诊断 · 修 Windows 软件层 · 纯脚本免安装（**需管理员**） |
+| PCB 看板 | CopperLens | v1.13 | Protel 99SE 板文件只读查看（`.pcb` / `.ddb`）· 点清单一颗料就定位、不再怼脸 · 点一条线整条网络亮起 · 两点量距 mm / mil · 板框 / 铜层 / 最细线宽 / 最小孔径 · 同库多板各占页签并排 · 拖到边缘自动平移 · 单文件免安装 · 不联网不上传 |
 
 #### 📻 播客工具（2）
 
@@ -122,13 +123,13 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **35 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **36 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (35 · 5 categories)
+### 🗂 Apps Indexed (36 · 5 categories)
 
 #### 🏮 Traditional Culture (13)
 
@@ -154,7 +155,7 @@
 |---|---|---|---|
 | XianIdle | 拾闲 | v0.7 | A decompression box — 25 little games with no timer and no way to lose, 371 three-paragraph Deep Reads, live radio guessing, a 34-node story with 10 endings, bilingual (English entry: `/xianidle/?lang=en`) |
 
-#### 🧰 Productivity Tools (17)
+#### 🧰 Productivity Tools (18)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
@@ -175,6 +176,7 @@
 | SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
 | DeviceLens | 设备诊断修复 | v0.2.2 | Any device on the PC — traces device → disk → volume → drive letter to name the broken layer, plus hardware readouts; two safe repairs, logged and reversible; bilingual, fully local |
 | UsbComFix | USB/串口一键修复 | v3.2.0 | USB device not detected, or COM port number taken — diagnose & repair the Windows software layer (admin required) |
+| CopperLens | PCB 看板 | v1.13 | Read-only viewer for Protel 99SE boards (`.pcb` / `.ddb`) — click a part in the list to locate it without losing context, click a trace to light the whole net, measure in mm / mil, board outline & layer stats, one tab per board from the same library, edge auto-pan, single file, fully offline |
 
 #### 📻 Podcast Tools (2)
 
