@@ -62,7 +62,7 @@
 | 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
 | 设备诊断修复 | DeviceLens | v0.2.2 | 接在电脑上的任何设备 · 设备 / 磁盘 / 卷 / 盘符四层逐层判因 · CPU / 内存 / 显卡 / 温度读数 · 两件安全修复先留底、可撤销 · 中英双语 · 纯本地 |
 | USB/串口一键修复 | UsbComFix | v3.2.0 | USB 设备认不出、串口 COM 号被占 · 一键取证诊断 · 修 Windows 软件层 · 纯脚本免安装（**需管理员**） |
-| PCB 看板 | CopperLens | v1.15 | Protel 99SE / KiCad / Gerber 只读查线（`.pcb` / `.ddb` / `.kicad_pcb` / 板厂那包 Gerber）· Gerber 一层一个文件、整包拖进来合成一块板 · 点清单一颗料就定位、不再怼脸 · 点一条线整条网络亮起 · 两点量距 mm / mil · 板框 / 铜层 / 最细线宽 / 最小孔径 · 同库多板各占页签并排 · 拖到边缘自动平移 · 单文件免安装 · 不联网不上传 |
+| PCB 看板 | CopperLens | v1.16 | Protel 99SE / KiCad / Gerber / 立创EDA 只读查线（`.pcb` / `.ddb` / `.kicad_pcb` / 立创 `.json` · `.epro2` / 板厂那包 Gerber）· 立创专业版工程整包拖进来，铜层用板子自己的层名、焊盘带真实网络名 · Gerber 一层一个文件、整包拖进来合成一块板 · 点清单一颗料就定位、不再怼脸 · 点一条线整条网络亮起 · 两点量距 mm / mil · 板框 / 铜层 / 最细线宽 / 最小孔径 · 同库多板各占页签并排 · 拖到边缘自动平移 · 单文件免安装 · 不联网不上传 |
 
 #### 📻 播客工具（2）
 
@@ -176,7 +176,7 @@
 | SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
 | DeviceLens | 设备诊断修复 | v0.2.2 | Any device on the PC — traces device → disk → volume → drive letter to name the broken layer, plus hardware readouts; two safe repairs, logged and reversible; bilingual, fully local |
 | UsbComFix | USB/串口一键修复 | v3.2.0 | USB device not detected, or COM port number taken — diagnose & repair the Windows software layer (admin required) |
-| CopperLens | PCB 看板 | v1.15 | Read-only net-tracing viewer for Protel 99SE, KiCad and Gerber (`.pcb` / `.ddb` / `.kicad_pcb` / the whole fabrication set) — drop a Gerber set in and it becomes one board, click a part in the list to locate it without losing context, click a trace to light the whole net, measure in mm / mil, board outline & layer stats, one tab per board from the same library, edge auto-pan, single file, fully offline |
+| CopperLens | PCB 看板 | v1.16 | Read-only net-tracing viewer for Protel 99SE, KiCad, Gerber and EasyEDA (`.pcb` / `.ddb` / `.kicad_pcb` / EasyEDA `.json` & `.epro2` / the whole fabrication set) — drop an EasyEDA pro project in whole and copper layers keep their own names with real net names on pads, drop a Gerber set in and it becomes one board, click a part in the list to locate it without losing context, click a trace to light the whole net, measure in mm / mil, board outline & layer stats, one tab per board from the same library, edge auto-pan, single file, fully offline |
 
 #### 📻 Podcast Tools (2)
 
