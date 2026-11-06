@@ -48,7 +48,7 @@
 | 闲听 | XianTuner | v1.0 | 本机音频播放 · 整文件夹入队 · 10 段均衡器 |
 | 拾声 | XianDial | v1.0 | 网络收音机 · 1120 个电台逐台试播 · 边听边录 |
 | 联屏 | PaneWall | v1.8 | IPTV 直播播放器 · 多画面墙 · 实时字幕 · 三端（桌面 / 网页 / 安卓）· 不自带任何源 |
-| 双机直传 | LanSplice | v2.0.3 | 同一路由器下两台电脑直传文件 / 文件夹 / 文字 · 不开共享不插 U 盘 · AES-256 · 断点续传 · 手机 App 收发 · 内置网络体检（连不上时告诉你卡在哪一层）· 单文件免安装 · 32/64 位通用 |
+| 双机直传 | LanSplice | v2.1.0 | 同一路由器下多台电脑直传文件 / 文件夹 / 文字 · 设备列表可多选、选中几台一次发完 · 不开共享不插 U 盘 · AES-256 · 断点续传 · 手机 App 收发 · 内置网络体检（连不上时告诉你卡在哪一层）· 单文件免安装 · 32/64 位通用 |
 | 剪贴板管理器 | ClipVault | v1.2 | 剪贴板自动捕获 · 搜索 · 置顶 |
 | RSS 阅读器 | DrillFeed | v1.1 | 垂直 RSS 阅读 · 深挖小众信源 |
 | 番茄钟 | FlowTimer | v1.0 | 专注计时 · 心流工作法 |
@@ -163,7 +163,7 @@
 | XianTuner | 闲听 | v1.0 | Local audio player — folder queue, 10-band EQ |
 | XianDial | 拾声 | v1.0 | Internet radio — 1,120 stations, record while listening |
 | PaneWall | 联屏 | v1.8 | IPTV / HLS player — video wall, live subtitles, three platforms, bundles no source |
-| LanSplice | 双机直传 | v2.0.3 | PC-to-PC transfer on the same router — files, folders, text; no Windows sharing, no USB stick; AES-256, resumable, phone app, built-in checkup that names the broken layer; one exe |
+| LanSplice | 双机直传 | v2.1.0 | Multi-peer transfer on the same router — files, folders, text; pick several devices and send once; no Windows sharing, no USB stick; AES-256, resumable, phone app, built-in checkup that names the broken layer; one exe |
 | ClipVault | 剪贴板管理器 | v1.2 | Clipboard manager — auto-capture & search |
 | DrillFeed | RSS 阅读器 | v1.1 | Vertical RSS reader for researchers |
 | FlowTimer | 番茄钟 | v1.0 | Pomodoro focus timer |
