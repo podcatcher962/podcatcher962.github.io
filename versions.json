@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-08T21:37:24+08:00",
+ "updated": "2026-11-09T00:47:14+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -13,7 +13,7 @@
  "stats": {
   "tools": 36,
   "builds": 86,
-  "bytes": 644634601
+  "bytes": 620110560
  },
  "tools": [
   {
@@ -23,95 +23,92 @@
    "group": "reading",
    "blurb": "全离线 TXT/EPUB 阅读 + 174 声线听书",
    "featured": true,
-   "version": "1.13.0",
-   "tag": "v1.13.0",
+   "version": "1.14.0",
+   "tag": "v1.14.0",
    "released": "2026-11-08",
    "hub": "https://podcatcher962.github.io/moyin-reader/",
    "builds": [
     {
-     "file": "moyin-reader_1.13.0_amd64.deb",
+     "file": "moyin-reader_1.14.0_amd64.deb",
      "os": "linux",
      "arch": "amd64",
-     "size": 10278384,
-     "sha256": "66fc4a332037eb497f6a3709db3b44e3c387578f98451fb1d0117ecb183b679c",
+     "size": 10279780,
+     "sha256": "b032d416c7ad27412e93e2a8c6a310c7bc9969519d44855209ece559b5a622a4",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/moyin-reader_1.13.0_amd64.deb"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/moyin-reader_1.13.0_amd64.deb"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/moyin-reader_1.13.0_amd64.deb"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/moyin-reader_1.13.0_amd64.deb"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
       }
-     ],
-     "reused": true
+     ]
     },
     {
-     "file": "MoYinReader-Linux-1.13.0.tar.gz",
+     "file": "MoYinReader-Linux-1.14.0.tar.gz",
      "os": "linux",
      "arch": "x64",
-     "size": 10270935,
-     "sha256": "2776bd73fd911a31abb4dac2ec79c77ef6af85dbed46f23469ee73b4de915835",
+     "size": 10271986,
+     "sha256": "03c5d7c622f51d61a4cef59b45e01f79f6a72b7cff7342efd29f7c451f892ec4",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-Linux-1.13.0.tar.gz"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-Linux-1.13.0.tar.gz"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-Linux-1.13.0.tar.gz"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-Linux-1.13.0.tar.gz"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
       }
-     ],
-     "reused": true
+     ]
     },
     {
-     "file": "MoYinReader-macOS-1.13.0.zip",
+     "file": "MoYinReader-macOS-1.14.0.zip",
      "os": "macos",
      "arch": "universal",
-     "size": 174173,
-     "sha256": "b5d7e8cc27219f2976e7b6d3a96da1085788c2f9d531dca583f77384289a3df4",
+     "size": 175289,
+     "sha256": "cfcd780e29438b8a597d293afd919fdb524bb20928adbe895d895bcbdf4eb494",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-macOS-1.13.0.zip"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-macOS-1.13.0.zip"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-macOS-1.13.0.zip"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader-macOS-1.13.0.zip"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
       }
-     ],
-     "reused": true
+     ]
     },
     {
      "file": "MoYinReader.apk",
      "os": "android",
      "arch": "universal",
-     "size": 87734334,
-     "sha256": "599dbfdca86b25f62ad1d99f6223c227bb18710f7ce11467f90d7634724ed8ce",
+     "size": 73394481,
+     "sha256": "18141e6a42db02f77f6d52e29877eb257cd081aa6eb8d5fc8fa811f96bcbf553",
      "urls": [
       {
        "m": "pages",
@@ -119,100 +116,96 @@
       },
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.apk"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.apk"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.apk"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.apk"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
       }
-     ],
-     "reused": true
+     ]
     },
     {
      "file": "MoYinReader.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 91403796,
-     "sha256": "b0d51c2d70f7ba4258d1e1b5c0a378da0ece53f7851dbb775738b3e5018829d8",
+     "size": 81210618,
+     "sha256": "219b494d8135a35755ecc6cb421a0203b1cd47dd91c605609faea2b610e6704a",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.exe"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
       }
-     ],
-     "reused": true
+     ]
     },
     {
      "file": "MoYinReader.html",
      "os": "web",
      "arch": null,
-     "size": 418448,
-     "sha256": "b1e3792efe7ea476d82bec34bf43b434b9e7481eae9449dc6a249ea3d8b0a314",
+     "size": 421312,
+     "sha256": "f62685f3da02f6f22e9ae4aa39b08af0318eacb0f530022a05c4794b1f4b34da",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.html"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.html"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.html"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader.html"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
       }
-     ],
-     "reused": true
+     ]
     },
     {
      "file": "MoYinReader_Lite.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 17944927,
-     "sha256": "ab1455369bbb399cae0501dc56dacbc6931117f53a66b65e0af6f9b38773051f",
+     "size": 17947490,
+     "sha256": "ecb2ccd573fc9732ef89994165dcb050f67985ce8053d9f4c90762e038bb5c84",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader_Lite.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader_Lite.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader_Lite.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.13.0/MoYinReader_Lite.exe"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
       }
-     ],
-     "reused": true
+     ]
     }
    ]
   },
@@ -251,7 +244,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/PodcastRSS-Downloader/releases/download/v1.0/XimalayaWatcher.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -290,7 +284,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/PodcastBatch-Downloader/releases/download/v1.0/XiaoYuZhou-DL.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -329,7 +324,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/QuickConvert/releases/download/v2.0/QuickConvert.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "QuickConvert.exe",
@@ -354,7 +350,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/QuickConvert/releases/download/v2.0/QuickConvert.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "quickconvert.html",
@@ -379,7 +376,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/QuickConvert/releases/download/v2.0/quickconvert.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -418,7 +416,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/ClipVault/releases/download/v1.2/ClipVault.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "clipvault.html",
@@ -443,7 +442,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/ClipVault/releases/download/v1.2/clipvault.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -482,7 +482,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/NoteFlow/releases/download/v2.0/NoteFlow.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "NoteFlow.exe",
@@ -507,7 +508,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/NoteFlow/releases/download/v2.0/NoteFlow.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "noteflow.html",
@@ -532,7 +534,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/NoteFlow/releases/download/v2.0/noteflow.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -571,7 +574,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/DrillFeed/releases/download/v1.1/DrillFeed.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "DrillFeed.exe",
@@ -596,7 +600,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/DrillFeed/releases/download/v1.1/DrillFeed.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "drillfeed.html",
@@ -621,7 +626,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/DrillFeed/releases/download/v1.1/drillfeed.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -660,7 +666,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/TxtSeeker/releases/download/v1.4.0/TxtSeeker_v1.4.0.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -699,7 +706,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.3/DeShelf.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "DeShelf.html",
@@ -724,7 +732,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.3/DeShelf.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -763,7 +772,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/AvalokitaOracle/releases/download/v1.0/AvalokitaOracle.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -802,7 +812,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/BatchRename/releases/download/v1.0/BatchRename.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -841,7 +852,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/ChenMirror/releases/download/v1.0/ChenMirror.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -880,7 +892,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/copperlens/releases/download/v1.24.2/CopperLens-win32.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -919,7 +932,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/FlowTimer/releases/download/v1.0/FlowTimer.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "FlowTimer.exe",
@@ -944,7 +958,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/FlowTimer/releases/download/v1.0/FlowTimer.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "flowtimer.html",
@@ -969,7 +984,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/FlowTimer/releases/download/v1.0/flowtimer.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1008,7 +1024,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/GentleJoy/releases/download/v1.0/GentleJoy.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1047,7 +1064,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/IChing/releases/download/v1.0/IChing.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1086,7 +1104,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/JianMirror/releases/download/v1.0/JianMirror.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1125,7 +1144,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/LanSplice/releases/download/v2.1.0/LanSplice-1.9.2.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "LanSplice-2.1.0-linux-kit.tar.gz",
@@ -1150,7 +1170,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/LanSplice/releases/download/v2.1.0/LanSplice-2.1.0-linux-kit.tar.gz"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "LanSplice-v2.1.0.exe",
@@ -1175,7 +1196,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/LanSplice/releases/download/v2.1.0/LanSplice-v2.1.0.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1214,7 +1236,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/MindMirror/releases/download/v1.1/MindMirror.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "MindMirror.exe",
@@ -1239,7 +1262,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/MindMirror/releases/download/v1.1/MindMirror.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "mindmirror.html",
@@ -1264,7 +1288,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/MindMirror/releases/download/v1.1/mindmirror.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1303,7 +1328,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/panewall/releases/download/v1.8/PaneWall.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "PaneWall.exe",
@@ -1328,7 +1354,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/panewall/releases/download/v1.8/PaneWall.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "PaneWall.html",
@@ -1353,7 +1380,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/panewall/releases/download/v1.8/PaneWall.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1392,7 +1420,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/PetalVerse/releases/download/v1.0/PetalVerse.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1431,7 +1460,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/PixelBaZi/releases/download/v3.0/PixelBaZi.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "PixelBaZi.exe",
@@ -1456,7 +1486,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/PixelBaZi/releases/download/v3.0/PixelBaZi.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "pixelbazi.html",
@@ -1481,7 +1512,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/PixelBaZi/releases/download/v3.0/pixelbazi.html"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "PixelBaZi_Desktop.exe",
@@ -1506,7 +1538,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/PixelBaZi/releases/download/v3.0/PixelBaZi_Desktop.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1545,7 +1578,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/QiGlow/releases/download/v1.0/QiGlow.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1584,7 +1618,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/QuickPass/releases/download/v1.0/QuickPass.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "QuickPass.exe",
@@ -1609,7 +1644,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/QuickPass/releases/download/v1.0/QuickPass.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "quickpass.html",
@@ -1634,7 +1670,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/QuickPass/releases/download/v1.0/quickpass.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1673,7 +1710,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/SlimTone/releases/download/v1.0/SlimTone.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1712,7 +1750,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/TextDiff/releases/download/v2.0/TextDiff.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "TextDiff.exe",
@@ -1737,7 +1776,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/TextDiff/releases/download/v2.0/TextDiff.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "textdiff.html",
@@ -1762,7 +1802,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/TextDiff/releases/download/v2.0/textdiff.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1801,7 +1842,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/XianReverie/releases/download/v1.0/XianReverie.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1840,7 +1882,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/YuguTether/releases/download/v1.0/YuguTether.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1879,7 +1922,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/ZiOracle/releases/download/v1.0/ZiOracle.apk"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -1918,7 +1962,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/device-lens/releases/download/v0.2.2/device-lens-v0.2.2.zip"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "DeviceLens-v0.2.2.exe",
@@ -1943,7 +1988,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/device-lens/releases/download/v0.2.2/DeviceLens-v0.2.2.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "DeviceLens.exe",
@@ -1968,7 +2014,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/device-lens/releases/download/v0.2.2/DeviceLens.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -2007,7 +2054,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix-v3.2.0.zip"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "usb-com-fix.zip",
@@ -2032,7 +2080,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix.zip"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -2071,7 +2120,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial/releases/download/v1.0/XianDial.apk"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial.exe",
@@ -2096,7 +2146,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial/releases/download/v1.0/XianDial.exe"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -2135,7 +2186,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio/releases/download/v1.51/bootloader.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "partition-table.bin",
@@ -2160,7 +2212,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio/releases/download/v1.51/partition-table.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "xiandial-radio.bin",
@@ -2185,7 +2238,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio/releases/download/v1.51/xiandial-radio.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-v1.51-merged.bin",
@@ -2210,7 +2264,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio/releases/download/v1.51/XianDial-v1.51-merged.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianForge.en.html",
@@ -2235,7 +2290,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio/releases/download/v1.51/XianForge.en.html"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianForge.html",
@@ -2260,7 +2316,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio/releases/download/v1.51/XianForge.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -2299,7 +2356,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-28/releases/download/v2.8.0/XianDial-Radio28-v2.8.0-app.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-Radio28-v2.8.0-bootloader.bin",
@@ -2324,7 +2382,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-28/releases/download/v2.8.0/XianDial-Radio28-v2.8.0-bootloader.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-Radio28-v2.8.0-merged.bin",
@@ -2349,7 +2408,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-28/releases/download/v2.8.0/XianDial-Radio28-v2.8.0-merged.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-Radio28-v2.8.0-model.bin",
@@ -2374,7 +2434,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-28/releases/download/v2.8.0/XianDial-Radio28-v2.8.0-model.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-Radio28-v2.8.0-partition-table.bin",
@@ -2399,7 +2460,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-28/releases/download/v2.8.0/XianDial-Radio28-v2.8.0-partition-table.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianForge.html",
@@ -2424,7 +2486,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-28/releases/download/v2.8.0/XianForge.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -2463,7 +2526,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-en/releases/download/v1.51/bootloader.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "partition-table.bin",
@@ -2488,7 +2552,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-en/releases/download/v1.51/partition-table.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-EN-v1.51-merged.bin",
@@ -2513,7 +2578,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-en/releases/download/v1.51/XianDial-EN-v1.51-merged.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "xiandial-radio-en.bin",
@@ -2538,7 +2604,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-en/releases/download/v1.51/xiandial-radio-en.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianForge.en.html",
@@ -2563,7 +2630,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-radio-en/releases/download/v1.51/XianForge.en.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
@@ -2602,7 +2670,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-suite/releases/download/v1.55/XianDial-Suite-v1.55-app.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-Suite-v1.55-bootloader.bin",
@@ -2627,7 +2696,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-suite/releases/download/v1.55/XianDial-Suite-v1.55-bootloader.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-Suite-v1.55-merged.bin",
@@ -2652,7 +2722,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-suite/releases/download/v1.55/XianDial-Suite-v1.55-merged.bin"
       }
-     ]
+     ],
+     "reused": true
     },
     {
      "file": "XianDial-Suite-v1.55-partition-table.bin",
@@ -2677,7 +2748,8 @@
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-suite/releases/download/v1.55/XianDial-Suite-v1.55-partition-table.bin"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   }
