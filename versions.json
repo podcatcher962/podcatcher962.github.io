@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-09T23:38:11+08:00",
+ "updated": "2026-11-10T00:03:23+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -13,7 +13,7 @@
  "stats": {
   "tools": 36,
   "builds": 86,
-  "bytes": 663848086
+  "bytes": 663848353
  },
  "tools": [
   {
@@ -25,7 +25,7 @@
    "featured": true,
    "version": "1.14.11",
    "tag": "v1.14.11",
-   "released": "2026-11-09",
+   "released": "2026-11-10",
    "hub": "https://podcatcher962.github.io/moyin-reader/",
    "builds": [
     {
@@ -157,8 +157,8 @@
      "file": "MoYinReader.html",
      "os": "web",
      "arch": null,
-     "size": 476993,
-     "sha256": "bdcd8be2b8252b1105808849491f7f4393ed36930ca83e8a627fc2a08d879a6a",
+     "size": 477260,
+     "sha256": "b88076229e0373399e8cb85ff112d0b6b923faaff7f25c642b3646253d5fd185",
      "urls": [
       {
        "m": "ghproxy",
