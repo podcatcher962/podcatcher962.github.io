@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-09T00:47:14+08:00",
+ "updated": "2026-11-09T23:38:11+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -13,7 +13,7 @@
  "stats": {
   "tools": 36,
   "builds": 86,
-  "bytes": 620110560
+  "bytes": 663848086
  },
  "tools": [
   {
@@ -21,85 +21,85 @@
    "name": "墨吟阅读器",
    "repo": "podcatcher962/moyin-reader",
    "group": "reading",
-   "blurb": "全离线 TXT/EPUB 阅读 + 174 声线听书",
+   "blurb": "全离线 TXT/EPUB 阅读 + 分角色多声线听书",
    "featured": true,
-   "version": "1.14.0",
-   "tag": "v1.14.0",
-   "released": "2026-11-08",
+   "version": "1.14.11",
+   "tag": "v1.14.11",
+   "released": "2026-11-09",
    "hub": "https://podcatcher962.github.io/moyin-reader/",
    "builds": [
     {
-     "file": "moyin-reader_1.14.0_amd64.deb",
+     "file": "moyin-reader_1.14.11_amd64.deb",
      "os": "linux",
      "arch": "amd64",
-     "size": 10279780,
-     "sha256": "b032d416c7ad27412e93e2a8c6a310c7bc9969519d44855209ece559b5a622a4",
+     "size": 10306702,
+     "sha256": "4049877400fc39e28c9de8896dc48de071662ca60e95fb1985ad88e075203bac",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/moyin-reader_1.14.11_amd64.deb"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/moyin-reader_1.14.11_amd64.deb"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/moyin-reader_1.14.11_amd64.deb"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/moyin-reader_1.14.0_amd64.deb"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/moyin-reader_1.14.11_amd64.deb"
       }
      ]
     },
     {
-     "file": "MoYinReader-Linux-1.14.0.tar.gz",
+     "file": "MoYinReader-Linux-1.14.11.tar.gz",
      "os": "linux",
      "arch": "x64",
-     "size": 10271986,
-     "sha256": "03c5d7c622f51d61a4cef59b45e01f79f6a72b7cff7342efd29f7c451f892ec4",
+     "size": 10295954,
+     "sha256": "c54ba35fce74e4e662fc74686cf7dc4d14293b74c41dfe8d13987cb39f176b7a",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-Linux-1.14.11.tar.gz"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-Linux-1.14.11.tar.gz"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-Linux-1.14.11.tar.gz"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-Linux-1.14.0.tar.gz"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-Linux-1.14.11.tar.gz"
       }
      ]
     },
     {
-     "file": "MoYinReader-macOS-1.14.0.zip",
+     "file": "MoYinReader-macOS-1.14.11.zip",
      "os": "macos",
      "arch": "universal",
-     "size": 175289,
-     "sha256": "cfcd780e29438b8a597d293afd919fdb524bb20928adbe895d895bcbdf4eb494",
+     "size": 198823,
+     "sha256": "06e4d016531963b5ab7a5506de9a3d6a77a8eff6f3437b8ab49e6e73a86912b4",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-macOS-1.14.11.zip"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-macOS-1.14.11.zip"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-macOS-1.14.11.zip"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader-macOS-1.14.0.zip"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader-macOS-1.14.11.zip"
       }
      ]
     },
@@ -107,28 +107,24 @@
      "file": "MoYinReader.apk",
      "os": "android",
      "arch": "universal",
-     "size": 73394481,
-     "sha256": "18141e6a42db02f77f6d52e29877eb257cd081aa6eb8d5fc8fa811f96bcbf553",
+     "size": 73419057,
+     "sha256": "562d513c7135fea3fe9737af715138b0d94e3cfdd9beda52170077e4a45b37b1",
      "urls": [
       {
-       "m": "pages",
-       "u": "https://podcatcher962.github.io/moyin-reader/download/MoYinReader.apk"
-      },
-      {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.apk"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.apk"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.apk"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.apk"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.apk"
       }
      ]
     },
@@ -136,24 +132,24 @@
      "file": "MoYinReader.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 81210618,
-     "sha256": "219b494d8135a35755ecc6cb421a0203b1cd47dd91c605609faea2b610e6704a",
+     "size": 103004804,
+     "sha256": "308a05213c4b885d85b65aaa6a3330283f242b261933acb577120cad3a213e60",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.exe"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.exe"
       }
      ]
     },
@@ -161,24 +157,24 @@
      "file": "MoYinReader.html",
      "os": "web",
      "arch": null,
-     "size": 421312,
-     "sha256": "f62685f3da02f6f22e9ae4aa39b08af0318eacb0f530022a05c4794b1f4b34da",
+     "size": 476993,
+     "sha256": "bdcd8be2b8252b1105808849491f7f4393ed36930ca83e8a627fc2a08d879a6a",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.html"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.html"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.html"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader.html"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader.html"
       }
      ]
     },
@@ -186,24 +182,24 @@
      "file": "MoYinReader_Lite.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 17947490,
-     "sha256": "ecb2ccd573fc9732ef89994165dcb050f67985ce8053d9f4c90762e038bb5c84",
+     "size": 39736149,
+     "sha256": "8f5b03cd3f6a5a2d4c0bff519b7e8864a77b923391f3198735d6398cafe33c60",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader_Lite.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader_Lite.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader_Lite.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.0/MoYinReader_Lite.exe"
+       "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.11/MoYinReader_Lite.exe"
       }
      ]
     }
