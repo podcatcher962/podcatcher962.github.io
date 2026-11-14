@@ -80,6 +80,7 @@ body{
 .card .cn{font-size:18px;color:var(--text);font-weight:bold;letter-spacing:2px}
 .card .en{font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card .ver{font-size:10px;color:var(--gold);border:1px solid var(--gold);padding:2px 8px;letter-spacing:1px;white-space:nowrap;align-self:flex-start}
+.card .lic{display:inline-block;font-size:9px;line-height:1;color:var(--dim);border:1px solid var(--mutedBdr);padding:2px 5px;margin-right:5px;letter-spacing:.5px;border-radius:3px;white-space:nowrap;vertical-align:1px;font-family:inherit;cursor:help}
 .card .use{font-size:12px;color:var(--text);line-height:1.7;opacity:0.9;min-height:40px;
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:7;overflow:hidden}
 .card .more{font-size:11px;color:var(--accent);letter-spacing:1px;cursor:pointer;align-self:flex-start;margin-top:-4px}
@@ -298,7 +299,7 @@ html[data-theme="light"] .filmov{background:rgba(18,12,6,0.955)}
 // ============ 数据 ============
 const APPS = [
   // 传统文化
-  {icon:"🚪", cn:"四扇门", en:"XianThreshold", ver:"v1.1", cat:"culture",
+  {icon:"🚪", cn:"四扇门", en:"XianThreshold", ver:"v1.1", cat:"culture", lic:"©", licTitle:"源码可见 · 保留所有权利",
    use_cn:"种因觉照 · 每日三节 · 业力图谱 · 不诊断不算命", use_en:"Self-reflection — daily impulses and an ink map of your own roads",
    web:"XianThreshold", exe:null},
   {icon:"🧘", cn:"闲坐", en:"XianReverie", ver:"—", cat:"culture",
@@ -345,7 +346,7 @@ const APPS = [
   {icon:"🎵", cn:"闲听", en:"XianTuner", ver:"v1.0", cat:"tool",
    use_cn:"本机音频播放 · 整文件夹入队 · 整夜循环 · 10 段均衡器", use_en:"Local audio player — folder queue, overnight loop, 10-band EQ",
    web:"XianTuner", exe:null},
-  {icon:"📻", cn:"拾声", en:"XianDial", ver:"v1.0", cat:"tool",
+  {icon:"📻", cn:"拾声", en:"XianDial", ver:"v1.0", cat:"tool", lic:"©", licTitle:"源码可见 · 保留所有权利，禁止分发修改版",
    use_cn:"戏曲 / 评书 / 相声网络收音机 · 1120 个电台逐台试播 · 央视卫视伴音 · 能听自己存的戏 · 边听边录 · 无注册", use_en:"Chinese internet radio — 1,120 stations tested one by one, CCTV & satellite TV audio, record while listening, offline library",
    web:"xiandial", exe:{name:"XianDial.exe", size:"20.0 MB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.exe"},
    apk:{name:"XianDial.apk", size:"217 KB", url:"https://github.com/podcatcher962/xiandial/releases/latest/download/XianDial.apk"}},
@@ -434,8 +435,8 @@ const APPS = [
   {icon:"🩺", cn:"设备诊断修复", en:"DeviceLens", ver:"v0.2.2", cat:"tool",
    use_cn:"接在电脑上的任何设备 · 设备 / 磁盘 / 卷 / 盘符四层逐层判因，直接说清断在哪一层 · CPU / 内存 / 显卡 / 温度读数 · 能修的两件先留底、可撤销 · 中英双语 · 纯本地不上传", use_en:"Any device on the PC — USB drive, SD card, external HDD, serial card. Traces device → disk → volume → drive letter to name the layer that broke; CPU / RAM / GPU / thermal readouts; the two safe repairs are logged and reversible; bilingual, fully local",
    web:null, exe:{name:"DeviceLens.exe", size:"276 KB", url:"https://github.com/podcatcher962/device-lens/releases/latest/download/DeviceLens.exe"}},
-  {icon:"🔬", cn:"PCB 看板", en:"CopperLens", ver:"v1.24.2", cat:"tool",
-   use_cn:"GPL-3.0 开源 · 12 家格式只读查线（Protel 99SE / KiCad / Eagle / Gerber / 立创EDA / PADS / Altium / ODB++ / IPC-2581 / 点位图）· 点中一条线，状态栏直接标出是地 / 电源 / 时钟 / 复位 / 差分 · 实测电压阻值按板存本机、可导 CSV",
+  {icon:"🔬", cn:"PCB 看板", en:"CopperLens", ver:"v1.24.2", cat:"tool", lic:"GPL-3.0", licTitle:"GNU GPL v3 · 修改后分发须同样开源",
+   use_cn:"12 家格式只读查线（Protel 99SE / KiCad / Eagle / Gerber / 立创EDA / PADS / Altium / ODB++ / IPC-2581 / 点位图）· 点中一条线，状态栏直接标出是地 / 电源 / 时钟 / 复位 / 差分 · 实测电压阻值按板存本机、可导 CSV",
    use_en:"GPL-3.0 open source — read-only net tracing for 12 CAD formats (Protel, KiCad, EAGLE, Gerber, EasyEDA, PADS, Altium, ODB++, IPC-2581, boardview) · click a trace and the bar names it: ground, power, clock, reset or a diff pair · measurements kept per board, exportable as CSV",
    more_cn:
      '<h3>支持的格式（12 家，全部只读）</h3>' +
@@ -669,7 +670,7 @@ function cardHtml(a,i){
         </div>
         <div class="use">${use}</div>${more}
         <div class="btns">${btns}</div>
-        <div class="meta"><span>${t('ver')}: ${a.ver}</span><span>${meta}</span></div>
+        <div class="meta"><span><span class="lic" title="${a.licTitle||'MIT License · 可自由使用、修改、分发'}">${a.lic||'MIT'}</span>${t('ver')}: ${a.ver}</span><span>${meta}</span></div>
       </div>`;
 }
 function secHtml(cat, items){
