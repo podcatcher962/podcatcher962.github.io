@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-14T10:14:42+08:00",
+ "updated": "2026-11-14T12:39:50+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -110,10 +110,6 @@
      "size": 107444223,
      "sha256": "f42b8173700e940ceae77e693439befc85671cecfbf073ba5d4cab16eb732267",
      "urls": [
-      {
-       "m": "pages",
-       "u": "https://podcatcher962.github.io/moyin-reader/download/MoYinReader.apk"
-      },
       {
        "m": "ghproxy",
        "u": "https://gh-proxy.com/https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.41/MoYinReader.apk"
