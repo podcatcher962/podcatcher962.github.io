@@ -9,13 +9,13 @@
 
 > 藏兰兰全部软件于兰斋 · 捡拾软件世界里的微光，写给愿意慢下来的人
 
-「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **37 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
+「兰斋丛编」是永远的兰兰的个人软件汇总页——收录作者全部 **38 个软件作品**，含版本号、在线版、EXE 下载与文件大小。收藏此页，即可实时获取所有软件的最新更新。
 
 ### 📖 在线链接
 
 **https://podcatcher962.github.io/**
 
-### 🗂 收录软件（37 个 · 5 类）
+### 🗂 收录软件（38 个 · 5 类）
 
 #### 🏮 传统文化（13）
 
@@ -41,7 +41,7 @@
 |---|---|---|---|
 | 拾闲 | XianIdle | v0.7 | 下班后的解压盒 · 25 个没有计时器也没有失败的小玩法 · 371 题细说 · 真电台直播猜台 · 故事秘境十种结局 · 中英双语（在线版另有 `/xianidle/?lang=en` 英文入口） |
 
-#### 🧰 效率工具（19）
+#### 🧰 效率工具（20）
 
 | 软件 | 英文名 | 版本 | 用途 |
 |---|---|---|---|
@@ -59,11 +59,12 @@
 | 文本对比 | TextDiff | v2.0 | 文本差异对比 · 逐行高亮 |
 | 卷帙 | DeShelf | v1.3 | 本地 TXT 整理 · 清洗 / 智能分章 / EPUB |
 | 全文检索 | TxtSeeker | v1.4.0 | TXT 全文搜索定位 · 关键词高亮 · 定位文件夹 · 批量另存 · 搜索历史 / 检索方案 / CSV / 深浅主题 · 中英双语 · 纯本地 |
+| 墨吟 | MoYin Reader | v1.14.41 | 全离线中文 EPUB / TXT 阅读器 · 187 个离线声线，对白按人物自动换声 · 翻页 / 滚动双模式 · 繁简一键转换 · 划线批注与笔记导出 · 纯本地不上传 · MIT 开源免费（Win / 安卓 / 网页 / 信创 Linux / macOS） |
 | 批量重命名 | BatchRename | v1.0 | 文件批量重命名 |
 | 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
 | 设备诊断修复 | DeviceLens | v0.2.2 | 接在电脑上的任何设备 · 设备 / 磁盘 / 卷 / 盘符四层逐层判因 · CPU / 内存 / 显卡 / 温度读数 · 两件安全修复先留底、可撤销 · 中英双语 · 纯本地 |
 | USB/串口一键修复 | UsbComFix | v3.2.0 | USB 设备认不出、串口 COM 号被占 · 一键取证诊断 · 修 Windows 软件层 · 纯脚本免安装（**需管理员**） |
-| PCB 看板 | CopperLens | v1.16 | Protel 99SE / KiCad / Gerber / 立创EDA 只读查线（`.pcb` / `.ddb` / `.kicad_pcb` / 立创 `.json` · `.epro2` / 板厂那包 Gerber）· 立创专业版工程整包拖进来，铜层用板子自己的层名、焊盘带真实网络名 · Gerber 一层一个文件、整包拖进来合成一块板 · 点清单一颗料就定位、不再怼脸 · 点一条线整条网络亮起 · 两点量距 mm / mil · 板框 / 铜层 / 最细线宽 / 最小孔径 · 同库多板各占页签并排 · 拖到边缘自动平移 · 单文件免安装 · 不联网不上传 |
+| PCB 看板 | CopperLens | v1.24.2 | GPL-3.0 · 12 家格式只读查线（Protel 99SE / KiCad / Eagle / Gerber / 立创EDA / PADS / Altium / ODB++ / IPC-2581 / 点位图）· 点中一条线就标出是地 / 电源 / 时钟 / 复位 / 差分 · 实测电压阻值按板存本机、可导 CSV · 单文件免安装、不联网（完整功能清单见汇总页卡片上的「详细功能」） |
 
 #### 📻 播客工具（2）
 
@@ -124,13 +125,13 @@
 
 > All of Lanlan's software in one study. For those who enjoy a slower pace.
 
-**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **37 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
+**Lanzhai · Lanlan's Software Collection** is a one-page hub indexing **38 software works** by Lanlan Eternal — versions, web apps, EXE downloads and file sizes at a glance. Bookmark this page for live updates of every app.
 
 ### 📖 Online
 
 **https://podcatcher962.github.io/**
 
-### 🗂 Apps Indexed (37 · 5 categories)
+### 🗂 Apps Indexed (38 · 5 categories)
 
 #### 🏮 Traditional Culture (13)
 
@@ -156,7 +157,7 @@
 |---|---|---|---|
 | XianIdle | 拾闲 | v0.7 | A decompression box — 25 little games with no timer and no way to lose, 371 three-paragraph Deep Reads, live radio guessing, a 34-node story with 10 endings, bilingual (English entry: `/xianidle/?lang=en`) |
 
-#### 🧰 Productivity Tools (19)
+#### 🧰 Productivity Tools (20)
 
 | App | Name | Ver | Description |
 |---|---|---|---|
@@ -174,11 +175,12 @@
 | TextDiff | 文本对比 | v2.0 | Text diff with line highlighting |
 | DeShelf | 卷帙 | v1.3 | Local TXT organizer — clean, split, EPUB |
 | TxtSeeker | 全文检索 | v1.4.0 | TXT full-text search & locate — keyword highlight, reveal folder, batch save, search history, schemes, CSV, themes, bilingual, fully local |
+| MoYin Reader | 墨吟 | v1.14.41 | Offline Chinese EPUB & TXT reader — 187 on-device voices with dialogue cast per character, paged or scrolling mode, traditional/simplified, highlights, notes & export, fully local; MIT, free (Windows / Android / web / Linux / macOS) |
 | BatchRename | 批量重命名 | v1.0 | Batch file renamer |
 | SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
 | DeviceLens | 设备诊断修复 | v0.2.2 | Any device on the PC — traces device → disk → volume → drive letter to name the broken layer, plus hardware readouts; two safe repairs, logged and reversible; bilingual, fully local |
 | UsbComFix | USB/串口一键修复 | v3.2.0 | USB device not detected, or COM port number taken — diagnose & repair the Windows software layer (admin required) |
-| CopperLens | PCB 看板 | v1.16 | Read-only net-tracing viewer for Protel 99SE, KiCad, Gerber and EasyEDA (`.pcb` / `.ddb` / `.kicad_pcb` / EasyEDA `.json` & `.epro2` / the whole fabrication set) — drop an EasyEDA pro project in whole and copper layers keep their own names with real net names on pads, drop a Gerber set in and it becomes one board, click a part in the list to locate it without losing context, click a trace to light the whole net, measure in mm / mil, board outline & layer stats, one tab per board from the same library, edge auto-pan, single file, fully offline |
+| CopperLens | PCB 看板 | v1.24.2 | GPL-3.0 · read-only net tracing for 12 CAD formats (Protel 99SE, KiCad, EAGLE, Gerber, EasyEDA, PADS, Altium, ODB++, IPC-2581, boardview) · click a trace and the bar names it: ground, power, clock, reset or diff pair · measurements saved per board, exportable as CSV · single file, fully offline (full feature list under “Details” on the hub card) |
 
 #### 📻 Podcast Tools (2)
 
