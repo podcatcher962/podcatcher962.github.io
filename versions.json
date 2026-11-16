@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-15T23:40:00+08:00",
+ "updated": "2026-11-16T19:38:49+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -11,9 +11,9 @@
   "release": "GitHub Release（官方原始）"
  },
  "stats": {
-  "tools": 37,
-  "builds": 87,
-  "bytes": 970424011
+  "tools": 36,
+  "builds": 86,
+  "bytes": 714550230
  },
  "tools": [
   {
@@ -200,44 +200,6 @@
       {
        "m": "release",
        "u": "https://github.com/podcatcher962/moyin-reader/releases/download/v1.14.41/MoYinReader_Lite.exe"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "YanZha",
-   "name": "言札",
-   "repo": "podcatcher962/YanZha",
-   "group": "tool",
-   "blurb": "全离线音视频转文字：中英日韩粤，区分说话人",
-   "featured": true,
-   "version": "0.2.0",
-   "tag": "v0.2.0",
-   "released": "2026-11-15",
-   "builds": [
-    {
-     "file": "YanZha-v0.2.0-win64.zip",
-     "os": "windows",
-     "arch": "x64",
-     "size": 259731446,
-     "sha256": "8206d63a5c35a24f7201351a37303b23b3fdb384ae0f127e54ec6ddf10f64c78",
-     "urls": [
-      {
-       "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha/releases/download/v0.2.0/YanZha-v0.2.0-win64.zip"
-      },
-      {
-       "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha/releases/download/v0.2.0/YanZha-v0.2.0-win64.zip"
-      },
-      {
-       "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha/releases/download/v0.2.0/YanZha-v0.2.0-win64.zip"
-      },
-      {
-       "m": "release",
-       "u": "https://github.com/podcatcher962/YanZha/releases/download/v0.2.0/YanZha-v0.2.0-win64.zip"
       }
      ]
     }
@@ -698,58 +660,58 @@
    "group": "reading",
    "blurb": "TXT 书库整理、清洗、分章",
    "featured": true,
-   "version": "1.3.3",
-   "tag": "v1.3.3",
-   "released": "2026-11-15",
+   "version": "1.5.4",
+   "tag": "v1.5.4",
+   "released": "2026-11-16",
    "hub": "https://podcatcher962.github.io/DeShelf/",
    "builds": [
     {
-     "file": "DeShelf.exe",
+     "file": "DeShelf-v1.5.4.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 11784600,
-     "sha256": "d74570765d54f20a032504e0b630bfa2ae35ddd9ba371cdad9793760ab4e2c02",
+     "size": 15570517,
+     "sha256": "ed7573deb1cad14d6954c29fa09d4d53bfd3fd8a43bdb2420b049733ec5b75ff",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.exe"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       }
      ]
     },
     {
-     "file": "DeShelf.html",
+     "file": "DeShelf-v1.5.4.html",
      "os": "web",
      "arch": null,
-     "size": 88271,
-     "sha256": "0025bd4c7cafec5beab10aad137aa94add6e4370eccdf155819f77635e25459c",
+     "size": 160019,
+     "sha256": "5f3b702429653c68880b0ebbe4ef0685c327ad02d0c1756b624506cc5ba2d619",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.html"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.html"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.html"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.3.3/DeShelf.html"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       }
      ]
     }
