@@ -2638,33 +2638,33 @@
    "group": "tool",
    "blurb": "PCB 走线查看器 · 查线路查通断",
    "featured": false,
-   "version": "1.24.2",
-   "tag": "v1.24.2",
-   "released": "2026-10-30",
+   "version": "1.25.1",
+   "tag": "v1.25.1",
+   "released": "2026-11-17",
    "hub": "https://podcatcher962.github.io/tracewisp/",
    "builds": [
     {
-     "file": "CopperLens-win32.exe",
+     "file": "TraceWisp-win32.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 9580716,
-     "sha256": "b7ebdf0c776472fc7cab940ec73de474d83ecc40fe8ec2ab4b259b9e1f7d23d5",
+     "size": 9721959,
+     "sha256": "f40afc6515873700b5e2fc90648e17bb3d770218a5d0e2ba803e637406b747bc",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.1/TraceWisp-win32.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.1/TraceWisp-win32.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.1/TraceWisp-win32.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+       "u": "https://github.com/podcatcher962/tracewisp/releases/download/v1.25.1/TraceWisp-win32.exe"
       }
      ]
     }
