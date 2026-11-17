@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="3;url=/tracewisp/">
+<title>亮线 TraceWisp · 这个工具改名了</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1c2024; --sub:#646b73; --line:#e3e6ea;
+          --accent:#b87333; --accent-soft:#fdf3e9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#16181b; --card:#1e2126; --ink:#eef0f2; --sub:#9aa3ad;
+            --line:#2c3138; --accent:#d99055; --accent-soft:#2a2119; }
+  }
+  * { box-sizing:border-box }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         padding:24px; background:var(--bg); color:var(--ink);
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+  .card { width:100%; max-width:520px; background:var(--card); border:1px solid var(--line);
+          border-radius:16px; padding:36px 32px; text-align:center; }
+  .mark { width:56px; height:56px; margin:0 auto 20px; border-radius:14px;
+          background:var(--accent-soft); display:flex; align-items:center; justify-content:center; }
+  .mark svg { width:30px; height:30px }
+  h1 { font-size:22px; margin:0 0 8px; letter-spacing:.5px }
+  .en { font-size:15px; color:var(--sub); margin:0 0 22px; letter-spacing:1.2px }
+  p { font-size:14.5px; line-height:1.75; color:var(--sub); margin:0 0 8px }
+  .btn { display:inline-block; margin-top:20px; padding:12px 26px; border-radius:10px;
+         background:var(--accent); color:#fff; text-decoration:none; font-size:15px; font-weight:600 }
+  .btn:hover { opacity:.9 }
+  .url { margin-top:16px; font-size:12.5px; color:var(--sub); font-family:ui-monospace,Menlo,Consolas,monospace;
+         word-break:break-all }
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#b87333" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 17 L9 17 L13 7 L17 14 L21 14"/>
+        <circle cx="9" cy="17" r="1.6" fill="#b87333" stroke="none"/>
+        <circle cx="13" cy="7" r="1.6" fill="#b87333" stroke="none"/>
+      </svg>
+    </div>
+
+    <h1>这个工具改名了</h1>
+    <p class="en">This tool has a new name</p>
+
+    <p>旧名字 <b>CopperLens / PCB 插线器</b> 已经停用，现在叫 <b>亮线 · TraceWisp</b>。</p>
+    <p>页面正在自动跳转，没有反应就点下面的按钮。</p>
+
+    <a class="btn" href="/tracewisp/">打开亮线 TraceWisp</a>
+
+    <div class="url">podcatcher962.github.io/tracewisp/</div>
+  </main>
+
+  <script>
+    /* meta refresh 之外再兜一层：部分内置浏览器不执行 meta 跳转 */
+    window.setTimeout(function () {
+      if (!document.hidden) location.replace('/tracewisp/');
+    }, 900);
+  </script>
+</body>
+</html>
