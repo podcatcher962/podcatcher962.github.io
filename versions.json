@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-17",
+ "updated": "2026-11-18",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -2638,33 +2638,33 @@
    "group": "tool",
    "blurb": "PCB 走线查看器 · 查线路查通断",
    "featured": false,
-   "version": "1.25.3",
-   "tag": "v1.25.3",
-   "released": "2026-11-17",
+   "version": "1.25.4",
+   "tag": "v1.25.4",
+   "released": "2026-11-18",
    "hub": "https://podcatcher962.github.io/tracewisp/",
    "builds": [
     {
      "file": "TraceWisp-win32.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 9726077,
-     "sha256": "8a38240f8910b7df90c8f2fa25cea8da15b8a71cc052ff4fadd5f0c47dee466c",
+     "size": 9728967,
+     "sha256": "dee98b7f5eed6b370990da93be09fcbc4df196af524c3026cb3fbd56f1561bbc",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.3/TraceWisp-win32.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.4/TraceWisp-win32.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.3/TraceWisp-win32.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.4/TraceWisp-win32.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.3/TraceWisp-win32.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.4/TraceWisp-win32.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/tracewisp/releases/download/v1.25.3/TraceWisp-win32.exe"
+       "u": "https://github.com/podcatcher962/tracewisp/releases/download/v1.25.4/TraceWisp-win32.exe"
       }
      ]
     }
