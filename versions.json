@@ -2633,10 +2633,10 @@
   },
   {
    "id": "tracewisp",
-   "name": "亮线",
+   "name": "铜迹",
    "repo": "podcatcher962/tracewisp",
    "group": "tool",
-   "blurb": "PCB 走线查看 · 查线路查通断",
+   "blurb": "PCB 走线查看器 · 查线路查通断",
    "featured": false,
    "version": "1.24.2",
    "tag": "v1.24.2",
