@@ -674,19 +674,19 @@
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.exe"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.exe"
       }
      ]
     },
@@ -699,19 +699,19 @@
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.html"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.html"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.html"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.html"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.html"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.html"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/vv1.5.5/DeShelf-vv1.5.5.html"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.5/DeShelf-v1.5.5.html"
       }
      ]
     }
