@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-16T22:27:26+08:00",
+ "updated": "2026-11-17T15:10:29+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -829,45 +829,6 @@
       {
        "m": "release",
        "u": "https://github.com/podcatcher962/ChenMirror/releases/download/v1.0/ChenMirror.apk"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "copperlens",
-   "name": "CopperLens",
-   "repo": "podcatcher962/copperlens",
-   "group": "tool",
-   "blurb": "铜箔/电路检视",
-   "featured": false,
-   "version": "1.24.2",
-   "tag": "v1.24.2",
-   "released": "2026-10-30",
-   "hub": "https://podcatcher962.github.io/copperlens/",
-   "builds": [
-    {
-     "file": "CopperLens-win32.exe",
-     "os": "windows",
-     "arch": "x64",
-     "size": 9580716,
-     "sha256": "b7ebdf0c776472fc7cab940ec73de474d83ecc40fe8ec2ab4b259b9e1f7d23d5",
-     "urls": [
-      {
-       "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/copperlens/releases/download/v1.24.2/CopperLens-win32.exe"
-      },
-      {
-       "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/copperlens/releases/download/v1.24.2/CopperLens-win32.exe"
-      },
-      {
-       "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/copperlens/releases/download/v1.24.2/CopperLens-win32.exe"
-      },
-      {
-       "m": "release",
-       "u": "https://github.com/podcatcher962/copperlens/releases/download/v1.24.2/CopperLens-win32.exe"
       }
      ]
     }
@@ -2665,6 +2626,45 @@
       {
        "m": "release",
        "u": "https://github.com/podcatcher962/xiandial-suite/releases/download/v1.55/XianDial-Suite-v1.55-partition-table.bin"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tracewisp",
+   "name": "亮线",
+   "repo": "podcatcher962/tracewisp",
+   "group": "tool",
+   "blurb": "PCB 走线查看 · 查线路查通断",
+   "featured": false,
+   "version": "1.24.2",
+   "tag": "v1.24.2",
+   "released": "2026-10-30",
+   "hub": "https://podcatcher962.github.io/tracewisp/",
+   "builds": [
+    {
+     "file": "CopperLens-win32.exe",
+     "os": "windows",
+     "arch": "x64",
+     "size": 9580716,
+     "sha256": "b7ebdf0c776472fc7cab940ec73de474d83ecc40fe8ec2ab4b259b9e1f7d23d5",
+     "urls": [
+      {
+       "m": "ghproxy",
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+      },
+      {
+       "m": "ghfast",
+       "u": "https://ghfast.top/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+      },
+      {
+       "m": "ghnet",
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+      },
+      {
+       "m": "release",
+       "u": "https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
       }
      ]
     }
