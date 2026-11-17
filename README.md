@@ -64,7 +64,7 @@
 | 瘦音 | SlimTone | v1.0 | MP3 / M4A 批量转 64kbps · 整文件夹或单文件 · 纯离线 |
 | 设备诊断修复 | DeviceLens | v0.2.2 | 接在电脑上的任何设备 · 设备 / 磁盘 / 卷 / 盘符四层逐层判因 · CPU / 内存 / 显卡 / 温度读数 · 两件安全修复先留底、可撤销 · 中英双语 · 纯本地 |
 | USB/串口一键修复 | UsbComFix | v3.2.0 | USB 设备认不出、串口 COM 号被占 · 一键取证诊断 · 修 Windows 软件层 · 纯脚本免安装（**需管理员**） |
-| 铜迹 | TraceWisp | v1.25.4 | GPL-3.0 · 12 种格式只读查线（Protel 99SE / KiCad / Eagle / Gerber / 立创EDA / PADS / Altium / ODB++ / IPC-2581 / 点位图）· 点中一条线就标出是地 / 电源 / 时钟 / 复位 / 差分 · 手机扫二维码就能用浏览器看板（同一 Wi-Fi，电脑不用守着）· 实测电压阻值按板存本机、可导 CSV · 单文件免安装、不联网（完整功能清单见汇总页卡片上的「详细功能」） |
+| 铜迹 | TraceWisp | v1.25.5 | GPL-3.0 · 12 种格式只读查线（Protel 99SE / KiCad / Eagle / Gerber / 立创EDA / PADS / Altium / ODB++ / IPC-2581 / 点位图）· 点中一条线就标出是地 / 电源 / 时钟 / 复位 / 差分 · 手机扫二维码就能用浏览器看板（同一 Wi-Fi，电脑不用守着）· 实测电压阻值按板存本机、可导 CSV · 单文件免安装、不联网（完整功能清单见汇总页卡片上的「详细功能」） |
 | 言札 | YanZha | v0.2.0 | 全离线音视频转文字 · 中英日韩粤五语自动识别、中英混说也认 · 区分说话人并按人改名 · 七种导出（TXT / MD / Word / SRT / VTT / 带时间戳 TXT / JSON）· 一小时录音约三分钟、纯 CPU 不要显卡 · 断网可用、不联网不上传 · MIT 开源（Windows x64） |
 
 #### 📻 播客工具（2）
@@ -181,7 +181,7 @@
 | SlimTone | 瘦音 | v1.0 | Batch-convert MP3 & M4A to 64 kbps — folder or file, fully offline |
 | DeviceLens | 设备诊断修复 | v0.2.2 | Any device on the PC — traces device → disk → volume → drive letter to name the broken layer, plus hardware readouts; two safe repairs, logged and reversible; bilingual, fully local |
 | UsbComFix | USB/串口一键修复 | v3.2.0 | USB device not detected, or COM port number taken — diagnose & repair the Windows software layer (admin required) |
-| TraceWisp | 铜迹 | v1.25.4 | GPL-3.0 · read-only net tracing for 12 CAD formats (Protel 99SE, KiCad, EAGLE, Gerber, EasyEDA, PADS, Altium, ODB++, IPC-2581, boardview) · click a trace and the bar names it: ground, power, clock, reset or diff pair · scan a QR code and read the same board in a phone browser over your Wi-Fi · measurements saved per board, exportable as CSV · single file, fully offline (full feature list under “Details” on the hub card) |
+| TraceWisp | 铜迹 | v1.25.5 | GPL-3.0 · read-only net tracing for 12 CAD formats (Protel 99SE, KiCad, EAGLE, Gerber, EasyEDA, PADS, Altium, ODB++, IPC-2581, boardview) · click a trace and the bar names it: ground, power, clock, reset or diff pair · scan a QR code and read the same board in a phone browser over your Wi-Fi · measurements saved per board, exportable as CSV · single file, fully offline (full feature list under “Details” on the hub card) |
 | YanZha | 言札 | v0.2.0 | Fully offline audio & video transcription — 5 languages auto-detected (zh/en/ja/ko/yue, mixed zh-en supported), speaker diarization with renameable speakers, 7 export formats (TXT / MD / Word / SRT / VTT / timestamped TXT / JSON), ~3 min per hour of audio on CPU only, works offline; MIT (Windows x64) |
 
 #### 📻 Podcast Tools (2)
