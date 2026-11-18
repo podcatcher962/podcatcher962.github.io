@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-18",
+ "updated": "2026-11-18T22:15:26+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -11,9 +11,9 @@
   "release": "GitHub Release（官方原始）"
  },
  "stats": {
-  "tools": 37,
-  "builds": 87,
-  "bytes": 974318207
+  "tools": 38,
+  "builds": 88,
+  "bytes": 995000240
  },
  "tools": [
   {
@@ -660,58 +660,58 @@
    "group": "reading",
    "blurb": "TXT 书库整理、清洗、分章",
    "featured": true,
-   "version": "1.5.6",
-   "tag": "v1.5.6",
-   "released": "2026-11-17",
+   "version": "1.5.4",
+   "tag": "v1.5.4",
+   "released": "2026-11-16",
    "hub": "https://podcatcher962.github.io/DeShelf/",
    "builds": [
     {
-     "file": "DeShelf-v1.5.6.exe",
+     "file": "DeShelf-v1.5.4.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 15571800,
-     "sha256": "6f7b2d79bf97fcabf9799da86d999e3a0ef950c364dbe8791c652d04233f2b5a",
+     "size": 15570517,
+     "sha256": "ed7573deb1cad14d6954c29fa09d4d53bfd3fd8a43bdb2420b049733ec5b75ff",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.exe"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.exe"
       }
      ]
     },
     {
-     "file": "DeShelf-v1.5.6.html",
+     "file": "DeShelf-v1.5.4.html",
      "os": "web",
      "arch": null,
-     "size": 163778,
-     "sha256": "0d7ee218088c9db4c83de628054c2f872c098a85cc2b7576bebaddf53ca27871",
+     "size": 160019,
+     "sha256": "5f3b702429653c68880b0ebbe4ef0685c327ad02d0c1756b624506cc5ba2d619",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.html"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.html"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.html"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.6/DeShelf-v1.5.6.html"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.4/DeShelf-v1.5.4.html"
       }
      ]
     }
@@ -2632,39 +2632,39 @@
    ]
   },
   {
-   "id": "tracewisp",
-   "name": "铜迹",
-   "repo": "podcatcher962/tracewisp",
+   "id": "sheaf",
+   "name": "拾幅",
+   "repo": "podcatcher962/sheaf",
    "group": "tool",
-   "blurb": "PCB 走线查看器 · 查线路查通断",
+   "blurb": "报名照 / 压体积 / 九宫格 / 拼长图，全本地",
    "featured": false,
-   "version": "1.25.6",
-   "tag": "v1.25.6",
+   "version": "1.0.0",
+   "tag": "v1.0.0",
    "released": "2026-11-18",
-   "hub": "https://podcatcher962.github.io/tracewisp/",
+   "hub": null,
    "builds": [
     {
-     "file": "TraceWisp-win32.exe",
+     "file": "Sheaf.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 9729522,
-     "sha256": "d2eb1f595ab0e5819b94d70340e32a7df6a294c1b79a496cb340547fb069ae0b",
+     "size": 20682033,
+     "sha256": "162ef7131663f3adfa28157b43bf51dc8408d7dcadfa2caa0f2be15cb1d2dd3a",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.6/TraceWisp-win32.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/sheaf/releases/download/v1.0.0/Sheaf.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.6/TraceWisp-win32.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/sheaf/releases/download/v1.0.0/Sheaf.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/tracewisp/releases/download/v1.25.6/TraceWisp-win32.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/sheaf/releases/download/v1.0.0/Sheaf.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/tracewisp/releases/download/v1.25.6/TraceWisp-win32.exe"
+       "u": "https://github.com/podcatcher962/sheaf/releases/download/v1.0.0/Sheaf.exe"
       }
      ]
     }
@@ -2704,6 +2704,45 @@
       {
        "m": "release",
        "u": "https://github.com/podcatcher962/YanZha/releases/download/v0.5.0/YanZha-v0.5.0-win64.zip"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tracewisp",
+   "name": "铜迹",
+   "repo": "podcatcher962/tracewisp",
+   "group": "tool",
+   "blurb": "PCB 走线查看器 · 查线路查通断",
+   "featured": false,
+   "version": "1.24.2",
+   "tag": "v1.24.2",
+   "released": "2026-10-30",
+   "hub": "https://podcatcher962.github.io/tracewisp/",
+   "builds": [
+    {
+     "file": "CopperLens-win32.exe",
+     "os": "windows",
+     "arch": "x64",
+     "size": 9580716,
+     "sha256": "b7ebdf0c776472fc7cab940ec73de474d83ecc40fe8ec2ab4b259b9e1f7d23d5",
+     "urls": [
+      {
+       "m": "ghproxy",
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+      },
+      {
+       "m": "ghfast",
+       "u": "https://ghfast.top/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+      },
+      {
+       "m": "ghnet",
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
+      },
+      {
+       "m": "release",
+       "u": "https://github.com/podcatcher962/tracewisp/releases/download/v1.24.2/CopperLens-win32.exe"
       }
      ]
     }
