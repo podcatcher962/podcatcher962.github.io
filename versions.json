@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-18T22:15:26+08:00",
+ "updated": "2026-11-18T23:29:18+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -13,7 +13,7 @@
  "stats": {
   "tools": 38,
   "builds": 88,
-  "bytes": 995000240
+  "bytes": 994999239
  },
  "tools": [
   {
@@ -2641,14 +2641,14 @@
    "version": "1.0.0",
    "tag": "v1.0.0",
    "released": "2026-11-18",
-   "hub": null,
+   "hub": "https://podcatcher962.github.io/sheaf/",
    "builds": [
     {
      "file": "Sheaf.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 20682033,
-     "sha256": "162ef7131663f3adfa28157b43bf51dc8408d7dcadfa2caa0f2be15cb1d2dd3a",
+     "size": 20681032,
+     "sha256": "9ad5e1b090a36be25051e542a231bdd0ab5262ebc42b6d8556eeb2501c54d484",
      "urls": [
       {
        "m": "ghproxy",
