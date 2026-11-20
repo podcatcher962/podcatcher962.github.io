@@ -2677,33 +2677,33 @@
    "group": "tool",
    "blurb": "录音视频转文字稿，全离线不上传",
    "featured": false,
-   "version": "0.6.1",
-   "tag": "v0.6.1",
+   "version": "0.6.2",
+   "tag": "v0.6.2",
    "released": "2026-11-20",
    "hub": null,
    "builds": [
     {
-     "file": "YanZha-v0.6.1-win64.zip",
+     "file": "YanZha-v0.6.2-win64.zip",
      "os": "windows",
      "arch": "x64",
-     "size": 259781092,
-     "sha256": "4b98c5af22b67a73c8ddce0ac022311f4aa99fce4a904a68b8f570b227d0b95f",
+     "size": 260634235,
+     "sha256": "84a4c8c9073b3a252cbcca5e209ae010363c31a9bbdd9eadba8272266c8144b8",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha/releases/download/v0.6.1/YanZha-v0.6.1-win64.zip"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha/releases/download/v0.6.1/YanZha-v0.6.1-win64.zip"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha/releases/download/v0.6.1/YanZha-v0.6.1-win64.zip"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/YanZha/releases/download/v0.6.1/YanZha-v0.6.1-win64.zip"
+       "u": "https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
       }
      ]
     }
