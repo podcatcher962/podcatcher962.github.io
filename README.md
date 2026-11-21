@@ -57,7 +57,7 @@
 | 万能换算器 | QuickConvert | v2.0 | 离线单位换算 · 12 类 |
 | 密码生成器 | QuickPass | v1.0 | 强密码生成 · 本地离线 |
 | 文本对比 | TextDiff | v2.0 | 文本差异对比 · 逐行高亮 |
-| 卷帙 | DeShelf | v1.5.6 | 本地 TXT 整理 · 编码识别 · 广告清洗 · 智能分章 · EPUB 导出 · 简繁去重 · 中英双语 |
+| 卷帙 | DeShelf | v1.5.7 | 本地 TXT 整理 · 编码识别 · 广告清洗 · 智能分章 · EPUB 导出 · 简繁去重 · 段落修复（标点独占一行 / 句中断行） · 中英双语 |
 | 全文检索 | TxtSeeker | v1.4.0 | TXT 全文搜索定位 · 关键词高亮 · 定位文件夹 · 批量另存 · 搜索历史 / 检索方案 / CSV / 深浅主题 · 中英双语 · 纯本地 |
 | 墨吟 | MoYin Reader | v1.14.41 | 全离线中文 EPUB / TXT 阅读器 · 187 个离线声线，对白按人物自动换声 · 翻页 / 滚动双模式 · 繁简一键转换 · 划线批注与笔记导出 · 纯本地不上传 · MIT 开源免费（Win / 安卓 / 网页 / 信创 Linux / macOS） |
 | 批量重命名 | BatchRename | v1.0 | 文件批量重命名 |
@@ -175,7 +175,7 @@
 | QuickConvert | 万能换算器 | v2.0 | Universal offline unit converter |
 | QuickPass | 密码生成器 | v1.0 | Offline strong password generator |
 | TextDiff | 文本对比 | v2.0 | Text diff with line highlighting |
-| DeShelf | 卷帙 | v1.5.6 | Local TXT organizer — encoding detect, ad cleanup, smart chapter split, EPUB export, script dedupe, bilingual |
+| DeShelf | 卷帙 | v1.5.7 | Local TXT organizer — encoding detect, ad cleanup, smart chapter split, EPUB export, script dedupe, paragraph repair, bilingual |
 | TxtSeeker | 全文检索 | v1.4.0 | TXT full-text search & locate — keyword highlight, reveal folder, batch save, search history, schemes, CSV, themes, bilingual, fully local |
 | MoYin Reader | 墨吟 | v1.14.41 | Offline Chinese EPUB & TXT reader — 187 on-device voices with dialogue cast per character, paged or scrolling mode, traditional/simplified, highlights, notes & export, fully local; MIT, free (Windows / Android / web / Linux / macOS) |
 | BatchRename | 批量重命名 | v1.0 | Batch file renamer |
