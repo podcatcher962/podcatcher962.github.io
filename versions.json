@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-21T11:44:37+08:00",
+ "updated": "2026-11-21T12:46:43+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -13,7 +13,7 @@
  "stats": {
   "tools": 38,
   "builds": 88,
-  "bytes": 995892150
+  "bytes": 995907353
  },
  "tools": [
   {
@@ -2677,33 +2677,33 @@
    "group": "tool",
    "blurb": "录音视频转文字稿，全离线不上传",
    "featured": false,
-   "version": "0.6.2",
-   "tag": "v0.6.2",
-   "released": "2026-11-20",
+   "version": "0.7.0",
+   "tag": "v0.7.0",
+   "released": "2026-11-21",
    "hub": null,
    "builds": [
     {
-     "file": "YanZha-v0.6.2-win64.zip",
+     "file": "YanZha-v0.7.0-win64.zip",
      "os": "windows",
      "arch": "x64",
-     "size": 260634235,
-     "sha256": "84a4c8c9073b3a252cbcca5e209ae010363c31a9bbdd9eadba8272266c8144b8",
+     "size": 260649438,
+     "sha256": "32769ce784ff3cf198679f07339f235d85c20b2fa1dee4f8c0556d90a3c3be73",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha/releases/download/v0.7.0/YanZha-v0.7.0-win64.zip"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha/releases/download/v0.7.0/YanZha-v0.7.0-win64.zip"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha/releases/download/v0.7.0/YanZha-v0.7.0-win64.zip"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/YanZha/releases/download/v0.6.2/YanZha-v0.6.2-win64.zip"
+       "u": "https://github.com/podcatcher962/YanZha/releases/download/v0.7.0/YanZha-v0.7.0-win64.zip"
       }
      ]
     }
