@@ -6,8 +6,8 @@
    留空 = 该渠道不显示（不会出现空按钮）。
    视频号没有网页地址，只能写名字，页面提示「微信搜一搜」。 */
 var CONTACT = {
-  xhs:    { name: '', url: '' },                               // 小红书昵称 + 主页链接
-  shipin: { name: '' },                                        // 视频号名字（无链接）
+  xhs:    { name: '永远の兰兰 · 719673770', url: '' },         // 小红书昵称 + 主页链接（url 留空 = 显示「App 内搜索」）
+  shipin: { name: '永远の兰兰' },                             // 视频号名字（无链接）
   email:  '',                                                  // 公开邮箱，建议用别名
   github: { name: 'podcatcher962', url: 'https://github.com/podcatcher962' }
 };
