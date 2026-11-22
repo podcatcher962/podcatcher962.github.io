@@ -1,9 +1,11 @@
 /* 兰斋丛编 Service Worker
  * 策略：页面「网络优先」（保证软件列表实时更新），静态资源「缓存优先」（离线可看）。
  * 改版本号即可让旧缓存整体失效。 */
-const CACHE = 'lanzhai-v5';
+const CACHE = 'lanzhai-v6';
 const CORE = ['./', './index.html', './manifest.json',
               './icon-192.png', './icon-512.png',
+              './assets/site.css', './assets/site.js',
+              './about/', './disclaimer/', './changelog/', './404.html',
               './promo/lanzhai-promo-poster.jpg'];
 
 self.addEventListener('install', function(e){

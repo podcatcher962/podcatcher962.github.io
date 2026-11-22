@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-ui="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>更新记录 · 兰斋丛编 | Updates</title>
+<meta name="description" content="兰斋丛编的更新记录：每个新版本改了什么、什么时候发的。按时间倒序，最新在最前。">
+<link rel="canonical" href="https://podcatcher962.github.io/changelog/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="更新记录 · 兰斋丛编">
+<meta property="og:description" content="每个新版本改了什么、什么时候发的。">
+<meta property="og:url" content="https://podcatcher962.github.io/changelog/">
+<meta name="theme-color" content="#f2e6cd">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=20261122">
+<script src="/assets/site.js?v=20261122" defer></script>
+</head>
+<body>
+
+<div class="nav">
+  <a class="brand" href="/">兰斋丛编</a>
+  <a href="/"><span class="L-zh">全部工具</span><span class="L-en">Tools</span></a>
+  <a href="/changelog/" class="on"><span class="L-zh">更新</span><span class="L-en">Updates</span></a>
+  <a href="/about/"><span class="L-zh">关于</span><span class="L-en">About</span></a>
+  <a href="/disclaimer/"><span class="L-zh">免责</span><span class="L-en">Terms</span></a>
+  <span class="tools">
+    <button id="lZh" onclick="setLang('zh')">中</button>
+    <button id="lEn" onclick="setLang('en')">EN</button>
+    <button id="btnTheme" onclick="toggleTheme()" title="主题 / Theme">🌙</button>
+  </span>
+</div>
+
+<div class="wrap">
+<div class="doc">
+
+  <div data-lang="zh">
+    <div class="kicker">兰 斋 丛 编 · LANZHAI</div>
+    <h1>更新记录</h1>
+    <div class="lead">最新在最前 · 只记值得一提的改动，全量记录在各仓库的 Releases</div>
+
+    <p class="intro" style="margin-top:22px">
+      首页卡片上的版本号是跟着实际发布走的。这里写清楚每次改了什么，方便你判断要不要更新。
+    </p>
+
+    <h3 style="margin-top:26px">2026 年 11 月</h3>
+    <ul class="log">
+      <li>
+        <div class="when">11-22</div>
+        <div class="what">
+          <b>站点改版<span class="tag">本站</span></b>
+          <span>拆成独立页面：「关于我」「免责与隐私」「更新记录」各有自己的地址；首页去掉 9 秒开屏，补上「精选入口」和最近更新；新增品牌化的 404 页；修正卡片上的授权标注与统计数字。</span>
+        </div>
+      </li>
+      <li>
+        <div class="when">11-21</div>
+        <div class="what">
+          <b>言札 v0.7.2<span class="tag">Windows</span></b>
+          <span>视频里本来就带文本字幕的，可以直接把字幕轨导出来当稿子，不用再跑一遍识别。单轨直接导，多轨让你选；已有稿子时整份替换，并清空该文件的撤销记录，避免两份内容混在一起。</span>
+        </div>
+      </li>
+      <li>
+        <div class="when">11-21</div>
+        <div class="what">
+          <b>卷帙 v1.5.7<span class="tag">Windows · 网页</span></b>
+          <span>修两处断行：一句话被硬换行切断的，接回整段；标点单独占一行的，接回上一句。整理电子书时不再出现「引号孤零零挂在段尾」。</span>
+        </div>
+      </li>
+    </ul>
+
+    <h3 style="margin-top:30px">更早的记录</h3>
+    <p>每个项目的完整版本历史，在各自仓库的 Releases 页里，那里同时保留了历史版本的下载。</p>
+    <p class="note">只列出对使用者有感知的改动；纯内部重构、构建脚本调整不在此列。</p>
+
+    <div class="actions">
+      <a class="btn solid" href="/">去看全部工具 →</a>
+      <a class="btn" href="https://github.com/podcatcher962" target="_blank" rel="noopener">GitHub 仓库</a>
+    </div>
+  </div>
+
+  <div data-lang="en">
+    <div class="kicker">LANZHAI · LANLAN'S SOFTWARE COLLECTION</div>
+    <h1>Updates</h1>
+    <div class="lead">Newest first · only changes you can feel; full history lives in each repository's Releases</div>
+
+    <p class="intro" style="margin-top:22px">
+      Version numbers on the home page follow real releases. This page explains what changed, so you can decide whether to update.
+    </p>
+
+    <h3 style="margin-top:26px">November 2026</h3>
+    <ul class="log">
+      <li>
+        <div class="when">11-22</div>
+        <div class="what">
+          <b>Site rebuild<span class="tag">Site</span></b>
+          <span>Split into separate pages for About, Disclaimer and Updates, each with its own URL. Removed the 9-second intro splash, added a featured entry row and recent updates. New branded 404. Corrected licence labels and tool counts.</span>
+        </div>
+      </li>
+      <li>
+        <div class="when">11-21</div>
+        <div class="what">
+          <b>YanZha v0.7.2<span class="tag">Windows</span></b>
+          <span>If a video already carries a text subtitle track, you can import it as the transcript instead of running speech recognition again. Single track imports directly; multiple tracks prompt a choice. Importing replaces the whole draft and clears that file's undo history.</span>
+        </div>
+      </li>
+      <li>
+        <div class="when">11-21</div>
+        <div class="what">
+          <b>DeShelf v1.5.7<span class="tag">Windows · Web</span></b>
+          <span>Two line-break fixes: sentences split by hard wraps are joined back, and punctuation left alone on a line is pulled back into the previous sentence.</span>
+        </div>
+      </li>
+    </ul>
+
+    <h3 style="margin-top:30px">Older releases</h3>
+    <p>Complete version history lives in each project's Releases page, together with older downloads.</p>
+    <p class="note">Only user-visible changes are listed here; internal refactors and build-script tweaks are not.</p>
+
+    <div class="actions">
+      <a class="btn solid" href="/?l=en">Browse all tools →</a>
+      <a class="btn" href="https://github.com/podcatcher962" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="pfoot">
+  © <span id="year">2026</span> 永远的兰兰 · Lanlan Eternal
+  <span class="sep">·</span><a href="/">兰斋丛编</a>
+  <span class="sep">·</span><a href="/about/"><span class="L-zh">关于</span><span class="L-en">About</span></a>
+  <span class="sep">·</span><a href="https://github.com/podcatcher962" target="_blank" rel="noopener">GitHub</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-ui="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于我 · 兰斋丛编 | About</title>
+<meta name="description" content="永远的兰兰（Lanlan Eternal）——一个人写的四十来个免费小工具：传统文化、效率、播客。不用注册、文件不出本机、无广告。这里说明我是谁、为什么做、怎么联系。">
+<link rel="canonical" href="https://podcatcher962.github.io/about/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于我 · 兰斋丛编">
+<meta property="og:description" content="一个人写的四十来个免费小工具。不用注册、文件不出本机、无广告。">
+<meta property="og:url" content="https://podcatcher962.github.io/about/">
+<meta property="og:image" content="https://podcatcher962.github.io/generated-images/hub_poster.jpg">
+<meta name="theme-color" content="#f2e6cd">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=20261122">
+<script src="/assets/site.js?v=20261122" defer></script>
+</head>
+<body>
+
+<div class="nav">
+  <a class="brand" href="/">兰斋丛编</a>
+  <a href="/"><span class="L-zh">全部工具</span><span class="L-en">Tools</span></a>
+  <a href="/changelog/"><span class="L-zh">更新</span><span class="L-en">Updates</span></a>
+  <a href="/about/" class="on"><span class="L-zh">关于</span><span class="L-en">About</span></a>
+  <a href="/disclaimer/"><span class="L-zh">免责</span><span class="L-en">Terms</span></a>
+  <span class="tools">
+    <button id="lZh" onclick="setLang('zh')">中</button>
+    <button id="lEn" onclick="setLang('en')">EN</button>
+    <button id="btnTheme" onclick="toggleTheme()" title="主题 / Theme">🌙</button>
+  </span>
+</div>
+
+<div class="wrap">
+<div class="doc">
+
+  <div data-lang="zh">
+    <div class="kicker">兰 斋 丛 编 · LANZHAI</div>
+    <h1>关于我</h1>
+    <div class="lead">永远的兰兰 · Lanlan Eternal</div>
+
+    <p class="intro" style="margin-top:22px">
+      一个人，一台电脑，四十来个<em>不打扰人</em>的小工具。
+    </p>
+
+    <h2>我是谁</h2>
+    <p>我叫永远的兰兰，网上一直用这个名字。</p>
+    <p>这里没有团队，没有公司，也没有融资。页面上这些东西都是我一个人写的，从最早的一个小工具开始，一个一个攒起来。中间有做废的、有半途放下的，留下来的就是你现在看到的这些。</p>
+    <p>清单里大概四十个：传统文化的、日常效率的、播客的，还有几个纯粹是我自己想玩的东西（比如把走线图放大到能看清每一根铜）。</p>
+
+    <h2>为什么做这些</h2>
+    <p>最开始是因为自己要用。找了一圈，能用的工具要么收费，要么要注册，要么把你的文件传到我看不见的服务器上。</p>
+    <p>后来慢慢成了习惯：遇到一个反复出现的小麻烦，就想把它做成一个双击就能用的小东西。做得多了，索性开一个页面全部摆出来，省得每次都要翻聊天记录找链接。</p>
+    <p>我相信工具应该长这样——<strong>不打扰、不收费、不要你的手机号、用完就关掉</strong>。做不到这几点的，我不会放到这个页面上。</p>
+
+    <h2>怎么做的</h2>
+    <p>几条自己定的规矩，几年下来基本没破过：</p>
+    <ul>
+      <li><strong>能单文件就单文件。</strong>在线版就是一个 HTML，桌面版就是一个 exe，不写安装程序、不写注册表、不留后台服务。</li>
+      <li><strong>文件不出本机。</strong>在线工具在你的浏览器里处理，没有后端；桌面工具断网也能用。</li>
+      <li><strong>代码公开。</strong>源码都在 GitHub，每个项目的授权写在各自的 LICENSE 里，不是所有项目都一样。</li>
+      <li><strong>做好才发。</strong>改完自己先跑一遍，测过的才写进更新记录。没测过的功能宁可不上。</li>
+    </ul>
+
+    <h2>更新的节奏</h2>
+    <p>不定时。有想法就做，做完再发，不会为了发版而发版。有时候一周几个，有时候一个月没有。</p>
+    <p>每个新版改了什么，都写在<a href="/changelog/">「更新」</a>页；更早的记录在各仓库的 Releases 里。首页卡片上的版本号是跟着实际发布走的，不是装饰。</p>
+
+    <h2>在哪找我</h2>
+    <p>有问题、想要某个功能、发现 bug，都可以直接说。我不一定秒回，但会看。</p>
+    <div class="contact" id="contacts"></div>
+    <p class="note">如果只是某一个软件的问题，在那个软件的 GitHub 仓库提 issue 最快——那里能看到代码，也能看到历史问题。</p>
+
+    <h2>常见问题</h2>
+    <div class="faq">
+      <details><summary>要收费吗？有内购吗？</summary><p>不收费。没有内购、没有广告、没有「高级版」，也没有藏在设置里的订阅。</p></details>
+      <details><summary>要注册账号吗？</summary><p>不用。在线版打开就能用；桌面版下载解压就能跑，不写注册表。</p></details>
+      <details><summary>我的文件会被上传吗？</summary><p>在线版不会——所有处理在你的浏览器里完成，没有服务器接收。桌面版在本机处理，不主动联网。</p></details>
+      <details><summary>为什么没有 Mac 版？</summary><p>桌面版是用 Python 打包的，只能在对应系统上构建，没法交叉编译。Mac 包需要真机验证，目前还没做；源码是公开的，可以自己跑。</p></details>
+      <details><summary>杀毒软件报毒怎么办？</summary><p>没有代码签名的 exe 经常被误报，这是行业里常见的情况。源码公开，可以自己编译核对；如果不放心，就别运行。</p></details>
+      <details><summary>能用在商业场合吗？</summary><p>看具体项目的 LICENSE。默认只授权个人使用，用在商业场景前先看那个仓库里的授权说明。</p></details>
+      <details><summary>为什么有的卡片没有版本号？</summary><p>那是在线网页版，跟着页面一起更新，没有单独的版本号。</p></details>
+    </div>
+
+    <h2>版权与免责</h2>
+    <p>本站是个人作品集，不是商业平台。使用范围、第三方内容、隐私与责任的说明，统一写在<a href="/disclaimer/">免责声明</a>里，请一并阅读。</p>
+
+    <div class="actions">
+      <a class="btn solid" href="/">去看全部工具 →</a>
+      <a class="btn" href="/changelog/">最近更新</a>
+    </div>
+  </div>
+
+  <div data-lang="en">
+    <div class="kicker">LANZHAI · LANLAN'S SOFTWARE COLLECTION</div>
+    <h1>About</h1>
+    <div class="lead">Lanlan Eternal</div>
+
+    <p class="intro" style="margin-top:22px">
+      One person, one computer, and about forty small tools that stay out of your way.
+    </p>
+
+    <h2>Who I am</h2>
+    <p>I go by Lanlan Eternal online. There is no team, no company and no funding behind this page — every tool here was written by me, one at a time.</p>
+    <p>The list is roughly forty items: traditional Chinese culture, everyday productivity, podcast utilities, and a few things I simply wanted to play with.</p>
+
+    <h2>Why I build them</h2>
+    <p>It started with my own needs. Most tools I could find were paid, required an account, or uploaded my files to a server I could not see.</p>
+    <p>So I made a habit of turning recurring small annoyances into something you double-click and use. Eventually I put all of them on one page, so I would stop digging through chat history for links.</p>
+    <p>I think a tool should be quiet: <strong>free, no sign-up, no ads, no phone number, and gone the moment you close it</strong>. Anything that cannot meet that does not belong here.</p>
+
+    <h2>How they are built</h2>
+    <ul>
+      <li><strong>Single file whenever possible.</strong> Web versions are one HTML file; desktop versions are one exe — no installer, no registry, no background service.</li>
+      <li><strong>Your files stay on your machine.</strong> Web tools run entirely in your browser; desktop tools work offline.</li>
+      <li><strong>Source is public.</strong> Code lives on GitHub, and each project has its own LICENSE — they are not all the same.</li>
+      <li><strong>Ship only what was tested.</strong> I run every change myself before it goes out.</li>
+    </ul>
+
+    <h2>Release rhythm</h2>
+    <p>Irregular. I build when there is an idea and publish when it is ready. What changed in each release is listed on the <a href="/changelog/?l=en">Updates</a> page; older notes live in each repository's Releases.</p>
+
+    <h2>Find me</h2>
+    <p>Questions, feature requests and bug reports are all welcome. I may not reply instantly, but I read everything.</p>
+    <div class="contact" id="contactsEn"></div>
+    <p class="note">For a specific tool, opening an issue in its GitHub repository is fastest.</p>
+
+    <h2>FAQ</h2>
+    <div class="faq">
+      <details><summary>Is it paid? Any in-app purchase?</summary><p>No. No ads, no premium tier, no hidden subscription.</p></details>
+      <details><summary>Do I need an account?</summary><p>No. Web tools open and work; desktop tools run after unzipping.</p></details>
+      <details><summary>Are my files uploaded?</summary><p>No. Web tools process everything in your browser; desktop tools run locally and do not upload by themselves.</p></details>
+      <details><summary>Why no macOS build?</summary><p>Desktop builds are packaged with Python, which cannot cross-compile. A Mac build needs real-hardware verification; the source is public and you can run it yourself.</p></details>
+      <details><summary>My antivirus flags the exe.</summary><p>Unsigned executables are frequently false-positived. The source is public — build it yourself if you prefer.</p></details>
+      <details><summary>Can I use it commercially?</summary><p>Depends on the LICENSE of that specific project. Default is personal use only.</p></details>
+    </div>
+
+    <h2>License &amp; disclaimer</h2>
+    <p>This is a personal portfolio, not a commercial service. See the <a href="/disclaimer/?l=en">disclaimer</a> for scope of use, third-party content, privacy and liability.</p>
+
+    <div class="actions">
+      <a class="btn solid" href="/?l=en">Browse all tools →</a>
+      <a class="btn" href="/changelog/?l=en">Recent updates</a>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="pfoot">
+  © <span id="year">2026</span> 永远的兰兰 · Lanlan Eternal
+  <span class="sep">·</span><a href="/">兰斋丛编</a>
+  <span class="sep">·</span><a href="/disclaimer/"><span class="L-zh">免责声明</span><span class="L-en">Disclaimer</span></a>
+  <span class="sep">·</span><a href="https://github.com/podcatcher962" target="_blank" rel="noopener">GitHub</a>
+</div>
+
+</body>
+</html>
