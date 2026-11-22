@@ -48,9 +48,13 @@ body{
   transition:background 0.3s,color 0.3s;
 }
 .wrap{max-width:1060px;width:100%}
-/* Splash 开屏：图形原样保留，2.6s 淡出，点任意处可跳过 */
-#splash{position:fixed;inset:0;z-index:300;cursor:pointer;background:#f2e6cd url('generated-images/hub_poster.jpg') center/contain no-repeat;animation:splashFade 2.6s ease forwards}
-@keyframes splashFade{0%{opacity:0}6%{opacity:1}78%{opacity:1}100%{opacity:0;visibility:hidden}}
+/* Splash 开屏海报：5s 淡出，点任意处跳过；同一会话只播一次（?splash=1 强制重播） */
+#splash{position:fixed;inset:0;z-index:300;cursor:pointer;background:#f2e6cd url('generated-images/hub_poster.jpg') center/contain no-repeat;animation:splashFade 5s ease forwards}
+html[data-nosplash] #splash{display:none}
+@keyframes splashFade{0%{opacity:0}4%{opacity:1}86%{opacity:1}100%{opacity:0;visibility:hidden}}
+#splash .shint{position:fixed;left:0;right:0;bottom:26px;text-align:center;font-size:12.5px;letter-spacing:3px;color:#8a7a5c;opacity:0;animation:hintIn .9s ease 1.1s forwards}
+@keyframes hintIn{to{opacity:.9}}
+@media(max-width:520px){#splash .shint{bottom:34px}}
 /* Topbar */
 .topbar{display:flex;justify-content:flex-start;gap:11px;margin-bottom:4px;flex-wrap:wrap;align-items:center}
 .topbar .tbrand{font-family:"Songti SC","SimSun",serif;font-size:15px;color:var(--gold);letter-spacing:3px;text-decoration:none;border:0;margin-right:auto;white-space:nowrap}
@@ -256,10 +260,13 @@ html[data-theme="light"] .filmov{background:rgba(18,12,6,0.955)}
   .findrow select{flex:1}
 }
 </style>
+<script>/* 同一会话已看过开屏就不再播；带 ?splash=1 可强制 */
+(function(){try{if(!/[?&]splash=1/.test(location.search)&&sessionStorage.getItem('lan_splash')==='1'){document.documentElement.setAttribute('data-nosplash','1');}else{sessionStorage.setItem('lan_splash','1');}}catch(e){}})();
+</script>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
 <body>
-<div id="splash" onclick="skipSplash()"></div>
+<div id="splash" onclick="skipSplash()"><span class="shint">轻点跳过</span></div>
 <noscript><div style="max-width:860px;margin:24px auto;padding:18px;line-height:1.9">
 <h2>兰斋丛编 · 兰兰软件集</h2>
 <p>永远的兰兰一个人做的四十来个免费小工具，点开即用：不用安装、不用注册、文件在本地处理不上传。</p>
@@ -984,7 +991,7 @@ function renderFeatured(){
 // ============ 最近更新（手工维护，只放有感知的改动） ============
 const RECENT = [
   {d:'11-22', n:{zh:'站点改版',en:'Site rebuild'},
-   s:{zh:'独立页面、去掉开屏、新增更新记录',en:'Separate pages, no splash, changelog added'}, u:'changelog/'},
+   s:{zh:'独立页面、恢复开屏海报、新增更新记录',en:'Separate pages, splash poster back, changelog added'}, u:'changelog/'},
   {d:'11-21', n:{zh:'言札 v0.7.2',en:'YanZha v0.7.2'},
    s:{zh:'视频自带字幕轨，可以直接导成稿',en:'Import built-in subtitle tracks as a transcript'},
    u:'https://github.com/podcatcher962/YanZha/releases/tag/v0.7.2'},
