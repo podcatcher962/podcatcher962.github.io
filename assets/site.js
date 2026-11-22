@@ -73,7 +73,7 @@ var CONTACT = {
     }
     if (CONTACT.xhs && CONTACT.xhs.name) {
       out.push(card(CONTACT.xhs.url, zh ? '小红书' : 'Xiaohongshu',
-        CONTACT.xhs.name + (CONTACT.xhs.url ? '' : (zh ? '（App 内搜索）' : ' (search in app)')))
+        CONTACT.xhs.name, CONTACT.xhs.url ? '' : 'off')
       );
     }
     if (CONTACT.shipin && CONTACT.shipin.name) {
