@@ -48,8 +48,9 @@ body{
   transition:background 0.3s,color 0.3s;
 }
 .wrap{max-width:1060px;width:100%}
-/* Splash 开屏 */
-/* 开屏已去掉（2026-11-22）：简介点进来的人不该先等 9 秒海报 */
+/* Splash 开屏：图形原样保留，2.6s 淡出，点任意处可跳过 */
+#splash{position:fixed;inset:0;z-index:300;cursor:pointer;background:#f2e6cd url('generated-images/hub_poster.jpg') center/contain no-repeat;animation:splashFade 2.6s ease forwards}
+@keyframes splashFade{0%{opacity:0}6%{opacity:1}78%{opacity:1}100%{opacity:0;visibility:hidden}}
 /* Topbar */
 .topbar{display:flex;justify-content:flex-start;gap:11px;margin-bottom:4px;flex-wrap:wrap;align-items:center}
 .topbar .tbrand{font-family:"Songti SC","SimSun",serif;font-size:15px;color:var(--gold);letter-spacing:3px;text-decoration:none;border:0;margin-right:auto;white-space:nowrap}
@@ -258,6 +259,7 @@ html[data-theme="light"] .filmov{background:rgba(18,12,6,0.955)}
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
 <body>
+<div id="splash" onclick="skipSplash()"></div>
 <noscript><div style="max-width:860px;margin:24px auto;padding:18px;line-height:1.9">
 <h2>兰斋丛编 · 兰兰软件集</h2>
 <p>永远的兰兰一个人做的四十来个免费小工具，点开即用：不用安装、不用注册、文件在本地处理不上传。</p>
@@ -1006,6 +1008,9 @@ function renderRecent(){
   setL(lang);
   renderPoems();
 })();
+</script>
+<script>
+function skipSplash(){var s=document.getElementById('splash');if(!s||s.dataset.going)return;s.dataset.going=1;s.style.transition='opacity .35s';s.style.opacity='0';setTimeout(function(){if(s.parentNode)s.remove();},380);}
 </script>
 <script>
 /* PWA：只在 https 下注册（file:// 与 http 会被浏览器拒绝） */
