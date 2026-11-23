@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-23T20:57:22+08:00",
+ "updated": "2026-11-23T21:32:07+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -2811,35 +2811,35 @@
    "name": "纹谱",
    "repo": "podcatcher962/wenpu",
    "group": "culture",
-   "blurb": "378 种传统母题，按几何实时生成四方无缝纹样",
+   "blurb": "378 种传统图案元素，按几何实时生成四方无缝纹样，中英双语",
    "featured": false,
-   "version": "3.2",
-   "tag": "v3.2",
+   "version": "3.3",
+   "tag": "v3.3",
    "released": "2026-11-23",
    "hub": "https://podcatcher962.github.io/wenpu/",
    "builds": [
     {
-     "file": "Wenpu-3.2-linux.tar.gz",
+     "file": "Wenpu-3.3-linux.tar.gz",
      "os": "linux",
      "arch": "x64",
-     "size": 106465,
-     "sha256": "fbb3388b940d5627abfcb29cb1d24ba15fdaa7339901d795e6f37e4a7b2baad2",
+     "size": 155571,
+     "sha256": "2a7f226f66a73609e9164bbeff2b1bc73b7e38b49fb5c0c79c394d796a56cbce",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu-3.2-linux.tar.gz"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu-3.3-linux.tar.gz"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu-3.2-linux.tar.gz"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu-3.3-linux.tar.gz"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu-3.2-linux.tar.gz"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu-3.3-linux.tar.gz"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu-3.2-linux.tar.gz"
+       "u": "https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu-3.3-linux.tar.gz"
       }
      ]
     },
@@ -2847,24 +2847,24 @@
      "file": "Wenpu.apk",
      "os": "android",
      "arch": "universal",
-     "size": 144228,
-     "sha256": "299d741494760935cdf1e75408fffead7d5a5500b84e37c6df9a26cdaefec6cc",
+     "size": 193380,
+     "sha256": "63985a7b1b986a69f061d474d1bf32309f2592a9e32f37a3851fb4f4b0a811e0",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.apk"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.apk"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.apk"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.apk"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.apk"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.apk"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.apk"
+       "u": "https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.apk"
       }
      ]
     },
@@ -2872,24 +2872,24 @@
      "file": "Wenpu.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 17838812,
-     "sha256": "a83ca263ef382d6d181445bf53bc9ee24fdb2c737461b806eb3ca1d7ae4c12ef",
+     "size": 17888005,
+     "sha256": "ad36805914e2ee8f111a111e400fd57aced43a6457bd628eed21fcc52addae5f",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/wenpu/releases/download/v3.2/Wenpu.exe"
+       "u": "https://github.com/podcatcher962/wenpu/releases/download/v3.3/Wenpu.exe"
       }
      ]
     }
