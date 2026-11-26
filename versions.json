@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-23T21:32:07+08:00",
+ "updated": "2026-11-26T18:49:11+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -12,8 +12,8 @@
  },
  "stats": {
   "tools": 39,
-  "builds": 93,
-  "bytes": 1045457212
+  "builds": 92,
+  "bytes": 1054002741
  },
  "tools": [
   {
@@ -2039,62 +2039,35 @@
    "group": "other",
    "blurb": "",
    "featured": false,
-   "version": "3.2.0",
-   "tag": "v3.2.0",
-   "released": "2026-10-23",
+   "version": "3.7.0",
+   "tag": "v3.7.0",
+   "released": "2026-11-26",
    "hub": null,
    "builds": [
     {
-     "file": "usb-com-fix-v3.2.0.zip",
+     "file": "usb-com-fix.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 142049,
-     "sha256": "31a68fd2676526dc134365cfc0889f704b42e060cb7a9683260c4ebcf8f0a063",
+     "size": 8682176,
+     "sha256": "abf628a58953b5e923f5202a67cd354027bdf6cb78f8b83344f80c9f73bec07c",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix-v3.2.0.zip"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.7.0/usb-com-fix.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix-v3.2.0.zip"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.7.0/usb-com-fix.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix-v3.2.0.zip"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.7.0/usb-com-fix.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix-v3.2.0.zip"
+       "u": "https://github.com/podcatcher962/usb-com-fix/releases/download/v3.7.0/usb-com-fix.exe"
       }
-     ],
-     "reused": true
-    },
-    {
-     "file": "usb-com-fix.zip",
-     "os": "windows",
-     "arch": "x64",
-     "size": 142049,
-     "sha256": "31a68fd2676526dc134365cfc0889f704b42e060cb7a9683260c4ebcf8f0a063",
-     "urls": [
-      {
-       "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix.zip"
-      },
-      {
-       "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix.zip"
-      },
-      {
-       "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix.zip"
-      },
-      {
-       "m": "release",
-       "u": "https://github.com/podcatcher962/usb-com-fix/releases/download/v3.2.0/usb-com-fix.zip"
-      }
-     ],
-     "reused": true
+     ]
     }
    ]
   },
