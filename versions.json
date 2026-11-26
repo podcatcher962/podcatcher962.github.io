@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-26T18:49:11+08:00",
+ "updated": "2026-11-26T22:17:42+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -11,9 +11,9 @@
   "release": "GitHub Release（官方原始）"
  },
  "stats": {
-  "tools": 39,
-  "builds": 92,
-  "bytes": 1054002741
+  "tools": 40,
+  "builds": 93,
+  "bytes": 1245274906
  },
  "tools": [
   {
@@ -2905,6 +2905,45 @@
       }
      ],
      "reused": true
+    }
+   ]
+  },
+  {
+   "id": "yanzha-android",
+   "name": "言札 安卓版",
+   "repo": "podcatcher962/YanZha-Android",
+   "group": "tool",
+   "blurb": "手机上录音转文字，已有音频文件也能转，离线不上传",
+   "featured": false,
+   "version": "0.6.1",
+   "tag": "v0.6.1",
+   "released": "2026-11-26",
+   "hub": null,
+   "builds": [
+    {
+     "file": "YanZha-0.6.1-arm64.apk",
+     "os": "android",
+     "arch": "universal",
+     "size": 191272165,
+     "sha256": "201a12ed8fe50a0317ae779b7171a81b65b32ed4725d8aa60554defacfe85170",
+     "urls": [
+      {
+       "m": "ghproxy",
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.1/YanZha-0.6.1-arm64.apk"
+      },
+      {
+       "m": "ghfast",
+       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.1/YanZha-0.6.1-arm64.apk"
+      },
+      {
+       "m": "ghnet",
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.1/YanZha-0.6.1-arm64.apk"
+      },
+      {
+       "m": "release",
+       "u": "https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.1/YanZha-0.6.1-arm64.apk"
+      }
+     ]
     }
    ]
   },
