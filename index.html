@@ -652,7 +652,7 @@ const APPS = [
   {icon:"🎤", cn:"言札 安卓版", en:"YanZha Android", ver:"v0.6.1", cat:"tool",
    use_cn:"手机上离线录音转文字 · 点一下开始说，说完出字 · 手机里已有的 mp3 / m4a / wav / amr / flac / ogg 和视频都能转 · 文件管理、微信里长按直接送进来转 · 自动加标点，中英混说也认 · 长音频自动分段带进度条，随时可以取消 · 转完自动存一份到 下载/言札/ · 没有联网权限，飞行模式能用 · 模型在安装包里，装好就能用，不用再下载",
    use_en:"Offline speech-to-text on your phone · tap, speak, tap again · transcribe audio and video files already on the phone · long-press in any file manager or WeChat and send it straight into the app · automatic punctuation, mixed Chinese and English · long audio is chunked with a progress bar and can be cancelled · results auto-saved to Download/言札/ · the app has no INTERNET permission, so it cannot go online even in principle · models ship inside the APK, nothing to download later",
-   web:null, exe:null, apk:{name:"YanZha-0.6.1-arm64.apk", size:"182.4 MB", url:"https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.1/YanZha-0.6.1-arm64.apk"}},
+   web:null, exe:null, apk:{name:"YanZha-0.6.1-arm64.apk", size:"182.4 MB", url:"/yanzha-android/"}},
   // 播客工具
   {icon:"📻", cn:"播客批量下载器", en:"PodcastBatch-Downloader", ver:"v1.0", cat:"podcast",
    use_cn:"播客节目批量下载 · 增量更新", use_en:"Podcast batch downloader",
@@ -841,6 +841,11 @@ function visibleApps(){
   else if(SORT === 'ver') list = list.slice().sort((x,y)=>verNum(y.ver)-verNum(x.ver));
   return list;
 }
+function dlHref(u){
+  if(/^https:\/\/github\.com\/[^\/]+\/[^\/]+\/releases\/(download|latest\/download)\//.test(u))
+    return "/dl/?u=" + encodeURIComponent(u);
+  return u;
+}
 function cardHtml(a,i){
   const use = lang==='zh'?a.use_cn:a.use_en;
   const more = (a.more_cn||a.more_en)
@@ -848,9 +853,9 @@ function cardHtml(a,i){
   let btns = '';
   if(a.web){ const wu = a.web.startsWith('http') ? a.web : `https://podcatcher962.github.io/${a.web}/`; btns += `<a href="${wu}" target="_blank" rel="noopener">${t('webBtn')}</a>`; }
   // 按钮上不写体积（会把按键撑出卡片），放 title 里悬停可见
-  if(a.apk){ btns += `<a class="apk" href="${a.apk.url}" target="_blank" rel="noopener" title="${a.apk.name} · ${a.apk.size}">${t('apkBtn')}</a>`; }
+  if(a.apk){ btns += `<a class="apk" href="${dlHref(a.apk.url)}" target="_blank" rel="noopener" title="${a.apk.name} · ${a.apk.size}">${t('apkBtn')}</a>`; }
   if(a.exe){ const elab = /\.zip$/i.test(a.exe.name) ? (t('zipBtn')) : t('exeBtn');
-    btns += `<a class="exe" href="${a.exe.url}" target="_blank" rel="noopener" title="${a.exe.name} · ${a.exe.size}">${elab}</a>`; }
+    btns += `<a class="exe" href="${dlHref(a.exe.url)}" target="_blank" rel="noopener" title="${a.exe.name} · ${a.exe.size}">${elab}</a>`; }
   const meta = (a.exe ? `${a.exe.name} · ${a.exe.size}` : (a.apk ? `${a.apk.name} · ${a.apk.size}` : (a.web ? (a.web.includes('http') ? '🌐 在线站' : `${a.web}.html`) : '—')));
   return `
       <div class="card">

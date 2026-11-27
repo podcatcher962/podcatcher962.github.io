@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-ui="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>选择下载源 · 兰斋丛编</title>
+<meta name="theme-color" content="#f2e6cd">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=20261122b">
+<script src="/assets/site.js?v=20261122b" defer></script>
+<style>
+.dl{margin:24px 0 0;display:grid;gap:12px}
+.dl a.mir{display:block;padding:17px 22px;border:1px solid var(--bdr);border-radius:8px;
+  background:var(--card);color:var(--text);text-decoration:none;font-size:17px;line-height:1.5;
+  transition:background .18s,color .18s,border-color .18s}
+.dl a.mir:hover{background:var(--bdr);color:var(--bg);border-color:var(--bdr)}
+.dl a.mir small{display:block;font-size:13px;opacity:.7;margin-top:4px}
+.dl a.orig{font-size:14px;padding:13px 20px;opacity:.85}
+.warn{margin:24px 0 0;padding:15px 19px;border-left:3px solid var(--bdr);background:var(--card);
+  font-size:14.5px;line-height:1.85}
+.warn b{color:var(--accent)}
+.fn{margin:10px 0 0;font-size:14px;line-height:1.9;opacity:.85;word-break:break-all}
+h2{font-size:18px;margin:40px 0 0;letter-spacing:.06em}
+ul.tips{margin:14px 0 0;padding-left:20px;font-size:14.5px;line-height:2}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a class="brand" href="/">兰斋丛编</a>
+  <a href="/">全部工具</a>
+  <a href="/changelog/">更新</a>
+  <a href="/about/">关于</a>
+  <span class="tools">
+    <button id="btnTheme" onclick="toggleTheme()" title="主题 / Theme">🌙</button>
+  </span>
+</div>
+
+<div class="wrap">
+<div class="doc">
+
+  <div class="kicker">选 择 下 载 源 · MIRROR</div>
+  <h1>哪个快用哪个</h1>
+  <div class="lead" id="lead">同一个文件，四个源。</div>
+  <p class="fn" id="fn"></p>
+
+  <div class="warn">
+    <b>在微信 / QQ 里点下载没反应，是这两个 App 自己拦的。</b>
+    点右上角 <b>「···」→ 在浏览器打开</b>，再点下载。
+  </div>
+
+  <div class="dl" id="dl"></div>
+
+  <h2>下不动 / 装不上</h2>
+  <ul class="tips">
+    <li>四个源都慢，多半是你这边的网络在限速，换 WiFi 或等一会儿再试。</li>
+    <li>Windows 上如果是 exe：下载完右键「属性」看有没有「解除锁定」，有就勾上，双击运行。杀软报毒先看数字签名与来源，不确定就别装。</li>
+    <li>安卓 apk：下完在通知栏点开，弹出「禁止安装未知应用」时去设置里允许当前浏览器安装，再返回点安装。</li>
+    <li>下到一半断了要重下——安卓和 Windows 自带的下载器都不续传。</li>
+    <li>加速源是第三方公益节点，只做中转，不存内容。所有链接指向同一个文件。</li>
+  </ul>
+
+  <p class="fn" style="margin-top:30px">
+    不对？<a href="/">回首页</a> 找对应工具，或到 <a href="/about/">关于我</a> 里的联系方式说明情况。
+  </p>
+
+</div>
+</div>
+
+<div class="pfoot">
+  <a href="/">兰斋丛编</a> · <a href="/disclaimer/">免责与隐私</a> · <a href="/about/">关于我</a>
+</div>
+
+<script>
+(function(){
+  var MIRRORS = [
+    ['https://hk.gh-proxy.com/', '加速 ①　先试这个'],
+    ['https://gh-proxy.com/',    '加速 ②'],
+    ['https://cors.isteed.cc/',  '加速 ③'],
+    ['https://ghfast.top/',      '加速 ④']
+  ];
+  var q = new URLSearchParams(location.search);
+  var u = q.get('u') || '';
+  var ok = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/releases\/(download|latest\/download)\//.test(u);
+  var box = document.getElementById('dl');
+  if(!ok){
+    document.getElementById('lead').textContent = '链接不完整';
+    document.getElementById('fn').textContent = '请从首页点对应工具的下载按钮，会自动跳到本页。';
+    return;
+  }
+  var name = decodeURIComponent((u.split('?')[0].split('/').pop()) || '文件');
+  var size = q.get('s') || '';
+  var lead = document.getElementById('lead');
+  var fn = document.getElementById('fn');
+  fn.textContent = name + (size ? '　·　' + size : '');
+  var html = '';
+  MIRRORS.forEach(function(m, i){
+    html += '<a class="mir" rel="nofollow noopener" href="' + m[0] + u + '">' + m[1]
+         +  '<small>点下去就开始下，浏览器说「不安全 / 未知」时选继续，这是中转站</small></a>';
+  });
+  html += '<a class="mir orig" rel="nofollow noopener" href="' + u + '">GitHub 原始链接（国内直连通常只有几十 KB/s，只作备用）</a>';
+  box.innerHTML = html;
+})();
+</script>
+</body>
+</html>
