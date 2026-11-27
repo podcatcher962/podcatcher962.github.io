@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-27T19:59:28+08:00",
+ "updated": "2026-11-27T20:25:44+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -12,8 +12,8 @@
  },
  "stats": {
   "tools": 40,
-  "builds": 93,
-  "bytes": 1245284989
+  "builds": 94,
+  "bytes": 1518698399
  },
  "tools": [
   {
@@ -2913,33 +2913,58 @@
    "group": "tool",
    "blurb": "手机上录音转文字，已有音频文件也能转，离线不上传",
    "featured": false,
-   "version": "0.6.3",
-   "tag": "v0.6.3",
+   "version": "0.6.4",
+   "tag": "v0.6.4",
    "released": "2026-11-27",
    "hub": null,
    "builds": [
     {
-     "file": "YanZha-0.6.3-arm64.apk",
+     "file": "YanZha-0.6.4-arm64.apk",
      "os": "android",
      "arch": "universal",
-     "size": 191280357,
-     "sha256": "7aee6e9e2ff4da0aebf28048049c847d0705f2d428759418dfc6707759a9ac01",
+     "size": 191284521,
+     "sha256": "96c5e1e43c5354c4f61d805a66c7a8d27ad443141bf931a5bcf083393e0c755d",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-arm64.apk"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-arm64.apk"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-arm64.apk"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk"
+       "u": "https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-arm64.apk"
+      }
+     ]
+    },
+    {
+     "file": "YanZha-0.6.4-pro-arm64.apk",
+     "os": "android",
+     "arch": "universal",
+     "size": 273409246,
+     "sha256": "40441bb24b2635f1704209a4c5194bdda9fda65c7a45f51a9fe6ae178ed54c21",
+     "urls": [
+      {
+       "m": "ghproxy",
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-pro-arm64.apk"
+      },
+      {
+       "m": "ghfast",
+       "u": "https://ghfast.top/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-pro-arm64.apk"
+      },
+      {
+       "m": "ghnet",
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-pro-arm64.apk"
+      },
+      {
+       "m": "release",
+       "u": "https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.4/YanZha-0.6.4-pro-arm64.apk"
       }
      ]
     }

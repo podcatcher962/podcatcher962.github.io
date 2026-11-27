@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-ui="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>言札 · 电脑还是手机 · 兰斋丛编</title>
+<meta name="description" content="言札是同一个引擎的两个版本：电脑版（Windows）做整篇整理与校对，手机版（安卓）装兜里随时把录音变成文字。全程离线，不联网。">
+<meta name="theme-color" content="#f2e6cd">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=20261122b">
+<script src="/assets/site.js?v=20261122b" defer></script>
+<style>
+.pick{margin:26px 0 0;display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media(max-width:760px){.pick{grid-template-columns:1fr}}
+.pick a{display:block;text-decoration:none;color:var(--text);border:1px solid var(--bdr);
+  border-radius:10px;background:var(--card);padding:22px 24px;transition:border-color .18s,transform .18s}
+.pick a:hover{border-color:var(--text);transform:translateY(-1px)}
+.pick .os{font-size:13px;letter-spacing:.16em;opacity:.65}
+.pick .big{font-size:22px;margin:8px 0 2px;letter-spacing:.02em}
+.pick .sz{font-size:13.5px;opacity:.75;line-height:1.7}
+.pick .go{display:inline-block;margin-top:14px;font-size:14px;border-bottom:1px solid currentColor;padding-bottom:2px}
+.pick a.hot{border-color:var(--text)}
+.pick a.hot .os::after{content:' · 你就是用这个打开的';opacity:.7}
+table.cmp{width:100%;border-collapse:collapse;margin:16px 0 0;font-size:14.5px}
+table.cmp th,table.cmp td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--bdr);vertical-align:top}
+table.cmp th{font-weight:600;opacity:.8;font-size:13px;letter-spacing:.04em}
+table.cmp td:first-child{width:34%}
+table.cmp td.y{text-align:center}
+h2{font-size:18px;margin:40px 0 0;letter-spacing:.06em}
+ul.tips{margin:14px 0 0;padding-left:20px;font-size:14.5px;line-height:2}
+.warn{margin:24px 0 0;padding:15px 19px;border-left:3px solid var(--bdr);background:var(--card);
+  font-size:14.5px;line-height:1.85}
+.warn b{color:var(--accent)}
+.fn{margin:10px 0 0;font-size:14px;line-height:1.9;opacity:.85;word-break:break-all}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a class="brand" href="/">兰斋丛编</a>
+  <a href="/">全部工具</a>
+  <a href="/changelog/">更新</a>
+  <a href="/about/">关于</a>
+  <span class="tools">
+    <button id="btnTheme" onclick="toggleTheme()" title="主题 / Theme">🌙</button>
+  </span>
+</div>
+
+<div class="wrap">
+<div class="doc">
+
+  <div class="kicker">言 札 · YANZHA</div>
+  <h1>你打算在哪儿用</h1>
+  <div class="lead">同一个引擎，两个安装包：电脑上做整篇整理，手机上随手把录音变成文字。</div>
+
+  <div class="pick" id="pick">
+
+    <a id="optPc" href="/dl/?u=https%3A%2F%2Fgithub.com%2Fpodcatcher962%2FYanZha%2Freleases%2Fdownload%2Fv0.7.2%2FYanZha-v0.7.2-win64.zip">
+      <div class="os">WINDOWS · 电脑</div>
+      <div class="big">言札 v0.7.2</div>
+      <div class="sz">248.6 MB · 解压即用，不用安装<br>一小时的播客约三分钟出稿<br>分人、校对、字幕导入、八种导出</div>
+      <div class="go">下载电脑版</div>
+    </a>
+
+    <a id="optApk" href="/yanzha-android/">
+      <div class="os">ANDROID · 手机</div>
+      <div class="big">言札 安卓版 0.6.3</div>
+      <div class="sz">182.4 MB · 安装包内含模型，装好就能用<br>点一下开始说，说完出字<br>手机里已有的音频、视频也能送进来</div>
+      <div class="go">下载安卓版</div>
+    </a>
+
+  </div>
+
+  <div class="warn">
+    <b>在微信 / QQ 里点下载没反应，是这两个 App 自己拦的。</b>
+    点右上角 <b>「···」→ 在浏览器打开</b>，再点下载。
+  </div>
+
+  <h2>两个版本差在哪</h2>
+  <table class="cmp">
+    <tr><th></th><th>电脑版 v0.7.2</th><th>安卓版 0.6.3</th></tr>
+    <tr><td>录音直接转</td><td class="y">要先用别的软件录，再导入</td><td class="y">✅ 点一下开始说</td></tr>
+    <tr><td>手机里的音频 / 视频</td><td class="y">要先拷到电脑</td><td class="y">✅ 文件管理、微信里长按直接送进来</td></tr>
+    <tr><td>分说话人（访谈、多人播客）</td><td class="y">✅ 可以指定几个人，还能改名</td><td class="y">—</td></tr>
+    <tr><td>逐句校对、搜索、改一个字</td><td class="y">✅ 点句就改，可撤销</td><td class="y">—</td></tr>
+    <tr><td>视频自带文本字幕直接成稿</td><td class="y">✅ 不跑识别，零错字</td><td class="y">—</td></tr>
+    <tr><td>导出</td><td class="y">八种（txt / srt / vtt / docx 等）</td><td class="y">复制、存成 txt</td></tr>
+    <tr><td>速度</td><td class="y">1 小时录音约 3 分钟</td><td class="y">3 分钟音频十几秒</td></tr>
+    <tr><td>联网</td><td class="y">程序里没有联网代码</td><td class="y">连 INTERNET 权限都没申请</td></tr>
+  </table>
+
+  <h2>怎么选</h2>
+  <ul class="tips">
+    <li><b>只想把手机里的录音、微信语音、随手录的想法变成文字</b> → 装安卓版。装完就不用管网络，飞行模式也能用。</li>
+    <li><b>要把播客、会议、采访整理成能交出去的稿子</b> → 用电脑版。分人、校对、导出字幕这些只有电脑版有。</li>
+    <li>两个都想要也可以，只是不能同时装在一台手机上（见下）。</li>
+  </ul>
+
+  <h2>几个常被问到的事</h2>
+  <ul class="tips">
+    <li><b>两个包能一起装在一台手机上吗？</b>不能。它们是同一个 App 的两个版本，装其中一个会把另一个替换掉。你转好的稿子都在「下载 / 言札」里，换包、卸载都不会跟着消失。</li>
+    <li><b>为什么版本号不一样（0.7.2 和 0.6.3）？</b>两套完全不同的程序：电脑版是 Python 打包，安卓版是 Java 打包，界面、功能、发布时间各走各的。版本号不能对齐，对齐反而会让人以为是同一个东西。</li>
+    <li><b>哪个更准？</b>电脑版。它的模型更大，还能分人、逐句改；手机版为了装进手机用了小模型，安静环境下差别不大，术语、人名会更容易听错。</li>
+    <li><b>会不会上传我的录音？</b>不会。电脑版程序里没有联网代码；安卓版安装包没有 INTERNET 权限，系统层面就联不了网。这条可以直接在手机上验：设置里看应用权限。</li>
+  </ul>
+
+  <h2>源码与历史版本</h2>
+  <p class="fn">
+    电脑版 <a href="https://github.com/podcatcher962/YanZha/releases" target="_blank" rel="noopener">github.com/podcatcher962/YanZha</a><br>
+    安卓版 <a href="https://github.com/podcatcher962/YanZha-Android/releases" target="_blank" rel="noopener">github.com/podcatcher962/YanZha-Android</a>
+  </p>
+
+  <p class="fn" style="margin-top:30px">
+    不对？<a href="/">回首页</a> 看别的工具，或到 <a href="/about/">关于我</a> 里的联系方式说明情况。
+  </p>
+
+</div>
+</div>
+
+<div class="pfoot">
+  <a href="/">兰斋丛编</a> · <a href="/disclaimer/">免责与隐私</a> · <a href="/about/">关于我</a>
+</div>
+
+<script>
+(function(){
+  // 从手机上点进来的，把安卓版排到前面并标出来，少点一次
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var pick = document.getElementById('pick');
+  var pc = document.getElementById('optPc');
+  var apk = document.getElementById('optApk');
+  if (isAndroid) {
+    pick.insertBefore(apk, pc);
+    apk.className = 'hot';
+    document.querySelector('.lead').textContent =
+      '你在用手机看，先看下面这个；要在电脑上整理整篇稿子，再翻第二个。';
+  }
+})();
+</script>
+</body>
+</html>

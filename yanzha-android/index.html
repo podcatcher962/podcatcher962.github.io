@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>言札 · 安卓版下载 | YanZha Android</title>
-<meta name="description" content="言札安卓版 0.6.3 下载：手机上离线录音转文字，装好就能用，不用联网。四个下载源，哪个快用哪个。182.4 MB，仅 arm64。">
+<meta name="description" content="言札安卓版 0.6.4 下载：手机上离线录音转文字，装好就能用，不用联网。标准版 182.4 MB、增强版 260.7 MB，自己选。四个下载源，哪个快用哪个。">
 <link rel="canonical" href="https://podcatcher962.github.io/yanzha-android/">
 <meta property="og:type" content="article">
 <meta property="og:title" content="言札 · 安卓版下载">
-<meta property="og:description" content="手机上离线录音转文字。182.4 MB，装好就能用，不用联网。">
+<meta property="og:description" content="手机上离线录音转文字。标准版 182.4 MB、增强版 260.7 MB，装好就能用，不用联网。">
 <meta property="og:url" content="https://podcatcher962.github.io/yanzha-android/">
 <meta property="og:image" content="https://podcatcher962.github.io/generated-images/hub_poster.jpg">
 <meta name="theme-color" content="#f2e6cd">
@@ -16,7 +16,15 @@
 <link rel="stylesheet" href="/assets/site.css?v=20261122b">
 <script src="/assets/site.js?v=20261122b" defer></script>
 <style>
-.dl{margin:26px 0 10px;display:grid;gap:12px}
+.pick2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 6px}
+@media(max-width:620px){.pick2{grid-template-columns:1fr}}
+.pick2 button{text-align:left;cursor:pointer;padding:15px 18px;border:1px solid var(--bdr);
+  border-radius:9px;background:var(--card);color:var(--text);font-size:16px;line-height:1.5;
+  font-family:inherit;transition:border-color .16s}
+.pick2 button small{display:block;font-size:13px;opacity:.7;margin-top:3px}
+.pick2 button.sel{border-color:var(--text)}
+.pick2 button.sel::before{content:'✓ ';color:var(--accent)}
+.dl{margin:14px 0 10px;display:grid;gap:12px}
 .dlbtn{display:block;padding:18px 22px;border:1px solid var(--bdr);border-radius:8px;
   background:var(--card);color:var(--text);text-decoration:none;font-size:18px;line-height:1.5;
   transition:background .18s,border-color .18s}
@@ -58,33 +66,31 @@ dl.faq dd{margin:6px 0 0;opacity:.92}
 
   <div class="kicker">言 札 · YANZHA ANDROID</div>
   <h1>言札 · 安卓版</h1>
-  <div class="lead">录音变文字，全程留在手机里 · v0.6.3 · 182.4 MB · 仅 arm64</div>
+  <div class="lead">录音变文字，全程留在手机里 · v0.6.4 · 两个包自己选</div>
 
-  <p class="note">本次更新：修掉长音频掉字（旧版按 30 秒切段，越过识别模型的上限，一分钟音频常常只转出十几个字），并新增「已存」面板与「保存录音」开关。</p>
+  <p class="note">本次更新：新增<b>增强版</b>安装包（换成更大的识别模型，错字更少、自带标点），标准版照旧；两版都修完了长音频掉字。</p>
 
 <div class="warn">
     <b>在微信 / QQ 里点下载没反应，是正常的。</b>这两个 App 内置的浏览器不让存安装包。
     点右上角 <b>「···」→ 在浏览器打开</b>，再从本页下载。
   </div>
 
-  <h2>下载</h2>
-  <p class="note">同一个文件，四个源。哪个下得快就用哪个，下完体积对得上就是完整的。</p>
-  <div class="dl">
-    <a class="dlbtn" rel="nofollow noopener" href="https://hk.gh-proxy.com/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk">加速 ①　推荐先试这个
-      <small>实测约 1.7 MB/s，182 MB 大概三四分钟</small></a>
-    <a class="dlbtn" rel="nofollow noopener" href="https://gh-proxy.com/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk">加速 ②
-      <small>实测约 0.9 MB/s，五六分钟</small></a>
-    <a class="dlbtn" rel="nofollow noopener" href="https://cors.isteed.cc/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk">加速 ③
-      <small>实测约 0.9 MB/s，换一条线路</small></a>
-    <a class="dlbtn" rel="nofollow noopener" href="https://ghfast.top/https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk">加速 ④
-      <small>实测约 0.9 MB/s，前三个都不行时用</small></a>
-    <a class="dlbtn alt" rel="nofollow noopener" href="https://github.com/podcatcher962/YanZha-Android/releases/download/v0.6.3/YanZha-0.6.3-arm64.apk">GitHub 原始链接（国内直连很慢，只作备用）
-      <small>不用梯子时往往只有几十 KB/s，会用两小时以上，建议不用这条</small></a>
+  <h2>先选一个包</h2>
+  <div class="pick2" id="pick2">
+    <button class="sel" data-k="std">标准版　182.4 MB
+      <small>快、够用。三分钟音频十几秒转完</small></button>
+    <button data-k="pro">增强版　260.7 MB
+      <small>更准，人名术语错得少；慢 2~3 倍，手机老一点会更慢</small></button>
   </div>
+  <p class="note" id="pickNote">安静环境下两个版本差别不大；经常转播客、讲座、带很多人名书名的内容，选增强版。</p>
+
+  <h2>下载</h2>
+  <p class="note" id="dlNote">同一个文件，四个源。哪个下得快就用哪个，下完体积对得上就是完整的。</p>
+  <div class="dl" id="dl"></div>
 
   <h2>装这个包，三步</h2>
   <ol class="steps">
-    <li>下载完，在<b>通知栏</b>或「文件管理 → Download」里点开 <code>YanZha-0.6.3-arm64.apk</code>。</li>
+    <li>下载完，在<b>通知栏</b>或「文件管理 → Download」里点开 <code id="fn">YanZha-0.6.4-arm64.apk</code>。</li>
     <li>弹出「禁止安装未知应用」时，点<b>设置</b>，把当前浏览器（或文件管理）的「允许安装」打开，再返回点「安装」。</li>
     <li>首次打开要加载模型，<b>十几秒</b>，之后每次都是一两秒。加载完点大圆按钮说话。</li>
   </ol>
@@ -95,33 +101,41 @@ dl.faq dd{margin:6px 0 0;opacity:.92}
     <dd>换上面另一个加速源重下。安卓自带的下载器不支持续传，断了要从头开始，所以尽量在 WiFi 下一次下完。</dd>
 
     <dt>提示「应用未安装」或「安装包损坏」</dt>
-    <dd>多半是没下完整。先看文件大小是不是 <b>182.4 MB</b>（182,000,000 字节上下），不够就重下。如果体积对还装不上，看下一条。</dd>
+    <dd>多半是没下完整。先看文件大小对不对（标准版 <b>182.4 MB</b>、增强版 <b>260.7 MB</b>），不够就重下。如果体积对还装不上，看下一条。</dd>
 
     <dt>提示「此应用与你的手机不兼容」</dt>
     <dd>这个包只有 <b>arm64-v8a</b>，也就是 2016 年以后的主流手机。少数老机、以及部分平板是 32 位，装不了——这台机器上跑不动，不是包坏了。</dd>
+
+    <dt>两个包能一起装吗</dt>
+    <dd>不能。它们是同一个 App 的两个版本，装哪个就把另一个替换掉。已经转好的稿子都在「下载 / 言札」里，换包不会丢。</dd>
 
     <dt>装好了，说一句话没反应</dt>
     <dd>第一次打开要先授权<b>麦克风</b>。系统设置 → 应用 → 言札 → 权限 → 麦克风，允许。授权后重开一次。</dd>
 
     <dt>想要更准一点</dt>
-    <dd>安静环境下正对着说，准确率明显更高。转长音频时把手机放平、别捂着底部麦克风。识别的方言、口音、专业词越多，错字越多，这一点目前的离线模型都一样。</dd>
+    <dd>先换增强版；再就是在安静环境下正对着说。转长音频时把手机放平、别捂着底部麦克风。方言、口音、专业词越多错字越多，这一点目前的离线模型都一样。</dd>
   </dl>
 
   <h2>这个包是什么</h2>
   <p class="note">
-    离线语音转文字。模型（约 100 MB）直接装在安装包里，装好就能用，之后不再下载任何东西。
+    离线语音转文字。模型直接装在安装包里（标准版约 100 MB，增强版约 228 MB），装好就能用，之后不再下载任何东西。
     App 没有申请联网权限，飞行模式下照样能转。转完自动存一份到 <code>下载/言札/</code>。
     免费、开源，署名「永远的兰兰 · Lanlan Eternal」。
   </p>
-  <p class="meta">
-    版本 0.6.3（versionCode 12）· 182.4 MB · arm64-v8a · Android 8.0 以上<br>
-    sha256 <code>7aee6e9e2ff4da0aebf28048049c847d0705f2d428759418dfc6707759a9ac01</code><br>
+  <p class="meta" id="metaBox">
+    版本 0.6.4（versionCode 13）· 标准版 182.4 MB / 增强版 260.7 MB · arm64-v8a · Android 7.0 以上<br>
+    sha256 标准版 <code>96c5e1e43c5354c4f61d805a66c7a8d27ad443141bf931a5bcf083393e0c755d</code><br>
+    sha256 增强版 <code>40441bb24b2635f1704209a4c5194bdda9fda65c7a45f51a9fe6ae178ed54c21</code><br>
     源码 <a href="https://github.com/podcatcher962/YanZha-Android" rel="noopener">github.com/podcatcher962/YanZha-Android</a>
   </p>
 
-  <p class="note" style="margin-top:34px">
+  <p class="note" style="margin-top:26px">
+    要在电脑上整理整篇稿子？<a href="/yanzha/">言札电脑版（Windows）在这里</a>。
+  </p>
+
+  <p class="note" style="margin-top:14px">
     加速源是第三方公益节点，只是帮忙中转 GitHub 的文件，不存不读内容。<b>本页给的所有链接指向的都是同一个文件</b>，
-    装完在 App 的「关于」里能看到版本号 0.6.3。
+    装完在 App 里能看到版本号 0.6.4（增强版的标题会写「言札 增强版」）。
   </p>
 
 </div>
@@ -131,5 +145,54 @@ dl.faq dd{margin:6px 0 0;opacity:.92}
   <a href="/">兰斋丛编</a> · <a href="/disclaimer/">免责与隐私</a> · <a href="/about/">关于我</a>
 </div>
 
+<script>
+(function(){
+  var V = 'v0.6.4';
+  var BASE = 'https://github.com/podcatcher962/YanZha-Android/releases/download/' + V + '/';
+  var FILES = {
+    std: {name:'YanZha-0.6.4-arm64.apk',     size:'182.4 MB', mins:'三四分钟', key:'标准版'},
+    pro: {name:'YanZha-0.6.4-pro-arm64.apk', size:'260.7 MB', mins:'四五分钟', key:'增强版'}
+  };
+  var MIR = [
+    ['https://hk.gh-proxy.com/', '加速 ①　推荐先试这个', '实测约 1.7 MB/s'],
+    ['https://gh-proxy.com/',    '加速 ②', '实测约 0.9 MB/s'],
+    ['https://cors.isteed.cc/',  '加速 ③', '实测约 0.9 MB/s，换一条线路'],
+    ['https://ghfast.top/',      '加速 ④', '实测约 0.9 MB/s，前三个都不行时用']
+  ];
+  var cur = 'std';
+  var dl = document.getElementById('dl');
+  var fnEl = document.getElementById('fn');
+
+  function render(){
+    var f = FILES[cur];
+    var u = BASE + f.name;
+    var html = '';
+    for (var i = 0; i < MIR.length; i++){
+      var m = MIR[i];
+      html += '<a class="dlbtn" rel="nofollow noopener" href="' + m[0] + u + '">' + m[1]
+           +  '<small>' + m[2] + '，' + f.size + ' 大概' + f.mins + '</small></a>';
+    }
+    html += '<a class="dlbtn alt" rel="nofollow noopener" href="' + u + '">GitHub 原始链接（国内直连很慢，只作备用）'
+         +  '<small>不用梯子时往往只有几十 KB/s，会用两小时以上，建议不用这条</small></a>';
+    dl.innerHTML = html;
+    fnEl.textContent = f.name;
+    document.getElementById('dlNote').textContent =
+      f.key + '，' + f.size + '。同一个文件，四个源，哪个快用哪个，下完体积对得上就是完整的。';
+    var bs = document.querySelectorAll('#pick2 button');
+    for (var j = 0; j < bs.length; j++){
+      bs[j].className = (bs[j].getAttribute('data-k') === cur) ? 'sel' : '';
+    }
+  }
+
+  var all = document.querySelectorAll('#pick2 button');
+  for (var k = 0; k < all.length; k++){
+    all[k].addEventListener('click', function(){
+      cur = this.getAttribute('data-k');
+      render();
+    });
+  }
+  render();
+})();
+</script>
 </body>
 </html>
