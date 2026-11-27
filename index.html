@@ -475,9 +475,9 @@ const APPS = [
   {icon:"🔍", cn:"文本对比", en:"TextDiff", ver:"v2.0", cat:"tool",
    use_cn:"文本差异对比 · 逐行高亮", use_en:"Text diff with line highlighting",
    web:"TextDiff", exe:{name:"TextDiff.exe", size:"10.9 MB", url:"https://github.com/podcatcher962/TextDiff/releases/latest/download/TextDiff.exe"}},
-  {icon:"📚", cn:"卷帙", en:"DeShelf", ver:"v1.5.7", cat:"tool",
+  {icon:"📚", cn:"卷帙", en:"DeShelf", ver:"v1.5.8", cat:"tool",
    use_cn:"本地 TXT 整理 · 编码识别 · 广告清洗 · 智能分章 · EPUB 导出 · 简繁去重 · 段落修复（标点独占一行 / 句中断行） · 中英双语", use_en:"Local TXT organizer — encoding detect, ad cleanup, smart chapter split, EPUB export, script dedupe, paragraph repair (stray punctuation / mid-sentence line breaks), bilingual",
-   web:"DeShelf", exe:{name:"DeShelf-v1.5.7.exe", size:"14.9 MB", url:"https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.exe"}},
+   web:"DeShelf", exe:{name:"DeShelf-v1.5.8.exe", size:"14.86 MB", url:"https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.exe"}},
   {icon:"🔎", cn:"全文检索", en:"TxtSeeker", ver:"v1.4.0", cat:"tool",
    use_cn:"TXT 全文搜索定位 · 上万文件秒级命中 · 关键词高亮 · 定位文件夹 · 批量另存 · 搜索历史 / 检索方案 / CSV 导出 / 深浅主题 · 中英双语 · 纯本地不上传", use_en:"Full-text search across thousands of TXT files — keyword highlight, reveal in folder, batch save, search history, saved schemes, CSV export, dark/light themes, bilingual, fully local",
    web:"TxtSeeker", exe:{name:"TxtSeeker_v1.4.0.exe", size:"16.1 MB", url:"https://github.com/podcatcher962/TxtSeeker/releases/download/v1.4.0/TxtSeeker_v1.4.0.exe"}},
@@ -1002,6 +1002,9 @@ function renderFeatured(){
 
 // ============ 最近更新（手工维护，只放有感知的改动） ============
 const RECENT = [
+  {d:'11-27', n:{zh:'卷帙 v1.5.8',en:'DeShelf v1.5.8'},
+   s:{zh:'分章后章名不再拖着一整页目录',en:'Chapter titles no longer swallow a contents page'},
+   u:'https://github.com/podcatcher962/DeShelf/releases/tag/v1.5.8'},
   {d:'11-26', n:{zh:'言札 安卓版 v0.6.1',en:'YanZha Android v0.6.1'},
    s:{zh:'手机上离线录音转文字，手机里已有的音频文件也能转',en:'Offline speech-to-text on Android, including audio files already on the phone'},
    u:'https://github.com/podcatcher962/YanZha-Android/releases/tag/v0.6.1'},

@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated": "2026-11-27T19:01:34+08:00",
+ "updated": "2026-11-26T22:17:42+08:00",
  "hub": "https://podcatcher962.github.io/versions.json",
  "doc": "客户端按 builds[].urls 顺序尝试，第一个成功的即用；sha256 用于校验完整性。",
  "mirrors": {
@@ -13,7 +13,7 @@
  "stats": {
   "tools": 40,
   "builds": 93,
-  "bytes": 1245276797
+  "bytes": 1245274906
  },
  "tools": [
   {
@@ -731,60 +731,62 @@
    "group": "reading",
    "blurb": "TXT 书库整理、清洗、分章",
    "featured": true,
-   "version": "1.5.8",
-   "tag": "v1.5.8",
-   "released": "2026-11-27",
+   "version": "1.5.7",
+   "tag": "v1.5.7",
+   "released": "2026-11-21",
    "hub": "https://podcatcher962.github.io/DeShelf/",
    "builds": [
     {
-     "file": "DeShelf-v1.5.8.exe",
+     "file": "DeShelf-v1.5.7.exe",
      "os": "windows",
      "arch": "x64",
-     "size": 15585939,
-     "sha256": "a64a39da8f2216d3e678b1a8ef31bb1737adaf0f1fa8d3babd5b8515d91a7b14",
+     "size": 15585073,
+     "sha256": "27e90b4785fb28e064e95d88979fddd35fb3b93cd620fa4ebd33bc9ae458607d",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.exe"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.exe"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.exe"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.exe"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.exe"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.exe"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.exe"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.exe"
       }
-     ]
+     ],
+     "reused": true
     },
     {
-     "file": "DeShelf-v1.5.8.html",
+     "file": "DeShelf-v1.5.7.html",
      "os": "web",
      "arch": null,
-     "size": 173141,
-     "sha256": "3be46cc74775e5c9a4e12129aa41e6a0321634c9e6e2ff790a551be5374ca12c",
+     "size": 172116,
+     "sha256": "78402cd3388f94693abb8301d5b4dd161fd24d49e80c86ff1227239c1ae0edce",
      "urls": [
       {
        "m": "ghproxy",
-       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.html"
+       "u": "https://gh-proxy.com/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.html"
       },
       {
        "m": "ghfast",
-       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.html"
+       "u": "https://ghfast.top/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.html"
       },
       {
        "m": "ghnet",
-       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.html"
+       "u": "https://ghproxy.net/https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.html"
       },
       {
        "m": "release",
-       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.8/DeShelf-v1.5.8.html"
+       "u": "https://github.com/podcatcher962/DeShelf/releases/download/v1.5.7/DeShelf-v1.5.7.html"
       }
-     ]
+     ],
+     "reused": true
     }
    ]
   },
